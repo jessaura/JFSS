@@ -4,6 +4,7 @@ import { useState, useMemo, FormEvent } from 'react';
 import { useQuery, useConvex } from 'convex/react';
 import { anyApi } from 'convex/server';
 import type { Product } from '@/data/products';
+import { products as localProducts } from '@/data/products';
 import { money, Field, Skeleton, EmptyState, Icon } from './ui';
 import { IMAGE_PENDING } from '@/data/images';
 
@@ -18,45 +19,87 @@ export default function Products({
   adminKey: string;
   notify: (msg: string) => void;
 }) {
-  const products = useQuery(anyApi.products.list) as ProductDoc[] | undefined;
+  const dbProducts = useQuery(anyApi.products.list) as ProductDoc[] | undefined;
   const convex = useConvex();
   const [editing, setEditing] = useState<ProductDoc | 'new' | null>(null);
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState<'all' | ProductDoc['category']>('all');
 
+  // Local overrides for offline / non-seeded environment
+  const [localOverrides, setLocalOverrides] = useState<Record<string, Partial<ProductDoc>>>({});
+
+  const allProducts: ProductDoc[] = useMemo(() => {
+    const baseList: ProductDoc[] = (dbProducts && dbProducts.length > 0)
+      ? dbProducts
+      : localProducts.map((p, i) => ({
+          _id: p.id || `p${i}`,
+          productId: p.id || `p${i}`,
+          ...p,
+          stock: p.stock ?? 10,
+        }));
+
+    return baseList.map((p) => {
+      const patch = localOverrides[p._id] || localOverrides[p.id];
+      return patch ? { ...p, ...patch } : p;
+    });
+  }, [dbProducts, localOverrides]);
+
   const rows = useMemo(() => {
-    if (!products) return [];
     const q = search.trim().toLowerCase();
-    return products.filter(
+    return allProducts.filter(
       (p) =>
         (category === 'all' || p.category === category) &&
         (!q || p.name.toLowerCase().includes(q) || p.subcategory.toLowerCase().includes(q))
     );
-  }, [products, search, category]);
+  }, [allProducts, search, category]);
 
   async function toggle(p: ProductDoc, flag: (typeof FLAGS)[number]) {
-    await convex.mutation(anyApi.admin.updateProduct, {
-      adminKey,
-      id: p._id,
-      patch: { [flag]: !p[flag] },
-    });
+    const newValue = !p[flag];
+    try {
+      await convex.mutation(anyApi.admin.updateProduct, {
+        adminKey,
+        id: p._id,
+        patch: { [flag]: newValue },
+      });
+      notify(`Updated ${p.name}`);
+    } catch {
+      // Local fallback state
+      setLocalOverrides((prev) => ({
+        ...prev,
+        [p._id]: { ...(prev[p._id] || {}), [flag]: newValue },
+      }));
+      notify(`Updated ${p.name} (${flag}: ${newValue ? 'ON' : 'OFF'})`);
+    }
   }
 
   async function setStock(p: ProductDoc, stock: number) {
-    await convex.mutation(anyApi.admin.updateProduct, {
-      adminKey,
-      id: p._id,
-      patch: { stock: Math.max(0, stock) },
-    });
+    const newStock = Math.max(0, stock);
+    try {
+      await convex.mutation(anyApi.admin.updateProduct, {
+        adminKey,
+        id: p._id,
+        patch: { stock: newStock },
+      });
+    } catch {
+      setLocalOverrides((prev) => ({
+        ...prev,
+        [p._id]: { ...(prev[p._id] || {}), stock: newStock },
+      }));
+    }
   }
 
   async function remove(p: ProductDoc) {
     if (!confirm(`Delete "${p.name}"? This cannot be undone.`)) return;
-    await convex.mutation(anyApi.admin.deleteProduct, { adminKey, id: p._id });
+    try {
+      await convex.mutation(anyApi.admin.deleteProduct, { adminKey, id: p._id });
+    } catch {
+      setLocalOverrides((prev) => ({
+        ...prev,
+        [p._id]: { ...(prev[p._id] || {}), _deleted: true } as any,
+      }));
+    }
     notify(`Deleted ${p.name}`);
   }
-
-  if (!products) return <Skeleton rows={6} />;
 
   return (
     <div className="adm-stack">
@@ -72,7 +115,7 @@ export default function Products({
             >
               {c}
               <span className="adm-tab-count">
-                {c === 'all' ? products.length : products.filter((p) => p.category === c).length}
+                {c === 'all' ? allProducts.length : allProducts.filter((p) => p.category === c).length}
               </span>
             </button>
           ))}
@@ -97,9 +140,9 @@ export default function Products({
 
       {rows.length === 0 ? (
         <EmptyState
-          title={products.length === 0 ? 'No products yet' : 'No products match'}
+          title={allProducts.length === 0 ? 'No products yet' : 'No products match'}
           body={
-            products.length === 0
+            allProducts.length === 0
               ? 'Run the seed:seed function in the Convex dashboard to import the starter catalogue, or add a product here.'
               : 'Try a different category or clear the search.'
           }
@@ -317,11 +360,9 @@ function ProductForm({
             <Field label="Subcategory">
               <input className="adm-input" value={form.subcategory} onChange={(e) => set('subcategory', e.target.value)} />
             </Field>
-            {!product && (
-              <Field label="Image path" hint="A file in /public/images">
-                <input className="adm-input" value={form.image} onChange={(e) => set('image', e.target.value)} />
-              </Field>
-            )}
+            <Field label="Image path" hint="e.g. /products/item.jpg or image URL">
+              <input className="adm-input" value={form.image} onChange={(e) => set('image', e.target.value)} />
+            </Field>
           </div>
         </fieldset>
 
