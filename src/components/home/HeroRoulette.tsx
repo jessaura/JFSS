@@ -1,19 +1,24 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { lookbook } from '@/data/lookbook';
+import { getFeaturedProducts } from '@/data/products';
+import { getProductImage } from '@/data/images';
 
 /**
- * Hero carousel — real product photography, one shot at a time, sliding
- * sideways (translateX track) with a 5s auto-advance. Pauses on hover;
- * prev/next + counter for manual control. Auto-advance and the slide
- * transition are disabled under prefers-reduced-motion.
+ * Hero carousel — one shot at a time, sliding sideways (translateX track)
+ * with a 5s auto-advance. Pauses on hover; prev/next for manual control.
+ * Auto-advance and the slide transition are disabled under
+ * prefers-reduced-motion.
  *
- * Deliberately image-only: no name, price or badge until real product data
- * is attached to these photographs.
+ * Image-only by design: no name, price or badge overlay. Currently runs on
+ * the placeholder catalogue art; point `shots` at the real photography once
+ * it lands with its product data.
  */
 export default function HeroRoulette() {
-  const shots = lookbook;
+  const shots = getFeaturedProducts().map((p) => ({
+    id: p.id,
+    src: getProductImage(p.id),
+  }));
   const total = shots.length;
 
   const [index, setIndex] = useState(0);

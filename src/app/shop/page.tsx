@@ -8,7 +8,6 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import CartDrawer from '@/components/layout/CartDrawer';
 import ClearanceRail from '@/components/home/ClearanceRail';
-import LookbookGrid from '@/components/shop/LookbookGrid';
 import { products, Product, discountPercent } from '@/data/products';
 import { getProductImage } from '@/data/images';
 import { useStore } from '@/store/store';
@@ -162,9 +161,6 @@ export default function ShopPage() {
             </p>
           </div>
         </div>
-
-        {/* Real photography — image-only cards, open in a lightbox */}
-        <LookbookGrid />
 
         {/* Clearance Sale */}
         <div className="container" style={{ marginBottom: 'var(--space-3xl)' }}>
