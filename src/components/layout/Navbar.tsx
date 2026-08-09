@@ -38,7 +38,7 @@ export default function Navbar() {
   return (
     <>
       <div className="jf-utility-bar" aria-hidden="true">
-        <span>Free shipping over $75</span>
+        <span>Free shipping over £75</span>
         <span className="jf-utility-dot" />
         <span>Handcrafted in small batches</span>
         <span className="jf-utility-dot" />

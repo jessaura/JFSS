@@ -262,11 +262,11 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 {isUnpriced(product) ? (
                   <span className="current product-poa">Price on request</span>
                 ) : (
-                  <span className="current">${product.price}</span>
+                  <span className="current">£{product.price}</span>
                 )}
                 {!isUnpriced(product) && product.originalPrice && (
                   <>
-                    <span className="original">${product.originalPrice}</span>
+                    <span className="original">£{product.originalPrice}</span>
                     <span className="discount">{discount}% OFF</span>
                   </>
                 )}
@@ -470,8 +470,8 @@ function RelatedCard({ product, index }: { product: Product; index: number }) {
               <span className="current product-poa">Price on request</span>
             ) : (
               <>
-                <span className="current">${product.price}</span>
-                {product.originalPrice && <span className="original">${product.originalPrice}</span>}
+                <span className="current">£{product.price}</span>
+                {product.originalPrice && <span className="was">£{product.originalPrice}</span>}
               </>
             )}
           </div>

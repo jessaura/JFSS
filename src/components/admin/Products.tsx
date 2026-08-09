@@ -328,10 +328,10 @@ function ProductForm({
         <fieldset className="adm-fieldset">
           <legend>Pricing &amp; stock</legend>
           <div className="adm-grid">
-            <Field label="Price ($)" required>
+            <Field label="Price (£)" required>
               <input className="adm-input" type="number" min="0" step="1" value={form.price} onChange={(e) => set('price', Number(e.target.value))} required />
             </Field>
-            <Field label="Original price ($)" hint="0 = no markdown">
+            <Field label="Original price (£)" hint="0 = no markdown">
               <input className="adm-input" type="number" min="0" step="1" value={form.originalPrice} onChange={(e) => set('originalPrice', Number(e.target.value))} />
             </Field>
             <Field label="Stock" hint="Decrements on each order">

@@ -56,8 +56,8 @@ function EditCard({ product }: { product: Product }) {
             <span className="poa">Price on request</span>
           ) : (
             <>
-              <span className="now">${product.price}</span>
-              {product.originalPrice && <span className="was">${product.originalPrice}</span>}
+              <span className="now">£{product.price}</span>
+              {product.originalPrice && <span className="was">£{product.originalPrice}</span>}
             </>
           )}
         </div>

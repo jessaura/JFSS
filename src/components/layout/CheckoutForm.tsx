@@ -152,9 +152,9 @@ export default function CheckoutForm({ onClose }: { onClose: () => void }) {
       </label>
 
       <div className="jf-checkout-totals">
-        <div><span>Subtotal</span><span>${subtotal.toFixed(2)}</span></div>
-        <div><span>Shipping</span><span>{shipping === 0 ? 'Free' : `$${shipping.toFixed(2)}`}</span></div>
-        <div className="jf-checkout-grand"><span>Total</span><span>${(subtotal + shipping).toFixed(2)}</span></div>
+        <div><span>Subtotal</span><span>£{subtotal.toFixed(2)}</span></div>
+        <div><span>Shipping</span><span>{shipping === 0 ? 'Free' : `£${shipping.toFixed(2)}`}</span></div>
+        <div className="jf-checkout-grand"><span>Total</span><span>£{(subtotal + shipping).toFixed(2)}</span></div>
       </div>
 
       {error && <p className="jf-checkout-error" role="alert">{error}</p>}

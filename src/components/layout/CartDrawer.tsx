@@ -115,7 +115,7 @@ export default function CartDrawer() {
                       </div>
 
                       <span className="cart-item-price">
-                        ${(item.product.price * item.quantity).toFixed(2)}
+                        £{(item.product.price * item.quantity).toFixed(2)}
                       </span>
                     </motion.div>
                   ))}
@@ -137,7 +137,7 @@ export default function CartDrawer() {
                     initial={{ scale: 1.1 }}
                     animate={{ scale: 1 }}
                   >
-                    ${cartTotal().toFixed(2)}
+                    £{cartTotal().toFixed(2)}
                   </motion.span>
                 </div>
                 <button
@@ -155,7 +155,7 @@ export default function CartDrawer() {
                     marginTop: 'var(--space-md)',
                   }}
                 >
-                  Free shipping on orders over $200
+                  Free shipping on orders over £200
                 </p>
               </motion.div>
             )}

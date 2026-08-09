@@ -77,7 +77,7 @@ function ShopProductCard({ product }: { product: Product }) {
 
         <div className="wk-card-foot">
           <span className={`wk-price ${unpriced ? 'wk-price-poa' : ''}`}>
-            {unpriced ? 'Price on request' : `$${product.price}`}
+            {unpriced ? 'Price on request' : `£${product.price}`}
           </span>
 
           <div className="wk-card-actions">
@@ -256,8 +256,8 @@ export default function ShopPage() {
                   <div className="wk-price-filter">
                     <input type="range" min={0} max={PRICE_MAX} step={1} value={maxPrice} onChange={(e) => setMaxPrice(Number(e.target.value))} aria-label="Maximum price" />
                     <div className="wk-price-labels">
-                      <span>$0</span>
-                      <span>{priceActive ? `up to $${maxPrice}` : `$${PRICE_MAX}`}</span>
+                      <span>£0</span>
+                      <span>{priceActive ? `up to £${maxPrice}` : `£${PRICE_MAX}`}</span>
                     </div>
                   </div>
                 </FacetGroup>

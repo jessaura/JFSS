@@ -97,7 +97,7 @@ export default function HeroSection() {
               <span className="jf-hero-float-text">
                 <span className="jf-hero-float-name">{product.name}</span>
                 <span className="jf-hero-float-price">
-                  {isUnpriced(product) ? 'Price on request' : `$${product.price}`}
+                  {isUnpriced(product) ? 'Price on request' : `£${product.price}`}
                 </span>
               </span>
             </Link>

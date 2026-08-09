@@ -5,9 +5,9 @@ import { ReactNode } from 'react';
 /* ---------- formatters ---------- */
 
 export const money = (n: number) =>
-  new Intl.NumberFormat('en-US', {
+  new Intl.NumberFormat('en-GB', {
     style: 'currency',
-    currency: 'USD',
+    currency: 'GBP',
     maximumFractionDigits: n % 1 === 0 ? 0 : 2,
   }).format(n);
 
