@@ -8,7 +8,7 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import CartDrawer from '@/components/layout/CartDrawer';
 import ClearanceRail from '@/components/home/ClearanceRail';
-import { products, Product, discountPercent } from '@/data/products';
+import { products, Product, discountPercent, isUnpriced, colorAt } from '@/data/products';
 import { getProductImage } from '@/data/images';
 import { useStore } from '@/store/store';
 
@@ -16,12 +16,17 @@ const categories = [
   { value: 'all', label: 'All' },
   { value: 'women', label: 'Women' },
   { value: 'men', label: 'Men' },
+  { value: 'kids', label: 'Kids' },
+  { value: 'unisex', label: 'Unisex' },
 ];
 
+// Garment types come from the catalogue itself (Shirts, Tops, Blouses …),
+// replacing the old ready-to-wear / semi-stitched split the data no longer has.
 const types = [
   { value: 'all', label: 'All Types' },
-  { value: 'ready-to-wear', label: 'Ready-to-Wear' },
-  { value: 'semi-stitched', label: 'Semi-Stitched' },
+  ...[...new Set(products.map((p) => p.subcategory).filter(Boolean))]
+    .sort()
+    .map((s) => ({ value: s, label: s })),
 ];
 
 function ShopProductCard({ product, index }: { product: Product; index: number }) {
@@ -30,10 +35,11 @@ function ShopProductCard({ product, index }: { product: Product; index: number }
   const [added, setAdded] = useState(false);
   const wishlisted = isWishlisted(product.id);
   const disc = discountPercent(product);
+  const unpriced = isUnpriced(product);
 
   const handleAdd = (e: React.MouseEvent) => {
     e.preventDefault();
-    addToCart(product, product.colors[activeColor], product.sizes[0]);
+    addToCart(product, colorAt(product, activeColor), product.sizes[0] ?? 'One size');
     setAdded(true);
     setTimeout(() => setAdded(false), 2000);
   };
@@ -79,19 +85,34 @@ function ShopProductCard({ product, index }: { product: Product; index: number }
           </svg>
         </button>
 
-        <button className={`jf-pcard-add ${added ? 'added' : ''}`} onClick={handleAdd}>
-          {added ? '✓ Added to bag' : 'Add to bag'}
-        </button>
+        {/* Unpriced pieces can't be bought — a $0 order would be meaningless. */}
+        {unpriced ? (
+          <Link href={`/product/${product.id}`} className="jf-pcard-add jf-pcard-enquire">
+            Enquire
+          </Link>
+        ) : (
+          <button className={`jf-pcard-add ${added ? 'added' : ''}`} onClick={handleAdd}>
+            {added ? '✓ Added to bag' : 'Add to bag'}
+          </button>
+        )}
       </div>
 
       <div className="jf-pcard-info">
-        <p className="jf-pcard-cat">{product.subcategory} · {product.type}</p>
+        <p className="jf-pcard-cat">
+          {[product.subcategory, product.category].filter(Boolean).join(' · ')}
+        </p>
         <Link href={`/product/${product.id}`}>
           <h3 className="jf-pcard-name">{product.name}</h3>
         </Link>
         <div className="jf-pcard-price">
-          <span className="now">${product.price}</span>
-          {product.originalPrice && <span className="was">${product.originalPrice}</span>}
+          {unpriced ? (
+            <span className="poa">Price on request</span>
+          ) : (
+            <>
+              <span className="now">${product.price}</span>
+              {product.originalPrice && <span className="was">${product.originalPrice}</span>}
+            </>
+          )}
         </div>
         <div className="jf-pcard-colors">
           {product.colors.map((color, i) => (
@@ -135,13 +156,18 @@ export default function ShopPage() {
   const filteredProducts = useMemo(() => {
     let filtered = [...products];
     if (activeCategory !== 'all') filtered = filtered.filter((p) => p.category === activeCategory);
-    if (activeType !== 'all') filtered = filtered.filter((p) => p.type === activeType);
+    if (activeType !== 'all') filtered = filtered.filter((p) => p.subcategory === activeType);
+
+    // Unpriced pieces sort to the end either way — a 0 isn't "cheapest".
+    const byPrice = (dir: 1 | -1) => (a: Product, b: Product) => {
+      if (isUnpriced(a) !== isUnpriced(b)) return isUnpriced(a) ? 1 : -1;
+      return (a.price - b.price) * dir;
+    };
 
     switch (sortBy) {
-      case 'price-low': filtered.sort((a, b) => a.price - b.price); break;
-      case 'price-high': filtered.sort((a, b) => b.price - a.price); break;
+      case 'price-low': filtered.sort(byPrice(1)); break;
+      case 'price-high': filtered.sort(byPrice(-1)); break;
       case 'newest': filtered.sort((a, b) => (b.new ? 1 : 0) - (a.new ? 1 : 0)); break;
-      case 'rating': filtered.sort((a, b) => b.rating - a.rating); break;
       default: filtered.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
     }
     return filtered;
@@ -198,7 +224,6 @@ export default function ShopPage() {
                 <option value="newest">Newest</option>
                 <option value="price-low">Price: Low to High</option>
                 <option value="price-high">Price: High to Low</option>
-                <option value="rating">Top Rated</option>
               </select>
             </div>
           </div>

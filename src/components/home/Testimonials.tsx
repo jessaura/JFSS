@@ -8,11 +8,15 @@ export default function Testimonials() {
   const [active, setActive] = useState(0);
 
   useEffect(() => {
+    if (testimonials.length === 0) return;
     const interval = setInterval(() => {
       setActive((prev) => (prev + 1) % testimonials.length);
     }, 6000);
     return () => clearInterval(interval);
   }, []);
+
+  // Nothing to show until real customer reviews exist.
+  if (testimonials.length === 0) return null;
 
   const t = testimonials[active];
 

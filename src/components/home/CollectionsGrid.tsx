@@ -4,16 +4,18 @@ import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { collections } from '@/data/products';
+import { collections, products } from '@/data/products';
+import { IMAGE_PENDING } from '@/data/images';
 
 gsap.registerPlugin(ScrollTrigger);
 
-const collectionImages = [
-  '/images/hero-casual.png',
-  '/images/mens-collection.png',
-  '/images/womens-collection.png',
-  '/images/festive-collection.png',
-];
+// Each collection shows a real photographed piece from that category, so the
+// tiles reflect actual stock rather than stand-in art.
+const collectionImages = collections.map(
+  (col) =>
+    products.find((p) => p.category === col.id && p.images.length)?.images[0] ??
+    IMAGE_PENDING
+);
 
 export default function CollectionsGrid() {
   const sectionRef = useRef<HTMLElement>(null);

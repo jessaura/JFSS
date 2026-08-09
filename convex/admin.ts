@@ -26,9 +26,8 @@ const productFields = {
   originalPrice: v.optional(v.number()),
   description: v.string(),
   shortDescription: v.string(),
-  category: v.union(v.literal('men'), v.literal('women')),
+  category: v.union(v.literal('men'), v.literal('women'), v.literal('kids'), v.literal('unisex')),
   subcategory: v.string(),
-  type: v.union(v.literal('ready-to-wear'), v.literal('semi-stitched')),
   fabric: v.string(),
   colors: v.array(
     v.object({ name: v.string(), hex: v.string(), image: v.string() })
@@ -75,11 +74,8 @@ export const updateProduct = mutation({
       originalPrice: v.optional(v.number()),
       description: v.optional(v.string()),
       shortDescription: v.optional(v.string()),
-      category: v.optional(v.union(v.literal('men'), v.literal('women'))),
+      category: v.optional(v.union(v.literal('men'), v.literal('women'), v.literal('kids'), v.literal('unisex'))),
       subcategory: v.optional(v.string()),
-      type: v.optional(
-        v.union(v.literal('ready-to-wear'), v.literal('semi-stitched'))
-      ),
       fabric: v.optional(v.string()),
       sizes: v.optional(v.array(v.string())),
       tags: v.optional(v.array(v.string())),

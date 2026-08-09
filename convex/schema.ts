@@ -13,9 +13,8 @@ export default defineSchema({
     originalPrice: v.optional(v.number()),
     description: v.string(),
     shortDescription: v.string(),
-    category: v.union(v.literal('men'), v.literal('women')),
+    category: v.union(v.literal('men'), v.literal('women'), v.literal('kids'), v.literal('unisex')),
     subcategory: v.string(),
-    type: v.union(v.literal('ready-to-wear'), v.literal('semi-stitched')),
     fabric: v.string(),
     colors: v.array(
       v.object({ name: v.string(), hex: v.string(), image: v.string() })

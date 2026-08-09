@@ -5,6 +5,7 @@ import { useQuery, useConvex } from 'convex/react';
 import { anyApi } from 'convex/server';
 import type { Product } from '@/data/products';
 import { money, Field, Skeleton, EmptyState, Icon } from './ui';
+import { IMAGE_PENDING } from '@/data/images';
 
 type ProductDoc = Product & { _id: string; productId: string; stock?: number };
 
@@ -21,7 +22,7 @@ export default function Products({
   const convex = useConvex();
   const [editing, setEditing] = useState<ProductDoc | 'new' | null>(null);
   const [search, setSearch] = useState('');
-  const [category, setCategory] = useState<'all' | 'men' | 'women'>('all');
+  const [category, setCategory] = useState<'all' | ProductDoc['category']>('all');
 
   const rows = useMemo(() => {
     if (!products) return [];
@@ -61,7 +62,7 @@ export default function Products({
     <div className="adm-stack">
       <div className="adm-toolbar">
         <div className="adm-tabs" role="tablist" aria-label="Filter products by category">
-          {(['all', 'women', 'men'] as const).map((c) => (
+          {(['all', 'women', 'men', 'kids', 'unisex'] as const).map((c) => (
             <button
               key={c}
               role="tab"
@@ -126,7 +127,7 @@ export default function Products({
                 <tr key={p._id}>
                   <td>
                     <div className="adm-cell-product">
-                      <img src={p.images[0]} alt="" className="adm-thumb" />
+                      <img src={p.images[0] || IMAGE_PENDING} alt="" className="adm-thumb" />
                       <div className="adm-list-main">
                         <span className="adm-name">{p.name}</span>
                         <span className="adm-muted">{p.subcategory} · {p.fabric}</span>
@@ -135,7 +136,7 @@ export default function Products({
                   </td>
                   <td className="adm-cap">{p.category}</td>
                   <td>
-                    <span className="adm-num">{money(p.price)}</span>
+                    <span className="adm-num">{p.price > 0 ? money(p.price) : <em className="adm-muted">Not priced</em>}</span>
                     {p.originalPrice && <span className="adm-strike">{money(p.originalPrice)}</span>}
                   </td>
                   <td>
@@ -213,7 +214,6 @@ function ProductForm({
     stock: product?.stock ?? 10,
     category: product?.category ?? 'women',
     subcategory: product?.subcategory ?? '',
-    type: product?.type ?? 'ready-to-wear',
     fabric: product?.fabric ?? '',
     shortDescription: product?.shortDescription ?? '',
     description: product?.description ?? '',
@@ -239,9 +239,8 @@ function ProductForm({
       price: Number(form.price),
       ...(Number(form.originalPrice) > 0 ? { originalPrice: Number(form.originalPrice) } : {}),
       stock: Number(form.stock),
-      category: form.category as 'men' | 'women',
+      category: form.category as ProductDoc['category'],
       subcategory: form.subcategory,
-      type: form.type as 'ready-to-wear' | 'semi-stitched',
       fabric: form.fabric,
       shortDescription: form.shortDescription,
       description: form.description,
@@ -304,19 +303,19 @@ function ProductForm({
               <input className="adm-input" value={form.fabric} onChange={(e) => set('fabric', e.target.value)} />
             </Field>
             <Field label="Category">
-              <select className="adm-input" value={form.category} onChange={(e) => set('category', e.target.value as 'men' | 'women')}>
+              <select
+                className="adm-input"
+                value={form.category}
+                onChange={(e) => set('category', e.target.value as ProductDoc['category'])}
+              >
                 <option value="women">Women</option>
                 <option value="men">Men</option>
+                <option value="kids">Kids</option>
+                <option value="unisex">Unisex</option>
               </select>
             </Field>
             <Field label="Subcategory">
               <input className="adm-input" value={form.subcategory} onChange={(e) => set('subcategory', e.target.value)} />
-            </Field>
-            <Field label="Type">
-              <select className="adm-input" value={form.type} onChange={(e) => set('type', e.target.value as typeof form.type)}>
-                <option value="ready-to-wear">Ready to wear</option>
-                <option value="semi-stitched">Semi-stitched</option>
-              </select>
             </Field>
             {!product && (
               <Field label="Image path" hint="A file in /public/images">

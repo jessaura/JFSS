@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { getFeaturedProducts, Product } from '@/data/products';
+import { getFeaturedProducts, Product, isUnpriced } from '@/data/products';
 import { getProductImage } from '@/data/images';
 import { useStore } from '@/store/store';
 
@@ -52,8 +52,14 @@ function EditCard({ product }: { product: Product }) {
         <p className="jf-edit-cat">{product.subcategory}</p>
         <h3 className="jf-edit-name">{product.name}</h3>
         <div className="jf-edit-price">
-          <span className="now">${product.price}</span>
-          {product.originalPrice && <span className="was">${product.originalPrice}</span>}
+          {isUnpriced(product) ? (
+            <span className="poa">Price on request</span>
+          ) : (
+            <>
+              <span className="now">${product.price}</span>
+              {product.originalPrice && <span className="was">${product.originalPrice}</span>}
+            </>
+          )}
         </div>
       </Link>
     </div>

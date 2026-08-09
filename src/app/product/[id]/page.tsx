@@ -7,7 +7,7 @@ import gsap from 'gsap';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import CartDrawer from '@/components/layout/CartDrawer';
-import { getProductById, products, Product } from '@/data/products';
+import { getProductById, products, Product, isUnpriced, colorAt } from '@/data/products';
 import { getProductImage } from '@/data/images';
 import { useStore } from '@/store/store';
 
@@ -168,7 +168,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     if (!activeSize) {
       return;
     }
-    addToCart(product, product.colors[activeColor], activeSize, quantity);
+    addToCart(product, colorAt(product, activeColor), activeSize, quantity);
     setAddedToCart(true);
     setTimeout(() => setAddedToCart(false), 2500);
   };
@@ -204,7 +204,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               <motion.div
                 className="product-gallery-main"
                 style={{
-                  background: `linear-gradient(135deg, ${product.colors[activeColor].hex}15, ${product.colors[activeColor].hex}40)`,
+                  background: `linear-gradient(135deg, ${colorAt(product, activeColor).hex}15, ${colorAt(product, activeColor).hex}40)`,
                 }}
                 key={`${activeColor}-${activeImage}`}
                 initial={{ opacity: 0 }}
@@ -225,7 +225,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                     className={`product-gallery-thumb ${i === activeImage ? 'active' : ''}`}
                     onClick={() => setActiveImage(i)}
                     style={{
-                      background: `linear-gradient(135deg, ${product.colors[activeColor].hex}10, ${product.colors[activeColor].hex}30)`,
+                      background: `linear-gradient(135deg, ${colorAt(product, activeColor).hex}10, ${colorAt(product, activeColor).hex}30)`,
                     }}
                   >
                     <img
@@ -241,23 +241,30 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
             {/* Product Info */}
             <div className="product-info" ref={infoRef}>
               <p className="product-info-overline">
-                {product.subcategory} · {product.type === 'semi-stitched' ? 'Semi-Stitched' : 'Ready-to-Wear'}
+                {[product.subcategory, product.category].filter(Boolean).join(' · ')}
               </p>
 
               <h1>{product.name}</h1>
 
-              <div className="product-info-rating">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <span key={i} style={{ opacity: i < Math.round(product.rating) ? 1 : 0.3 }}>
-                    ★
-                  </span>
-                ))}
-                <span>{product.rating} ({product.reviews} reviews)</span>
-              </div>
+              {/* Stars only once real reviews exist — no phantom ratings. */}
+              {product.reviews > 0 && (
+                <div className="product-info-rating">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <span key={i} style={{ opacity: i < Math.round(product.rating) ? 1 : 0.3 }}>
+                      ★
+                    </span>
+                  ))}
+                  <span>{product.rating} ({product.reviews} reviews)</span>
+                </div>
+              )}
 
               <div className="product-info-price">
-                <span className="current">${product.price}</span>
-                {product.originalPrice && (
+                {isUnpriced(product) ? (
+                  <span className="current product-poa">Price on request</span>
+                ) : (
+                  <span className="current">${product.price}</span>
+                )}
+                {!isUnpriced(product) && product.originalPrice && (
                   <>
                     <span className="original">${product.originalPrice}</span>
                     <span className="discount">{discount}% OFF</span>
@@ -269,7 +276,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
               {/* Color Selection */}
               <div className="product-option-label">
-                Color: <span>{product.colors[activeColor].name}</span>
+                Color: <span>{colorAt(product, activeColor).name}</span>
               </div>
               <div className="product-colors">
                 {product.colors.map((color, i) => (
@@ -326,8 +333,11 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 <motion.button
                   className={`product-add-to-cart ${addedToCart ? 'added' : ''}`}
                   onClick={handleAddToCart}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                  // No price yet means no cart — a $0 order isn't a sale.
+                  disabled={isUnpriced(product)}
+                  title={isUnpriced(product) ? 'This piece is not priced yet' : undefined}
+                  whileHover={isUnpriced(product) ? undefined : { scale: 1.02 }}
+                  whileTap={isUnpriced(product) ? undefined : { scale: 0.98 }}
                 >
                   <AnimatePresence mode="wait">
                     {addedToCart ? (
@@ -338,6 +348,15 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                         exit={{ y: -20, opacity: 0 }}
                       >
                         ✓ Added to Bag
+                      </motion.span>
+                    ) : isUnpriced(product) ? (
+                      <motion.span
+                        key="poa"
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{ y: -20, opacity: 0 }}
+                      >
+                        Price on request
                       </motion.span>
                     ) : !activeSize ? (
                       <motion.span
@@ -373,21 +392,25 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
 
               {/* Meta */}
               <div className="product-meta">
+                {product.fabric && (
+                  <div className="product-meta-item">
+                    <strong>Fabric</strong>
+                    <span>{product.fabric}</span>
+                  </div>
+                )}
                 <div className="product-meta-item">
-                  <strong>Fabric</strong>
-                  <span>{product.fabric}</span>
+                  <strong>Category</strong>
+                  <span>{product.subcategory || '—'}</span>
                 </div>
-                <div className="product-meta-item">
-                  <strong>Type</strong>
-                  <span>{product.type === 'semi-stitched' ? 'Semi-Stitched' : 'Ready-to-Wear'}</span>
-                </div>
-                <div className="product-meta-item">
-                  <strong>Care</strong>
-                  <span>Dry clean recommended</span>
-                </div>
+                {typeof product.stock === 'number' && (
+                  <div className="product-meta-item">
+                    <strong>Availability</strong>
+                    <span>{product.stock > 0 ? `${product.stock} in stock` : 'Out of stock'}</span>
+                  </div>
+                )}
                 <div className="product-meta-item">
                   <strong>Shipping</strong>
-                  <span>Free shipping on orders over $200</span>
+                  <span>Free shipping on orders over $75</span>
                 </div>
               </div>
             </div>
@@ -429,7 +452,7 @@ function RelatedCard({ product, index }: { product: Product; index: number }) {
           <div
             className="product-card-image-inner"
             style={{
-              background: `linear-gradient(135deg, ${product.colors[0].hex}22, ${product.colors[0].hex}55)`,
+              background: `linear-gradient(135deg, ${colorAt(product).hex}22, ${colorAt(product).hex}55)`,
             }}
           >
             <img
@@ -443,8 +466,14 @@ function RelatedCard({ product, index }: { product: Product; index: number }) {
           <p className="product-card-category">{product.subcategory}</p>
           <h3 className="product-card-name">{product.name}</h3>
           <div className="product-card-price">
-            <span className="current">${product.price}</span>
-            {product.originalPrice && <span className="original">${product.originalPrice}</span>}
+            {isUnpriced(product) ? (
+              <span className="current product-poa">Price on request</span>
+            ) : (
+              <>
+                <span className="current">${product.price}</span>
+                {product.originalPrice && <span className="original">${product.originalPrice}</span>}
+              </>
+            )}
           </div>
         </div>
       </Link>
