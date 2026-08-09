@@ -7,6 +7,7 @@ import gsap from 'gsap';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import CartDrawer from '@/components/layout/CartDrawer';
+import ClearanceRail from '@/components/home/ClearanceRail';
 import { products, Product, discountPercent, isUnpriced, colorAt } from '@/data/products';
 import { getProductImage, hasPhoto } from '@/data/images';
 import { useStore } from '@/store/store';
@@ -202,6 +203,11 @@ export default function ShopPage() {
               </p>
             </div>
           </section>
+
+          {/* Clearance Sale band — genuine markdowns, dark contrast section */}
+          <div style={{ margin: 'var(--space-2xl) 0' }}>
+            <ClearanceRail />
+          </div>
 
           {/* Search + category quick-pills + sort */}
           <div className="wk-toolbar">

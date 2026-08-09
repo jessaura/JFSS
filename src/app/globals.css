@@ -5784,3 +5784,160 @@ input, textarea, select {
   .wk-toolbar { gap: var(--space-sm); }
   .wk-pill { padding: 6px 12px; font-size: 0.7rem; }
 }
+
+/* ============================================================
+   CLEARANCE SALE SECTION — Black Contrast Theme
+   ============================================================ */
+.jf-clear {
+  background: linear-gradient(135deg, #111111 0%, #1a0a0a 100%);
+  border-radius: 20px;
+  padding: var(--space-2xl) var(--space-2xl);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  position: relative;
+  overflow: hidden;
+}
+.jf-clear::before {
+  content: '';
+  position: absolute;
+  top: -100px; right: -100px;
+  width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(155, 0, 0, 0.25) 0%, transparent 70%);
+  pointer-events: none;
+}
+.jf-clear-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: var(--space-xl);
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: var(--space-lg);
+}
+.jf-clear-eyebrow {
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #FF5252;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 4px;
+}
+.jf-clear-head h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 2.4vw, 2rem);
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+}
+.jf-clear-head h2 .accent {
+  color: #FF5252;
+}
+.jf-clear-note {
+  font-size: var(--text-xs);
+  color: rgba(255, 255, 255, 0.6);
+  max-width: 380px;
+  margin: 0;
+  line-height: 1.5;
+}
+.jf-clear-rail {
+  display: flex;
+  gap: var(--space-lg);
+  overflow-x: auto;
+  padding-bottom: var(--space-md);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+.jf-clear-rail::-webkit-scrollbar {
+  height: 6px;
+}
+.jf-clear-rail::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+.jf-clear-card {
+  flex: 0 0 210px;
+  background: #1c1c1c;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  overflow: hidden;
+  text-decoration: none;
+  color: #fff;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.jf-clear-card:hover {
+  transform: translateY(-4px);
+  border-color: #FF5252;
+  box-shadow: 0 12px 30px rgba(255, 82, 82, 0.2);
+}
+.jf-clear-media {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: #262626;
+}
+.jf-clear-media img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s var(--jf-ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+}
+.jf-clear-card:hover .jf-clear-media img {
+  transform: scale(1.06);
+}
+.jf-clear-disc {
+  position: absolute;
+  top: 10px; left: 10px;
+  background: #D84315;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  box-shadow: 0 4px 12px rgba(216, 67, 21, 0.4);
+}
+.jf-clear-disc strong {
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+.jf-clear-disc span {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  opacity: 0.9;
+}
+.jf-clear-body {
+  padding: var(--space-md);
+}
+.jf-clear-cat {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: rgba(255, 255, 255, 0.45);
+  margin: 0 0 2px;
+}
+.jf-clear-name {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: #fff;
+  margin: 0 0 var(--space-xs);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.jf-clear-price {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.jf-clear-price .now {
+  font-size: var(--text-base);
+  font-weight: 800;
+  color: #FF5252;
+}
+.jf-clear-price .was {
+  font-size: var(--text-xs);
+  color: rgba(255, 255, 255, 0.4);
+  text-decoration: line-through;
+}

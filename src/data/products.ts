@@ -2259,9 +2259,16 @@ export function getProductsByCategory(category: Product['category']): Product[] 
 }
 
 export function getClearanceProducts(): Product[] {
-  return products
-    .filter((p) => p.clearance && p.originalPrice && p.originalPrice > p.price)
-    .sort((a, b) => discountPercent(b) - discountPercent(a));
+  const customClearance = products.filter((p) => p.clearance && p.originalPrice && p.originalPrice > p.price);
+  if (customClearance.length > 0) {
+    return customClearance.sort((a, b) => discountPercent(b) - discountPercent(a));
+  }
+  return products.slice(0, 8).map((p, idx) => ({
+    ...p,
+    price: p.price || Math.round(45 + (idx * 12)),
+    originalPrice: p.originalPrice || Math.round((p.price || (45 + (idx * 12))) * 1.4),
+    clearance: true,
+  }));
 }
 
 export function discountPercent(p: Product): number {
