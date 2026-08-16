@@ -9,6 +9,12 @@ export interface ProductColor {
   image: string;
 }
 
+export interface ProductVariant {
+  size: string;
+  color: string; // references a ProductColor.name; '' for colourless pieces
+  quantity: number;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -31,6 +37,7 @@ export interface Product {
   rating: number;
   reviews: number;
   stock?: number;
+  variants?: ProductVariant[];
 }
 
 export const products: Product[] = [
@@ -61,7 +68,19 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 2
+    "stock": 2,
+    "variants": [
+      {
+        "size": "L",
+        "color": "",
+        "quantity": 1
+      },
+      {
+        "size": "M",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p002",
@@ -91,7 +110,24 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 4
+    "stock": 4,
+    "variants": [
+      {
+        "size": "S",
+        "color": "",
+        "quantity": 1
+      },
+      {
+        "size": "M",
+        "color": "",
+        "quantity": 2
+      },
+      {
+        "size": "L",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p003",
@@ -130,7 +166,39 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 6
+    "stock": 6,
+    "variants": [
+      {
+        "size": "L",
+        "color": "White",
+        "quantity": 1
+      },
+      {
+        "size": "M",
+        "color": "White",
+        "quantity": 1
+      },
+      {
+        "size": "S",
+        "color": "White",
+        "quantity": 1
+      },
+      {
+        "size": "L",
+        "color": "Black",
+        "quantity": 1
+      },
+      {
+        "size": "M",
+        "color": "Black",
+        "quantity": 1
+      },
+      {
+        "size": "S",
+        "color": "Black",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p004",
@@ -165,7 +233,24 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 3
+    "stock": 3,
+    "variants": [
+      {
+        "size": "M",
+        "color": "",
+        "quantity": 1
+      },
+      {
+        "size": "L",
+        "color": "",
+        "quantity": 1
+      },
+      {
+        "size": "M",
+        "color": "Black",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p005",
@@ -193,7 +278,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "M",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p006",
@@ -222,7 +314,19 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 2
+    "stock": 2,
+    "variants": [
+      {
+        "size": "M",
+        "color": "",
+        "quantity": 1
+      },
+      {
+        "size": "L",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p007",
@@ -250,7 +354,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "M",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p008",
@@ -284,7 +395,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "XL",
+        "color": "light green",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p009",
@@ -318,7 +436,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "XL",
+        "color": "Brown",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p010",
@@ -346,7 +471,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "XL",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p011",
@@ -374,7 +506,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "XL",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p012",
@@ -402,7 +541,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "XL",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p013",
@@ -430,7 +576,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "XL",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p014",
@@ -458,7 +611,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "XL",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p015",
@@ -486,7 +646,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "XL",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p016",
@@ -514,7 +681,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "XL",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p017",
@@ -542,7 +716,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "XL",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p018",
@@ -570,7 +751,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "L",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p019",
@@ -598,7 +786,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "L",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p020",
@@ -626,7 +821,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "L",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p021",
@@ -654,7 +856,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "M",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p022",
@@ -682,7 +891,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "M",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p023",
@@ -710,7 +926,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "M",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p024",
@@ -738,7 +961,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "M",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p025",
@@ -766,7 +996,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "M",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p026",
@@ -794,7 +1031,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "XL",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p027",
@@ -822,7 +1066,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "L",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p028",
@@ -850,7 +1101,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "XL",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p029",
@@ -878,7 +1136,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 2
+    "stock": 2,
+    "variants": [
+      {
+        "size": "XL",
+        "color": "",
+        "quantity": 2
+      }
+    ]
   },
   {
     "id": "p030",
@@ -906,7 +1171,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "L",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p031",
@@ -934,7 +1206,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "XL",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p032",
@@ -962,7 +1241,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "L",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p033",
@@ -990,7 +1276,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "XL",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p034",
@@ -1018,7 +1311,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "XL",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p035",
@@ -1046,7 +1346,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "XL",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p036",
@@ -1074,7 +1381,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "L",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p037",
@@ -1102,7 +1416,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "XL",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p038",
@@ -1137,7 +1458,19 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 2
+    "stock": 2,
+    "variants": [
+      {
+        "size": "42",
+        "color": "Green",
+        "quantity": 1
+      },
+      {
+        "size": "44",
+        "color": "Green",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p039",
@@ -1172,7 +1505,19 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 2
+    "stock": 2,
+    "variants": [
+      {
+        "size": "M",
+        "color": "Golden Yellow",
+        "quantity": 1
+      },
+      {
+        "size": "XL",
+        "color": "Golden Yellow",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p040",
@@ -1207,7 +1552,19 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 2
+    "stock": 2,
+    "variants": [
+      {
+        "size": "XL",
+        "color": "Skin",
+        "quantity": 1
+      },
+      {
+        "size": "XXL",
+        "color": "Skin",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p041",
@@ -1236,7 +1593,19 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 2
+    "stock": 2,
+    "variants": [
+      {
+        "size": "XL",
+        "color": "",
+        "quantity": 1
+      },
+      {
+        "size": "L",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p042",
@@ -1265,7 +1634,19 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 2
+    "stock": 2,
+    "variants": [
+      {
+        "size": "XL",
+        "color": "",
+        "quantity": 1
+      },
+      {
+        "size": "L",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p043",
@@ -1294,7 +1675,19 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 2
+    "stock": 2,
+    "variants": [
+      {
+        "size": "XL",
+        "color": "",
+        "quantity": 1
+      },
+      {
+        "size": "L",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p044",
@@ -1323,7 +1716,19 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 2
+    "stock": 2,
+    "variants": [
+      {
+        "size": "XL",
+        "color": "",
+        "quantity": 1
+      },
+      {
+        "size": "L",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p045",
@@ -1352,7 +1757,19 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 2
+    "stock": 2,
+    "variants": [
+      {
+        "size": "40",
+        "color": "",
+        "quantity": 1
+      },
+      {
+        "size": "42",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p046",
@@ -1381,7 +1798,19 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 2
+    "stock": 2,
+    "variants": [
+      {
+        "size": "40",
+        "color": "",
+        "quantity": 1
+      },
+      {
+        "size": "42",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p047",
@@ -1419,7 +1848,19 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 2
+    "stock": 2,
+    "variants": [
+      {
+        "size": "One size",
+        "color": "Dark blue- Navy blue",
+        "quantity": 1
+      },
+      {
+        "size": "32",
+        "color": "Black",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p048",
@@ -1451,7 +1892,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "34",
+        "color": "Golden",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p049",
@@ -1476,7 +1924,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "One size",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p050",
@@ -1501,7 +1956,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "One size",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p051",
@@ -1547,7 +2009,29 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 5
+    "stock": 5,
+    "variants": [
+      {
+        "size": "One size",
+        "color": "Blue",
+        "quantity": 1
+      },
+      {
+        "size": "One size",
+        "color": "Black",
+        "quantity": 1
+      },
+      {
+        "size": "One size",
+        "color": "Orange",
+        "quantity": 1
+      },
+      {
+        "size": "One size",
+        "color": "Green",
+        "quantity": 2
+      }
+    ]
   },
   {
     "id": "p052",
@@ -1577,7 +2061,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "One size",
+        "color": "Golden pink with maroon",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p053",
@@ -1607,7 +2098,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "One size",
+        "color": "Golden Pink",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p054",
@@ -1631,7 +2129,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "One size",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p055",
@@ -1655,7 +2160,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "One size",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p056",
@@ -1682,7 +2194,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "M",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p057",
@@ -1714,7 +2233,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "M",
+        "color": "Navy Blue",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p058",
@@ -1740,7 +2266,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "M",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p059",
@@ -1766,7 +2299,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "M",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p060",
@@ -1793,7 +2333,14 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 1
+    "stock": 1,
+    "variants": [
+      {
+        "size": "M",
+        "color": "",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p061",
@@ -1831,7 +2378,19 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 2
+    "stock": 2,
+    "variants": [
+      {
+        "size": "XL",
+        "color": "Peacock Blue",
+        "quantity": 1
+      },
+      {
+        "size": "XL",
+        "color": "Grey",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p062",
@@ -1884,7 +2443,34 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 5
+    "stock": 5,
+    "variants": [
+      {
+        "size": "L",
+        "color": "Pink",
+        "quantity": 1
+      },
+      {
+        "size": "L",
+        "color": "White",
+        "quantity": 1
+      },
+      {
+        "size": "L",
+        "color": "Navy Blue",
+        "quantity": 1
+      },
+      {
+        "size": "L",
+        "color": "Red",
+        "quantity": 1
+      },
+      {
+        "size": "L",
+        "color": "Olive Green",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p063",
@@ -1922,7 +2508,24 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 3
+    "stock": 3,
+    "variants": [
+      {
+        "size": "XL",
+        "color": "",
+        "quantity": 1
+      },
+      {
+        "size": "XL",
+        "color": "Pink",
+        "quantity": 1
+      },
+      {
+        "size": "XL",
+        "color": "White",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p064",
@@ -1959,7 +2562,19 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 2
+    "stock": 2,
+    "variants": [
+      {
+        "size": "L",
+        "color": "White",
+        "quantity": 1
+      },
+      {
+        "size": "L",
+        "color": "Parrot Green",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p065",
@@ -2002,7 +2617,24 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 3
+    "stock": 3,
+    "variants": [
+      {
+        "size": "XL",
+        "color": "Golden",
+        "quantity": 1
+      },
+      {
+        "size": "XL",
+        "color": "Green",
+        "quantity": 1
+      },
+      {
+        "size": "XL",
+        "color": "Sky Blue",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p066",
@@ -2043,7 +2675,24 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 3
+    "stock": 3,
+    "variants": [
+      {
+        "size": "One size",
+        "color": "Green",
+        "quantity": 1
+      },
+      {
+        "size": "One size",
+        "color": "Golden",
+        "quantity": 1
+      },
+      {
+        "size": "One size",
+        "color": "Cherry Red",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p067",
@@ -2086,7 +2735,24 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 3
+    "stock": 3,
+    "variants": [
+      {
+        "size": "XL",
+        "color": "Blueish Grey",
+        "quantity": 1
+      },
+      {
+        "size": "XL",
+        "color": "Green",
+        "quantity": 1
+      },
+      {
+        "size": "XL",
+        "color": "Cherry Red",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p068",
@@ -2129,7 +2795,24 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 3
+    "stock": 3,
+    "variants": [
+      {
+        "size": "XL",
+        "color": "Golden",
+        "quantity": 1
+      },
+      {
+        "size": "XL",
+        "color": "Green",
+        "quantity": 1
+      },
+      {
+        "size": "XL",
+        "color": "Black",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p069",
@@ -2172,7 +2855,24 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 3
+    "stock": 3,
+    "variants": [
+      {
+        "size": "XL",
+        "color": "Cherry Red",
+        "quantity": 1
+      },
+      {
+        "size": "XL",
+        "color": "Sky Blue",
+        "quantity": 1
+      },
+      {
+        "size": "XL",
+        "color": "Green",
+        "quantity": 1
+      }
+    ]
   },
   {
     "id": "p070",
@@ -2215,7 +2915,24 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 3
+    "stock": 3,
+    "variants": [
+      {
+        "size": "XL",
+        "color": "Red",
+        "quantity": 1
+      },
+      {
+        "size": "XL",
+        "color": "Olive Green",
+        "quantity": 1
+      },
+      {
+        "size": "XL",
+        "color": "Golden Yellow",
+        "quantity": 1
+      }
+    ]
   }
 ];
 
@@ -2240,6 +2957,27 @@ export function colorAt(p: Product, index = 0): ProductColor {
 /** True when the piece has no price set yet — show price-on-request. */
 export function isUnpriced(p: Product): boolean {
   return !p.price || p.price <= 0;
+}
+
+/**
+ * Units available for a size + colour. Uses the variant matrix when the product
+ * has one; otherwise falls back to the single stock number (or treats stock as
+ * unset → available, so pre-variant products still sell).
+ */
+export function variantStock(p: Product, size: string, color: string): number {
+  if (p.variants && p.variants.length) {
+    const match = p.variants.find((v) => v.size === size && v.color === color);
+    return match ? match.quantity : 0;
+  }
+  return typeof p.stock === 'number' ? p.stock : Infinity;
+}
+
+/** Total units across the variant matrix, or the flat stock number. */
+export function totalStock(p: Product): number {
+  if (p.variants && p.variants.length) {
+    return p.variants.reduce((n, v) => n + v.quantity, 0);
+  }
+  return typeof p.stock === 'number' ? p.stock : 0;
 }
 
 export function getProductById(id: string): Product | undefined {

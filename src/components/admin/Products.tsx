@@ -3,10 +3,11 @@
 import { useState, useMemo, FormEvent } from 'react';
 import { useQuery, useConvex } from 'convex/react';
 import { anyApi } from 'convex/server';
-import type { Product } from '@/data/products';
+import type { Product, ProductColor } from '@/data/products';
 import { products as localProducts } from '@/data/products';
 import { money, Field, Skeleton, EmptyState, Icon } from './ui';
 import { IMAGE_PENDING } from '@/data/images';
+import ImageUpload from './ImageUpload';
 
 type ProductDoc = Product & { _id: string; productId: string; stock?: number };
 
@@ -26,7 +27,8 @@ export default function Products({
   const [category, setCategory] = useState<'all' | ProductDoc['category']>('all');
 
   // Local overrides for offline / non-seeded environment
-  const [localOverrides, setLocalOverrides] = useState<Record<string, Partial<ProductDoc>>>({});
+  type Override = Partial<ProductDoc> & { _deleted?: boolean };
+  const [localOverrides, setLocalOverrides] = useState<Record<string, Override>>({});
 
   const allProducts: ProductDoc[] = useMemo(() => {
     const baseList: ProductDoc[] = (dbProducts && dbProducts.length > 0)
@@ -38,10 +40,12 @@ export default function Products({
           stock: p.stock ?? 10,
         }));
 
-    return baseList.map((p) => {
-      const patch = localOverrides[p._id] || localOverrides[p.id];
-      return patch ? { ...p, ...patch } : p;
-    });
+    return baseList
+      .map((p) => {
+        const patch = localOverrides[p._id] || localOverrides[p.id];
+        return patch ? { ...p, ...patch } : p;
+      })
+      .filter((p) => !(p as Override)._deleted);
   }, [dbProducts, localOverrides]);
 
   const rows = useMemo(() => {
@@ -95,7 +99,7 @@ export default function Products({
     } catch {
       setLocalOverrides((prev) => ({
         ...prev,
-        [p._id]: { ...(prev[p._id] || {}), _deleted: true } as any,
+        [p._id]: { ...(prev[p._id] || {}), _deleted: true },
       }));
     }
     notify(`Deleted ${p.name}`);
@@ -254,23 +258,56 @@ function ProductForm({
     name: product?.name ?? '',
     price: product?.price ?? 0,
     originalPrice: product?.originalPrice ?? 0,
-    stock: product?.stock ?? 10,
     category: product?.category ?? 'women',
     subcategory: product?.subcategory ?? '',
     fabric: product?.fabric ?? '',
     shortDescription: product?.shortDescription ?? '',
     description: product?.description ?? '',
-    sizes: (product?.sizes ?? ['XS', 'S', 'M', 'L', 'XL']).join(', '),
+    sizes: (product?.sizes ?? []).join(', '),
     tags: (product?.tags ?? []).join(', '),
-    image: product?.images[0] ?? '/images/hero-casual.png',
     featured: product?.featured ?? false,
     isNew: product?.new ?? true,
     bestSeller: product?.bestSeller ?? false,
     clearance: product?.clearance ?? false,
   });
 
+  const [colors, setColors] = useState<ProductColor[]>(product?.colors ?? []);
+  const [images, setImages] = useState<string[]>(product?.images ?? []);
+  const [manualStock, setManualStock] = useState(product?.stock ?? 0);
+  // Stock matrix quantities keyed "size|||colour". Reconciled against the
+  // current sizes × colours on every render, so adding a size or colour just
+  // grows the grid and quantities for existing cells are kept.
+  const [variantQty, setVariantQty] = useState<Record<string, number>>(() => {
+    const m: Record<string, number> = {};
+    (product?.variants ?? []).forEach((v) => { m[`${v.size}|||${v.color}`] = v.quantity; });
+    return m;
+  });
+
   function set<K extends keyof typeof form>(key: K, value: (typeof form)[K]) {
     setForm((f) => ({ ...f, [key]: value }));
+  }
+
+  const sizeList = form.sizes.split(',').map((s) => s.trim()).filter(Boolean);
+  const colorCols = colors.length ? colors.map((c) => c.name) : ['']; // '' = colourless column
+  const hasMatrix = sizeList.length > 0;
+  const qk = (size: string, color: string) => `${size}|||${color}`;
+  const getQty = (size: string, color: string) => variantQty[qk(size, color)] ?? 0;
+  const setQty = (size: string, color: string, n: number) =>
+    setVariantQty((m) => ({ ...m, [qk(size, color)]: Math.max(0, n || 0) }));
+
+  const matrixVariants = hasMatrix
+    ? sizeList.flatMap((size) => colorCols.map((color) => ({ size, color, quantity: getQty(size, color) })))
+    : [];
+  const matrixTotal = matrixVariants.reduce((n, v) => n + v.quantity, 0);
+
+  function updateColor(i: number, patch: Partial<ProductColor>) {
+    setColors((cs) => cs.map((c, idx) => (idx === i ? { ...c, ...patch } : c)));
+  }
+  function addColor() {
+    setColors((cs) => [...cs, { name: `Colour ${cs.length + 1}`, hex: '#1C1917', image: '' }]);
+  }
+  function removeColor(i: number) {
+    setColors((cs) => cs.filter((_, idx) => idx !== i));
   }
 
   async function submit(e: FormEvent) {
@@ -281,18 +318,25 @@ function ProductForm({
       name: form.name,
       price: Number(form.price),
       ...(Number(form.originalPrice) > 0 ? { originalPrice: Number(form.originalPrice) } : {}),
-      stock: Number(form.stock),
       category: form.category as ProductDoc['category'],
       subcategory: form.subcategory,
       fabric: form.fabric,
       shortDescription: form.shortDescription,
       description: form.description,
-      sizes: form.sizes.split(',').map((s) => s.trim()).filter(Boolean),
+      sizes: sizeList,
       tags: form.tags.split(',').map((s) => s.trim()).filter(Boolean),
       featured: form.featured,
       new: form.isNew,
       bestSeller: form.bestSeller,
       clearance: form.clearance,
+      // Colour rows (each with its own uploaded image), the gallery, and the
+      // stock matrix — the pieces this form now owns.
+      colors: colors.map((c) => ({ name: c.name.trim(), hex: c.hex, image: c.image })),
+      images: images.filter(Boolean),
+      variants: matrixVariants,
+      // When a matrix exists it is the source of truth for stock; otherwise the
+      // manual number stands in for a variant-less piece.
+      stock: hasMatrix ? matrixTotal : Number(manualStock),
     };
     try {
       if (product) {
@@ -301,14 +345,7 @@ function ProductForm({
         const slug = form.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
         await convex.mutation(anyApi.admin.createProduct, {
           adminKey,
-          product: {
-            ...shared,
-            slug,
-            colors: [{ name: 'Default', hex: '#9B0000', image: form.image }],
-            images: [form.image],
-            rating: 4.5,
-            reviews: 0,
-          },
+          product: { ...shared, slug, rating: 0, reviews: 0 },
         });
       }
       onSaved(form.name);
@@ -360,25 +397,78 @@ function ProductForm({
             <Field label="Subcategory">
               <input className="adm-input" value={form.subcategory} onChange={(e) => set('subcategory', e.target.value)} />
             </Field>
-            <Field label="Image path" hint="e.g. /products/item.jpg or image URL">
-              <input className="adm-input" value={form.image} onChange={(e) => set('image', e.target.value)} />
-            </Field>
           </div>
         </fieldset>
 
         <fieldset className="adm-fieldset">
-          <legend>Pricing &amp; stock</legend>
+          <legend>Pricing</legend>
           <div className="adm-grid">
-            <Field label="Price (£)" required>
-              <input className="adm-input" type="number" min="0" step="1" value={form.price} onChange={(e) => set('price', Number(e.target.value))} required />
+            <Field label="Price (£)" hint="0 = price on request">
+              <input className="adm-input" type="number" min="0" step="1" value={form.price} onChange={(e) => set('price', Number(e.target.value))} />
             </Field>
             <Field label="Original price (£)" hint="0 = no markdown">
               <input className="adm-input" type="number" min="0" step="1" value={form.originalPrice} onChange={(e) => set('originalPrice', Number(e.target.value))} />
             </Field>
-            <Field label="Stock" hint="Decrements on each order">
-              <input className="adm-input" type="number" min="0" step="1" value={form.stock} onChange={(e) => set('stock', Number(e.target.value))} />
-            </Field>
           </div>
+        </fieldset>
+
+        {/* Gallery — uploaded to Convex storage. First image is the main photo. */}
+        <fieldset className="adm-fieldset">
+          <legend>Photos</legend>
+          <p className="adm-hint">The first photo is the main image. Upload from your computer — no file names or redeploys needed.</p>
+          <div className="adm-gallery">
+            {images.map((img, i) => (
+              <div className="adm-gallery-item" key={i}>
+                <ImageUpload
+                  adminKey={adminKey}
+                  value={img}
+                  onChange={(url) => setImages((arr) => arr.map((x, idx) => (idx === i ? url : x)))}
+                  onClear={() => setImages((arr) => arr.filter((_, idx) => idx !== i))}
+                />
+                {i === 0 && <span className="adm-gallery-main">Main</span>}
+              </div>
+            ))}
+            <ImageUpload adminKey={adminKey} value="" onChange={(url) => setImages((arr) => [...arr, url])} />
+          </div>
+        </fieldset>
+
+        {/* Colours — each with its own uploaded image. This is the flaw fix. */}
+        <fieldset className="adm-fieldset">
+          <legend>Colours</legend>
+          <p className="adm-hint">Add each colourway with its own swatch and photo. Shoppers see the matching photo when they pick a colour.</p>
+          <div className="adm-colors">
+            {colors.map((c, i) => (
+              <div className="adm-color-row" key={i}>
+                <ImageUpload
+                  adminKey={adminKey}
+                  value={c.image}
+                  onChange={(url) => updateColor(i, { image: url })}
+                  onClear={() => updateColor(i, { image: '' })}
+                  size="sm"
+                />
+                <div className="adm-color-fields">
+                  <input
+                    className="adm-input"
+                    placeholder="Colour name"
+                    value={c.name}
+                    onChange={(e) => updateColor(i, { name: e.target.value })}
+                    aria-label={`Colour ${i + 1} name`}
+                  />
+                  <input
+                    type="color"
+                    className="adm-color-swatch"
+                    value={c.hex}
+                    onChange={(e) => updateColor(i, { hex: e.target.value })}
+                    aria-label={`Colour ${i + 1} swatch`}
+                  />
+                </div>
+                <button type="button" className="adm-btn adm-btn-sm adm-btn-danger" onClick={() => removeColor(i)}>Remove</button>
+              </div>
+            ))}
+          </div>
+          <button type="button" className="adm-btn adm-btn-ghost" onClick={addColor}>
+            <Icon.plus /> Add colour
+          </button>
         </fieldset>
 
         <fieldset className="adm-fieldset">
@@ -397,6 +487,51 @@ function ProductForm({
               <input className="adm-input" value={form.tags} onChange={(e) => set('tags', e.target.value)} />
             </Field>
           </div>
+        </fieldset>
+
+        {/* Stock matrix — one quantity per size × colour. */}
+        <fieldset className="adm-fieldset">
+          <legend>Stock {hasMatrix && <span className="adm-legend-total">· {matrixTotal} units</span>}</legend>
+          {hasMatrix ? (
+            <>
+              <p className="adm-hint">A quantity for every size and colour. Total stock is their sum, and each order draws down the exact size &amp; colour bought.</p>
+              <div className="adm-matrix-wrap">
+                <table className="adm-matrix">
+                  <thead>
+                    <tr>
+                      <th>Size</th>
+                      {colorCols.map((c) => (
+                        <th key={c || '—'}>{c || '—'}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {sizeList.map((size) => (
+                      <tr key={size}>
+                        <th scope="row">{size}</th>
+                        {colorCols.map((color) => (
+                          <td key={color || '—'}>
+                            <label className="adm-sr">{size} {color || 'no colour'} quantity</label>
+                            <input
+                              type="number"
+                              min="0"
+                              className="adm-matrix-input"
+                              value={getQty(size, color)}
+                              onChange={(e) => setQty(size, color, Number(e.target.value))}
+                            />
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
+          ) : (
+            <Field label="Stock" hint="Add sizes above for a per-size/colour matrix. Decrements on each order.">
+              <input className="adm-input" type="number" min="0" step="1" value={manualStock} onChange={(e) => setManualStock(Number(e.target.value))} />
+            </Field>
+          )}
         </fieldset>
 
         <fieldset className="adm-fieldset">

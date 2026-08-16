@@ -106,6 +106,14 @@ const products = rawProducts.map((p, i) => {
   const vs = variantsByCloth.get(p['Cloth Name']) ?? [];
   const sizes = [...new Set(vs.map((v) => v.Size).filter(Boolean).map(String))];
   const colorNames = [...new Set(vs.map((v) => v.Color).filter(Boolean).map(String))];
+  // Size × colour stock matrix straight from the Variants sheet.
+  const variants = vs
+    .filter((v) => v.Size || v.Color)
+    .map((v) => ({
+      size: String(v.Size ?? '').trim() || 'One size',
+      color: String(v.Color ?? '').trim(),
+      quantity: Number(v.Quantity) || 0,
+    }));
 
   const file = findImage(p['Cloth Name']);
   let images = [];
@@ -149,6 +157,7 @@ const products = rawProducts.map((p, i) => {
     rating: 0,
     reviews: 0,
     stock: Number(p['Total Quantity']) || 0,
+    variants,
   };
 });
 
@@ -174,6 +183,12 @@ export interface ProductColor {
   image: string;
 }
 
+export interface ProductVariant {
+  size: string;
+  color: string;
+  quantity: number;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -196,6 +211,7 @@ export interface Product {
   rating: number;
   reviews: number;
   stock?: number;
+  variants?: ProductVariant[];
 }
 
 export const products: Product[] = ${JSON.stringify(products, null, 2)};

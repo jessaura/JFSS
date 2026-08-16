@@ -30,6 +30,18 @@ export default defineSchema({
     reviews: v.number(),
     // Inventory. Optional so pre-existing seeded docs stay valid.
     stock: v.optional(v.number()),
+    // Size × colour stock matrix. `color` references a ProductColor.name
+    // ('' for colourless pieces). When present, it is the source of truth for
+    // availability; total stock is the sum of quantities.
+    variants: v.optional(
+      v.array(
+        v.object({
+          size: v.string(),
+          color: v.string(),
+          quantity: v.number(),
+        })
+      )
+    ),
   })
     .index('by_slug', ['slug'])
     .index('by_productId', ['productId'])

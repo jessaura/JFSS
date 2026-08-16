@@ -42,6 +42,9 @@ const productFields = {
   rating: v.number(),
   reviews: v.number(),
   stock: v.optional(v.number()),
+  variants: v.optional(
+    v.array(v.object({ size: v.string(), color: v.string(), quantity: v.number() }))
+  ),
 };
 
 export const verifyKey = query({
@@ -86,6 +89,15 @@ export const updateProduct = mutation({
       rating: v.optional(v.number()),
       reviews: v.optional(v.number()),
       stock: v.optional(v.number()),
+      // The pieces the product form now edits: colour rows (each with its own
+      // uploaded image), the gallery, and the size × colour stock matrix.
+      colors: v.optional(
+        v.array(v.object({ name: v.string(), hex: v.string(), image: v.string() }))
+      ),
+      images: v.optional(v.array(v.string())),
+      variants: v.optional(
+        v.array(v.object({ size: v.string(), color: v.string(), quantity: v.number() }))
+      ),
     }),
   },
   handler: async (ctx, { adminKey, id, patch }) => {
