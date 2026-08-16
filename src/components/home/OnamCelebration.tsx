@@ -16,9 +16,6 @@ export default function OnamCelebration() {
 
   return (
     <section className="jf-onam" aria-label="Onam celebration collection">
-      <span className="jf-onam-pookalam" aria-hidden="true" />
-      <span className="jf-onam-pookalam alt" aria-hidden="true" />
-
       <div className="container jf-onam-inner">
         <div className="jf-onam-head">
           <span className="jf-onam-eyebrow">Onam Special · Kerala Tradition</span>
