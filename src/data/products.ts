@@ -3031,9 +3031,9 @@ export function getClearanceProducts(): Product[] {
  * set mundu, pattupavada, sarees and dhavani sets. Pulled by subcategory so it
  * tracks the real stock; nothing is invented.
  */
-export function getOnamProducts(): Product[] {
+export function getOnamProducts(list: Product[] = products): Product[] {
   const onamTypes = new Set(['Mundu', 'Sarees', 'Blouses']);
-  return products.filter((p) => onamTypes.has(p.subcategory));
+  return list.filter((p) => onamTypes.has(p.subcategory));
 }
 
 export function discountPercent(p: Product): number {

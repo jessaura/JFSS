@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { getOnamProducts, isUnpriced, colorAt } from '@/data/products';
 import { getProductImage } from '@/data/images';
+import { useCatalogue } from '@/components/providers/CatalogueProvider';
 
 /**
  * Onam Celebration — a festive band for authentic traditional Kerala festival
@@ -10,7 +11,7 @@ import { getProductImage } from '@/data/images';
  * getOnamProducts. Kasavu cream-and-gold framing with a pookalam flower motif.
  */
 export default function OnamCelebration() {
-  const items = getOnamProducts();
+  const items = getOnamProducts(useCatalogue());
   if (items.length === 0) return null;
 
   return (
@@ -36,7 +37,7 @@ export default function OnamCelebration() {
             return (
               <Link key={product.id} href={`/product/${product.id}`} className="jf-onam-card">
                 <div className="jf-onam-media">
-                  <img src={getProductImage(product.id)} alt={product.name} loading="lazy" />
+                  <img src={product.images[0] || getProductImage(product.id)} alt={product.name} loading="lazy" />
                   <span className="jf-onam-tag" style={{ background: swatch }}>Onam</span>
                 </div>
                 <div className="jf-onam-body">
