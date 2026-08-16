@@ -11,19 +11,19 @@
   /* Brand Colors — Crimson Signature Accent System (original palette restored).
      The navy/gold tokens added during the rebrand now resolve to the earlier
      espresso-dark bands + champagne gold, so redesigned sections match. */
-  /* Warm wine-tinted ink for all dark surfaces (was neutral espresso) —
-     ties the darks to the crimson signature instead of reading brown-grey. */
-  --navy: #1C1418;
-  --navy-light: #2C2126;
-  --navy-dark: #120C0F;
+  /* Deep near-black warm ink for all dark surfaces */
+  --navy: #17110F;
+  --navy-light: #2A2320;
+  --navy-dark: #0E0A08;
   /* Antique gold — cleaner, brighter brass than the old muddy #B8860B */
-  --gold: #BE8A2C;
-  --gold-light: #DDB466;
+  --gold: #C0912F;
+  --gold-light: #E0B95F;
 
-  --crimson: #9B0000;
-  --crimson-light: #C41A1A;
-  --crimson-dark: #6B0000;
-  --crimson-overlay: rgba(155, 0, 0, 0.05);
+  /* Livelier crimson-red (was the dark maroon #9B0000) — the signature, with life */
+  --crimson: #B3122A;
+  --crimson-light: #D81E39;
+  --crimson-dark: #7E0C1D;
+  --crimson-overlay: rgba(179, 18, 42, 0.06);
 
   /* Compat aliases — repair previously-undefined references so nothing renders transparent/broken */
   --dusty-rose: #D4A0A0;
@@ -34,38 +34,38 @@
 
   --grain-dot: rgba(155, 0, 0, 0.04);
 
-  --saffron: #9B0000;
-  --saffron-light: #C41A1A;
-  --saffron-dark: #6B0000;
-  --terracotta: #9B0000;
-  --terracotta-light: #C41A1A;
-  --champagne-gold: #D8B26A;
-  --soft-gold: #9B0000;
-  --soft-gold-light: #C41A1A;
+  --saffron: #B3122A;
+  --saffron-light: #D81E39;
+  --saffron-dark: #7E0C1D;
+  --terracotta: #B3122A;
+  --terracotta-light: #D81E39;
+  --champagne-gold: #DCB56C;
+  --soft-gold: #B3122A;
+  --soft-gold-light: #D81E39;
   /* Jewel peacock — a deep supporting tone with life, up from muddy sage */
-  --mehendi-green: #12514C;
-  --sale-red: #B42318;
+  --mehendi-green: #0F5049;
+  --sale-red: #C21127;
 
-  /* Warm Porcelain & Oat Neutrals — cleaner base, more separation between tones */
-  --ivory: #FBF8F2;
-  --cream: #FDFBF7;
+  /* Warm Sand & Linen Neutrals — a real tan base so white cards lift off it */
+  --ivory: #EFE6D4;
+  --cream: #F5EEDF;
   --warm-white: #FFFFFF;
-  --mist: #EDE6DA;
-  --charcoal: #1C1418;
-  --charcoal-light: #2C2126;
-  --charcoal-muted: #6B5F5B;
+  --mist: #E4D8C0;
+  --charcoal: #17110F;
+  --charcoal-light: #2A2320;
+  --charcoal-muted: #6E635C;
 
-  /* Functional System — Warm Porcelain Background & Wine-Ink / Crimson Accents */
-  --bg-primary: #FBF8F2;
-  --bg-secondary: #EFE8DC;
+  /* Functional System — Warm Sand Background, crisp white cards, deep-ink text */
+  --bg-primary: #EFE6D4;
+  --bg-secondary: #E4D8C0;
   --bg-card: #FFFFFF;
-  --bg-dark: #1C1418;
-  --text-primary: #1C1418;
-  --text-secondary: #6B5F5B;
-  --text-inverse: #FBF8F2;
+  --bg-dark: #17110F;
+  --text-primary: #17110F;
+  --text-secondary: #6E635C;
+  --text-inverse: #FBF6EC;
   /* Calm warm-neutral borders so crimson reads as an accent, not the default */
-  --border-color: rgba(28, 20, 24, 0.10);
-  --border-color-strong: rgba(155, 0, 0, 0.30);
+  --border-color: rgba(23, 17, 15, 0.12);
+  --border-color-strong: rgba(179, 18, 42, 0.32);
 
   /* Typography */
   --font-display: 'Inter Tight', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
