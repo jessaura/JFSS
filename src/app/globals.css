@@ -11,11 +11,14 @@
   /* Brand Colors — Crimson Signature Accent System (original palette restored).
      The navy/gold tokens added during the rebrand now resolve to the earlier
      espresso-dark bands + champagne gold, so redesigned sections match. */
-  --navy: #1C1917;
-  --navy-light: #292524;
-  --navy-dark: #0F1317;
-  --gold: #B8860B;
-  --gold-light: #D4A359;
+  /* Warm wine-tinted ink for all dark surfaces (was neutral espresso) —
+     ties the darks to the crimson signature instead of reading brown-grey. */
+  --navy: #1C1418;
+  --navy-light: #2C2126;
+  --navy-dark: #120C0F;
+  /* Antique gold — cleaner, brighter brass than the old muddy #B8860B */
+  --gold: #BE8A2C;
+  --gold-light: #DDB466;
 
   --crimson: #9B0000;
   --crimson-light: #C41A1A;
@@ -36,31 +39,33 @@
   --saffron-dark: #6B0000;
   --terracotta: #9B0000;
   --terracotta-light: #C41A1A;
-  --champagne-gold: #D4A359;
+  --champagne-gold: #D8B26A;
   --soft-gold: #9B0000;
   --soft-gold-light: #C41A1A;
-  --mehendi-green: #5B7052;
+  /* Jewel peacock — a deep supporting tone with life, up from muddy sage */
+  --mehendi-green: #12514C;
   --sale-red: #B42318;
 
-  /* Airy Cashmere Sand & Linen Neutrals */
-  --ivory: #F9F6F0;
-  --cream: #FAF7F2;
+  /* Warm Porcelain & Oat Neutrals — cleaner base, more separation between tones */
+  --ivory: #FBF8F2;
+  --cream: #FDFBF7;
   --warm-white: #FFFFFF;
-  --mist: #F1ECE3;
-  --charcoal: #1C1917;
-  --charcoal-light: #292524;
-  --charcoal-muted: #57534E;
+  --mist: #EDE6DA;
+  --charcoal: #1C1418;
+  --charcoal-light: #2C2126;
+  --charcoal-muted: #6B5F5B;
 
-  /* Functional System — Airy Cashmere Background & Deep Espresso/Crimson Accents */
-  --bg-primary: #F9F6F0;
-  --bg-secondary: #F1ECE3;
+  /* Functional System — Warm Porcelain Background & Wine-Ink / Crimson Accents */
+  --bg-primary: #FBF8F2;
+  --bg-secondary: #EFE8DC;
   --bg-card: #FFFFFF;
-  --bg-dark: #1C1917;
-  --text-primary: #1C1917;
-  --text-secondary: #57534E;
-  --text-inverse: #FAF7F2;
-  --border-color: rgba(155, 0, 0, 0.12);
-  --border-color-strong: rgba(155, 0, 0, 0.28);
+  --bg-dark: #1C1418;
+  --text-primary: #1C1418;
+  --text-secondary: #6B5F5B;
+  --text-inverse: #FBF8F2;
+  /* Calm warm-neutral borders so crimson reads as an accent, not the default */
+  --border-color: rgba(28, 20, 24, 0.10);
+  --border-color-strong: rgba(155, 0, 0, 0.30);
 
   /* Typography */
   --font-display: 'Inter Tight', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -2680,8 +2685,8 @@ input, textarea, select {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #FAF7F2;
-  color: #1C2A4A;
+  background: var(--ivory);
+  color: var(--charcoal);
   overflow: hidden;
 }
 
@@ -2761,7 +2766,7 @@ input, textarea, select {
   font-size: clamp(2rem, 5vw, 2.75rem);
   font-weight: 700;
   letter-spacing: 0.22em;
-  color: #1C2A4A;
+  color: var(--charcoal);
   line-height: 1;
 }
 
@@ -2776,7 +2781,7 @@ input, textarea, select {
 .preloader-progress-track {
   width: 140px;
   height: 2px;
-  background: rgba(28, 42, 74, 0.15);
+  background: var(--border-color-strong);
   border-radius: 2px;
   overflow: hidden;
   margin-top: var(--space-xs);
@@ -2784,7 +2789,7 @@ input, textarea, select {
 
 .preloader-progress-fill {
   height: 100%;
-  background: linear-gradient(90deg, #1C2A4A, var(--saffron));
+  background: linear-gradient(90deg, var(--crimson), var(--gold));
   border-radius: 2px;
 }
 
