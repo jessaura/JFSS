@@ -48,13 +48,27 @@ export const place = mutation({
       placedAt: Date.now(),
     });
 
-    // Draw down inventory for products that track stock.
+    // Draw down inventory. When the product has a size × colour matrix, reduce
+    // the exact variant bought and keep the stock total in sync; otherwise fall
+    // back to the flat stock number.
     for (const item of args.items) {
       const product = await ctx.db
         .query('products')
         .withIndex('by_productId', (q) => q.eq('productId', item.productId))
         .unique();
-      if (product && typeof product.stock === 'number') {
+      if (!product) continue;
+
+      if (product.variants && product.variants.length) {
+        const variants = product.variants.map((v) =>
+          v.size === item.size && v.color === item.color
+            ? { ...v, quantity: Math.max(0, v.quantity - item.quantity) }
+            : v
+        );
+        await ctx.db.patch(product._id, {
+          variants,
+          stock: variants.reduce((n, v) => n + v.quantity, 0),
+        });
+      } else if (typeof product.stock === 'number') {
         await ctx.db.patch(product._id, {
           stock: Math.max(0, product.stock - item.quantity),
         });

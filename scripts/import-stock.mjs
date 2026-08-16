@@ -104,7 +104,6 @@ const products = rawProducts.map((p, i) => {
   seenSlug.add(slug);
 
   const vs = variantsByCloth.get(p['Cloth Name']) ?? [];
-  const sizes = [...new Set(vs.map((v) => v.Size).filter(Boolean).map(String))];
   const colorNames = [...new Set(vs.map((v) => v.Color).filter(Boolean).map(String))];
   // Size × colour stock matrix straight from the Variants sheet.
   const variants = vs
@@ -114,6 +113,9 @@ const products = rawProducts.map((p, i) => {
       color: String(v.Color ?? '').trim(),
       quantity: Number(v.Quantity) || 0,
     }));
+  // Sizes are the union of variant sizes, so every variant is selectable and
+  // product.sizes never drifts from the matrix.
+  const sizes = [...new Set(variants.map((v) => v.size))];
 
   const file = findImage(p['Cloth Name']);
   let images = [];

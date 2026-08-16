@@ -7,8 +7,9 @@ import gsap from 'gsap';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import CartDrawer from '@/components/layout/CartDrawer';
-import { getProductById, products, Product, isUnpriced, colorAt } from '@/data/products';
+import { Product, isUnpriced, colorAt, variantStock } from '@/data/products';
 import { getProductImage } from '@/data/images';
+import { useProduct, useCatalogue } from '@/components/providers/CatalogueProvider';
 import { useStore } from '@/store/store';
 
 /* ---------- Size Guide Panel ---------- */
@@ -111,7 +112,8 @@ function SizeGuide({ open, onClose, category }: { open: boolean; onClose: () => 
 /* ---------- Product Detail Page ---------- */
 export default function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
-  const product = getProductById(id);
+  const catalogue = useCatalogue();
+  const product = useProduct(id);
   const { addToCart, toggleWishlist, isWishlisted } = useStore();
 
   const [activeColor, setActiveColor] = useState(0);
@@ -119,7 +121,6 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
   const [quantity, setQuantity] = useState(1);
   const [addedToCart, setAddedToCart] = useState(false);
   const [sizeGuideOpen, setSizeGuideOpen] = useState(false);
-  const [activeImage, setActiveImage] = useState(0);
 
   const infoRef = useRef<HTMLDivElement>(null);
 
@@ -164,16 +165,24 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : 0;
 
+  const selectedColor = colorAt(product, activeColor);
+  // Variants key colour by name in colors[], or '' for colourless pieces.
+  const variantColorKey = product.colors.length ? selectedColor.name : '';
+  const sizeQty = (size: string) => variantStock(product, size, variantColorKey);
+  const activeSizeOut = Boolean(activeSize) && sizeQty(activeSize) <= 0;
+  // The main photo follows the chosen colour when that colour has its own image.
+  const shownImage = selectedColor.image || getProductImage(product.id);
+  // Thumbnails = colours that carry a photo; clicking one selects that colour.
+  const colorThumbs = product.colors.filter((c) => c.image);
+
   const handleAddToCart = () => {
-    if (!activeSize) {
-      return;
-    }
-    addToCart(product, colorAt(product, activeColor), activeSize, quantity);
+    if (!activeSize || activeSizeOut || isUnpriced(product)) return;
+    addToCart(product, selectedColor, activeSize, quantity);
     setAddedToCart(true);
     setTimeout(() => setAddedToCart(false), 2500);
   };
 
-  const relatedProducts = products
+  const relatedProducts = catalogue
     .filter((p) => p.category === product.category && p.id !== product.id)
     .slice(0, 4);
 
@@ -204,38 +213,38 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               <motion.div
                 className="product-gallery-main"
                 style={{
-                  background: `linear-gradient(135deg, ${colorAt(product, activeColor).hex}15, ${colorAt(product, activeColor).hex}40)`,
+                  background: `linear-gradient(135deg, ${selectedColor.hex}15, ${selectedColor.hex}40)`,
                 }}
-                key={`${activeColor}-${activeImage}`}
+                key={shownImage}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3 }}
               >
                 <img
-                  src={getProductImage(product.id)}
+                  src={shownImage}
                   alt={product.name}
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                 />
               </motion.div>
 
-              <div className="product-gallery-thumbs">
-                {[0, 1, 2].map((i) => (
-                  <button
-                    key={i}
-                    className={`product-gallery-thumb ${i === activeImage ? 'active' : ''}`}
-                    onClick={() => setActiveImage(i)}
-                    style={{
-                      background: `linear-gradient(135deg, ${colorAt(product, activeColor).hex}10, ${colorAt(product, activeColor).hex}30)`,
-                    }}
-                  >
-                    <img
-                      src={getProductImage(product.id)}
-                      alt={`${product.name} thumbnail ${i + 1}`}
-                      style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                    />
-                  </button>
-                ))}
-              </div>
+              {/* Thumbnails = each colour that has a photo. */}
+              {colorThumbs.length > 1 && (
+                <div className="product-gallery-thumbs">
+                  {colorThumbs.map((c) => {
+                    const i = product.colors.indexOf(c);
+                    return (
+                      <button
+                        key={c.name}
+                        className={`product-gallery-thumb ${i === activeColor ? 'active' : ''}`}
+                        onClick={() => setActiveColor(i)}
+                        aria-label={c.name}
+                      >
+                        <img src={c.image} alt={c.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
             {/* Product Info */}
@@ -275,40 +284,53 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
               <p className="product-info-description">{product.description}</p>
 
               {/* Color Selection */}
-              <div className="product-option-label">
-                Color: <span>{colorAt(product, activeColor).name}</span>
-              </div>
-              <div className="product-colors">
-                {product.colors.map((color, i) => (
-                  <motion.div
-                    key={color.name}
-                    className={`product-color-swatch ${i === activeColor ? 'active' : ''}`}
-                    style={{ background: color.hex }}
-                    onClick={() => setActiveColor(i)}
-                    whileHover={{ scale: 1.1 }}
-                    whileTap={{ scale: 0.95 }}
-                    transition={{ type: 'spring', stiffness: 400 }}
-                  />
-                ))}
-              </div>
+              {product.colors.length > 0 && (
+                <>
+                  <div className="product-option-label">
+                    Color: <span>{selectedColor.name}</span>
+                  </div>
+                  <div className="product-colors">
+                    {product.colors.map((color, i) => (
+                      <motion.div
+                        key={color.name}
+                        className={`product-color-swatch ${i === activeColor ? 'active' : ''}`}
+                        style={{ background: color.hex }}
+                        onClick={() => { setActiveColor(i); setActiveSize(''); }}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                        transition={{ type: 'spring', stiffness: 400 }}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
 
-              {/* Size Selection */}
-              <div className="product-option-label">
-                Size: <span>{activeSize || 'Select a size'}</span>
-              </div>
-              <div className="product-sizes">
-                {product.sizes.map((size) => (
-                  <motion.button
-                    key={size}
-                    className={`product-size-btn ${size === activeSize ? 'active' : ''}`}
-                    onClick={() => setActiveSize(size)}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {size}
-                  </motion.button>
-                ))}
-              </div>
+              {/* Size Selection — out-of-stock sizes for the chosen colour disable. */}
+              {product.sizes.length > 0 && (
+                <>
+                  <div className="product-option-label">
+                    Size: <span>{activeSize || 'Select a size'}</span>
+                  </div>
+                  <div className="product-sizes">
+                    {product.sizes.map((size) => {
+                      const out = sizeQty(size) <= 0;
+                      return (
+                        <motion.button
+                          key={size}
+                          className={`product-size-btn ${size === activeSize ? 'active' : ''} ${out ? 'out' : ''}`}
+                          onClick={() => !out && setActiveSize(size)}
+                          disabled={out}
+                          title={out ? 'Out of stock in this colour' : undefined}
+                          whileHover={out ? undefined : { scale: 1.05 }}
+                          whileTap={out ? undefined : { scale: 0.95 }}
+                        >
+                          {size}
+                        </motion.button>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
               <button
                 className="size-guide-link"
                 onClick={() => setSizeGuideOpen(true)}
@@ -333,11 +355,11 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 <motion.button
                   className={`product-add-to-cart ${addedToCart ? 'added' : ''}`}
                   onClick={handleAddToCart}
-                  // No price yet means no cart — a $0 order isn't a sale.
-                  disabled={isUnpriced(product)}
+                  // No price → no cart; and can't buy a size that's out of stock.
+                  disabled={isUnpriced(product) || activeSizeOut}
                   title={isUnpriced(product) ? 'This piece is not priced yet' : undefined}
-                  whileHover={isUnpriced(product) ? undefined : { scale: 1.02 }}
-                  whileTap={isUnpriced(product) ? undefined : { scale: 0.98 }}
+                  whileHover={isUnpriced(product) || activeSizeOut ? undefined : { scale: 1.02 }}
+                  whileTap={isUnpriced(product) || activeSizeOut ? undefined : { scale: 0.98 }}
                 >
                   <AnimatePresence mode="wait">
                     {addedToCart ? (
@@ -348,6 +370,10 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                         exit={{ y: -20, opacity: 0 }}
                       >
                         ✓ Added to Bag
+                      </motion.span>
+                    ) : activeSizeOut ? (
+                      <motion.span key="out" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -20, opacity: 0 }}>
+                        Out of stock
                       </motion.span>
                     ) : isUnpriced(product) ? (
                       <motion.span

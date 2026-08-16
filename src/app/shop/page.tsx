@@ -10,6 +10,7 @@ import CartDrawer from '@/components/layout/CartDrawer';
 import ClearanceRail from '@/components/home/ClearanceRail';
 import { products, Product, discountPercent, isUnpriced, colorAt } from '@/data/products';
 import { getProductImage, hasPhoto } from '@/data/images';
+import { useCatalogue } from '@/components/providers/CatalogueProvider';
 import { useStore } from '@/store/store';
 
 /* ---------- facets, built from the real catalogue ---------- */
@@ -57,12 +58,12 @@ function ShopProductCard({ product }: { product: Product }) {
       transition={{ duration: 0.35 }}
     >
       <Link href={`/product/${product.id}`} className="wk-card-media">
-        <img src={getProductImage(product.id)} alt={product.name} loading="lazy" />
+        <img src={product.images[0] || getProductImage(product.id)} alt={product.name} loading="lazy" />
         {product.bestSeller ? (
           <span className="wk-badge">Bestseller</span>
         ) : disc > 0 ? (
           <span className="wk-badge wk-badge-sale">−{disc}%</span>
-        ) : !hasPhoto(product.id) ? (
+        ) : !product.images.length && !hasPhoto(product.id) ? (
           <span className="wk-badge wk-badge-soft">Photo soon</span>
         ) : null}
       </Link>
@@ -128,6 +129,7 @@ function BagIcon() {
 /* ---------- page ---------- */
 
 export default function ShopPage() {
+  const catalogue = useCatalogue();
   const [cats, setCats] = useState<Set<string>>(new Set());
   const [selTypes, setSelTypes] = useState<Set<string>>(new Set());
   const [maxPrice, setMaxPrice] = useState(PRICE_MAX);
@@ -163,7 +165,7 @@ export default function ShopPage() {
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    let out = products.filter((p) => {
+    let out = catalogue.filter((p) => {
       if (cats.size && !cats.has(p.category)) return false;
       if (selTypes.size && !selTypes.has(p.subcategory)) return false;
       // A lowered price cap only makes sense for priced pieces — hide unpriced then.
@@ -183,7 +185,7 @@ export default function ShopPage() {
       default: out = out.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
     }
     return out;
-  }, [cats, selTypes, priceActive, maxPrice, search, sortBy]);
+  }, [catalogue, cats, selTypes, priceActive, maxPrice, search, sortBy]);
 
   return (
     <>

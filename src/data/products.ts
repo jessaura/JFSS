@@ -1835,6 +1835,7 @@ export const products: Product[] = [
       }
     ],
     "sizes": [
+      "One size",
       "32"
     ],
     "images": [],
@@ -1912,7 +1913,9 @@ export const products: Product[] = [
     "subcategory": "Blouses",
     "fabric": "",
     "colors": [],
-    "sizes": [],
+    "sizes": [
+      "One size"
+    ],
     "images": [],
     "tags": [
       "blouses",
@@ -1944,7 +1947,9 @@ export const products: Product[] = [
     "subcategory": "Blouses",
     "fabric": "",
     "colors": [],
-    "sizes": [],
+    "sizes": [
+      "One size"
+    ],
     "images": [],
     "tags": [
       "blouses",
@@ -1997,7 +2002,9 @@ export const products: Product[] = [
         "image": ""
       }
     ],
-    "sizes": [],
+    "sizes": [
+      "One size"
+    ],
     "images": [],
     "tags": [
       "blouses",
@@ -2050,7 +2057,9 @@ export const products: Product[] = [
         "image": ""
       }
     ],
-    "sizes": [],
+    "sizes": [
+      "One size"
+    ],
     "images": [],
     "tags": [
       "blouses",
@@ -2087,7 +2096,9 @@ export const products: Product[] = [
         "image": ""
       }
     ],
-    "sizes": [],
+    "sizes": [
+      "One size"
+    ],
     "images": [],
     "tags": [
       "mundu",
@@ -2118,7 +2129,9 @@ export const products: Product[] = [
     "subcategory": "Sarees",
     "fabric": "",
     "colors": [],
-    "sizes": [],
+    "sizes": [
+      "One size"
+    ],
     "images": [],
     "tags": [
       "sarees",
@@ -2149,7 +2162,9 @@ export const products: Product[] = [
     "subcategory": "Blouses",
     "fabric": "",
     "colors": [],
-    "sizes": [],
+    "sizes": [
+      "One size"
+    ],
     "images": [],
     "tags": [
       "blouses",
@@ -2663,7 +2678,9 @@ export const products: Product[] = [
         "image": ""
       }
     ],
-    "sizes": [],
+    "sizes": [
+      "One size"
+    ],
     "images": [],
     "tags": [
       "tops",
