@@ -63,16 +63,18 @@ export default function Products({
   const [localOverrides, setLocalOverrides] = useState<Record<string, Override>>({});
 
   const allProducts: ProductDoc[] = useMemo(() => {
-    const baseList: ProductDoc[] = (dbProducts && dbProducts.length > 0)
-      ? dbProducts
-      : localProducts.map((p, i) => ({
-          _id: p.id || `p${i}`,
-          productId: p.id || `p${i}`,
-          ...p,
-          stock: p.stock ?? 10,
-        }));
+    // Always start from the full static catalogue, keyed by productId, then
+    // overlay any product that exists in Convex (real _id + edits). This is why
+    // saving one product no longer hides the other 69: Convex is an overlay on
+    // the 70, not a replacement for them.
+    const byId = new Map<string, ProductDoc>();
+    localProducts.forEach((p, i) => {
+      const pid = p.id || `p${i}`;
+      byId.set(pid, { _id: pid, productId: pid, ...p, stock: p.stock ?? 10 });
+    });
+    (dbProducts ?? []).forEach((d) => byId.set(d.productId, d));
 
-    return baseList
+    return [...byId.values()]
       .map((p) => {
         const patch = localOverrides[p._id] || localOverrides[p.id];
         return patch ? { ...p, ...patch } : p;
