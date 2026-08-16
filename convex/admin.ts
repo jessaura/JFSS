@@ -66,6 +66,28 @@ export const createProduct = mutation({
   },
 });
 
+/**
+ * Save a product by its stable productId: patch it if it already lives in
+ * Convex, otherwise insert it. This is what the admin form uses, so the very
+ * first edit of a catalogue piece (which until then only exists in the static
+ * file) creates its Convex record instead of erroring on an unknown id.
+ */
+export const upsertProduct = mutation({
+  args: { adminKey: v.string(), productId: v.string(), product: v.object(productFields) },
+  handler: async (ctx, { adminKey, productId, product }) => {
+    checkKey(adminKey);
+    const existing = await ctx.db
+      .query('products')
+      .withIndex('by_productId', (q) => q.eq('productId', productId))
+      .unique();
+    if (existing) {
+      await ctx.db.patch(existing._id, product);
+      return existing._id;
+    }
+    return ctx.db.insert('products', { productId, ...product });
+  },
+});
+
 export const updateProduct = mutation({
   args: {
     adminKey: v.string(),

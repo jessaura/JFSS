@@ -13,6 +13,38 @@ type ProductDoc = Product & { _id: string; productId: string; stock?: number };
 
 const FLAGS = ['featured', 'new', 'bestSeller', 'clearance'] as const;
 
+/** New productId for a piece created in the admin (module scope, not render). */
+function freshProductId() {
+  return `p${Date.now().toString(36)}`;
+}
+
+/** Shape a product into the field set upsertProduct accepts (drops _id etc.). */
+function toFields(p: Product & { stock?: number }) {
+  return {
+    name: p.name,
+    slug: p.slug,
+    price: p.price,
+    ...(p.originalPrice ? { originalPrice: p.originalPrice } : {}),
+    description: p.description,
+    shortDescription: p.shortDescription,
+    category: p.category,
+    subcategory: p.subcategory,
+    fabric: p.fabric ?? '',
+    colors: p.colors ?? [],
+    sizes: p.sizes ?? [],
+    images: p.images ?? [],
+    tags: p.tags ?? [],
+    featured: Boolean(p.featured),
+    new: Boolean(p.new),
+    bestSeller: Boolean(p.bestSeller),
+    ...(p.clearance !== undefined ? { clearance: p.clearance } : {}),
+    rating: p.rating ?? 0,
+    reviews: p.reviews ?? 0,
+    ...(p.stock !== undefined ? { stock: p.stock } : {}),
+    ...(p.variants ? { variants: p.variants } : {}),
+  };
+}
+
 export default function Products({
   adminKey,
   notify,
@@ -57,14 +89,20 @@ export default function Products({
     );
   }, [allProducts, search, category]);
 
+  // upsert by productId so a change persists to Convex even for a piece that
+  // until now only lived in the static catalogue (unknown Convex id).
+  async function persist(p: ProductDoc, patch: Partial<ProductDoc>) {
+    await convex.mutation(anyApi.admin.upsertProduct, {
+      adminKey,
+      productId: p.productId,
+      product: toFields({ ...p, ...patch }),
+    });
+  }
+
   async function toggle(p: ProductDoc, flag: (typeof FLAGS)[number]) {
     const newValue = !p[flag];
     try {
-      await convex.mutation(anyApi.admin.updateProduct, {
-        adminKey,
-        id: p._id,
-        patch: { [flag]: newValue },
-      });
+      await persist(p, { [flag]: newValue });
       notify(`Updated ${p.name}`);
     } catch {
       // Local fallback state
@@ -79,11 +117,7 @@ export default function Products({
   async function setStock(p: ProductDoc, stock: number) {
     const newStock = Math.max(0, stock);
     try {
-      await convex.mutation(anyApi.admin.updateProduct, {
-        adminKey,
-        id: p._id,
-        patch: { stock: newStock },
-      });
+      await persist(p, { stock: newStock });
     } catch {
       setLocalOverrides((prev) => ({
         ...prev,
@@ -338,16 +372,19 @@ function ProductForm({
       // manual number stands in for a variant-less piece.
       stock: hasMatrix ? matrixTotal : Number(manualStock),
     };
+    // Upsert by productId: patches the Convex record if it exists, otherwise
+    // creates it — so editing a piece that only lived in the static catalogue
+    // just works instead of erroring on an unknown id.
+    const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    const productId = product?.productId || freshProductId();
+    const full = {
+      ...shared,
+      slug: product?.slug || slugify(form.name),
+      rating: product?.rating ?? 0,
+      reviews: product?.reviews ?? 0,
+    };
     try {
-      if (product) {
-        await convex.mutation(anyApi.admin.updateProduct, { adminKey, id: product._id, patch: shared });
-      } else {
-        const slug = form.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-        await convex.mutation(anyApi.admin.createProduct, {
-          adminKey,
-          product: { ...shared, slug, rating: 0, reviews: 0 },
-        });
-      }
+      await convex.mutation(anyApi.admin.upsertProduct, { adminKey, productId, product: full });
       onSaved(form.name);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Save failed — check the fields and try again.');
