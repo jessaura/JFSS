@@ -10,6 +10,7 @@ import Orders from '@/components/admin/Orders';
 import Products from '@/components/admin/Products';
 import Customers from '@/components/admin/Customers';
 import Subscribers from '@/components/admin/Subscribers';
+import Settings from '@/components/admin/Settings';
 
 const CONVEX_READY = Boolean(process.env.NEXT_PUBLIC_CONVEX_URL);
 
@@ -19,6 +20,7 @@ const NAV = [
   { id: 'products', label: 'Products', icon: Icon.products },
   { id: 'customers', label: 'Customers', icon: Icon.customers },
   { id: 'subscribers', label: 'Subscribers', icon: Icon.mail },
+  { id: 'settings', label: 'Settings', icon: Icon.settings },
 ] as const;
 
 type ViewId = (typeof NAV)[number]['id'];
@@ -217,6 +219,7 @@ function Console({ adminKey, onLogout }: { adminKey: string; onLogout: () => voi
           {view === 'products' && <Products adminKey={adminKey} notify={notify} />}
           {view === 'customers' && <Customers adminKey={adminKey} />}
           {view === 'subscribers' && <Subscribers adminKey={adminKey} notify={notify} />}
+          {view === 'settings' && <Settings adminKey={adminKey} notify={notify} />}
         </main>
       </div>
 

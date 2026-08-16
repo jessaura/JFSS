@@ -6041,3 +6041,16 @@ input, textarea, select {
 @media (max-width: 640px) {
   .adm-color-row { flex-wrap: wrap; }
 }
+
+/* ---------- WhatsApp checkout button ---------- */
+.jf-btn-whatsapp {
+  background: #25D366;
+  color: #0B3D2E;
+  border: none;
+  gap: 10px;
+  text-decoration: none;
+  justify-content: center;
+}
+.jf-btn-whatsapp:hover { background: #1EBE5A; transform: translateY(-2px); }
+.jf-btn-whatsapp svg { flex: 0 0 auto; }
+.adm-settings { max-width: 520px; display: flex; flex-direction: column; gap: 14px; }

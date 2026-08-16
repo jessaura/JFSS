@@ -92,4 +92,10 @@ export default defineSchema({
     source: v.string(),
     createdAt: v.number(),
   }).index('by_email', ['email']),
+
+  // Single-row store configuration (e.g. the WhatsApp order number).
+  settings: defineTable({
+    whatsappNumber: v.string(),
+    updatedAt: v.number(),
+  }),
 });
