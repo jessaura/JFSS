@@ -3026,6 +3026,16 @@ export function getClearanceProducts(): Product[] {
   }));
 }
 
+/**
+ * Authentic traditional Onam / Kerala festival wear already in the catalogue —
+ * set mundu, pattupavada, sarees and dhavani sets. Pulled by subcategory so it
+ * tracks the real stock; nothing is invented.
+ */
+export function getOnamProducts(): Product[] {
+  const onamTypes = new Set(['Mundu', 'Sarees', 'Blouses']);
+  return products.filter((p) => onamTypes.has(p.subcategory));
+}
+
 export function discountPercent(p: Product): number {
   if (!p.originalPrice || p.originalPrice <= p.price) return 0;
   return Math.round(((p.originalPrice - p.price) / p.originalPrice) * 100);

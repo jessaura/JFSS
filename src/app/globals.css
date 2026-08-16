@@ -5786,25 +5786,27 @@ input, textarea, select {
 }
 
 /* ============================================================
-   CLEARANCE SALE SECTION — Black Contrast Theme
+   CLEARANCE SALE SECTION — Ivory "final markdowns" editorial
    ============================================================ */
 .jf-clear {
-  background: linear-gradient(135deg, #111111 0%, #1a0a0a 100%);
-  border-radius: 20px;
-  padding: var(--space-2xl) var(--space-2xl);
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+  background:
+    repeating-linear-gradient(-45deg, rgba(155, 0, 0, 0.035) 0 14px, transparent 14px 28px),
+    linear-gradient(180deg, #FFFFFF 0%, var(--cream) 100%);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-xl);
+  padding: var(--space-2xl);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-md);
   position: relative;
   overflow: hidden;
 }
+/* Crimson spine running down the left edge — the "sale ticket" cue */
 .jf-clear::before {
   content: '';
   position: absolute;
-  top: -100px; right: -100px;
-  width: 300px; height: 300px;
-  background: radial-gradient(circle, rgba(155, 0, 0, 0.25) 0%, transparent 70%);
-  pointer-events: none;
+  top: 0; bottom: 0; left: 0;
+  width: 6px;
+  background: linear-gradient(180deg, var(--crimson-light), var(--crimson-dark));
 }
 .jf-clear-head {
   display: flex;
@@ -5813,32 +5815,36 @@ input, textarea, select {
   margin-bottom: var(--space-xl);
   flex-wrap: wrap;
   gap: var(--space-md);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   padding-bottom: var(--space-lg);
+  border-bottom: 1.5px dashed var(--border-color-strong);
 }
 .jf-clear-eyebrow {
-  font-size: 0.7rem;
-  letter-spacing: 0.16em;
+  font-size: 0.68rem;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: #FF5252;
+  color: #fff;
   font-weight: 700;
-  display: block;
-  margin-bottom: 4px;
+  display: inline-block;
+  margin-bottom: 10px;
+  background: var(--crimson);
+  padding: 4px 12px;
+  border-radius: var(--radius-full);
 }
 .jf-clear-head h2 {
   font-family: var(--font-display);
-  font-size: clamp(1.4rem, 2.4vw, 2rem);
+  font-size: clamp(1.6rem, 3vw, 2.4rem);
   font-weight: 700;
-  color: #fff;
+  color: var(--text-primary);
   margin: 0;
+  line-height: 1;
 }
 .jf-clear-head h2 .accent {
-  color: #FF5252;
+  color: var(--crimson);
 }
 .jf-clear-note {
-  font-size: var(--text-xs);
-  color: rgba(255, 255, 255, 0.6);
-  max-width: 380px;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  max-width: 40ch;
   margin: 0;
   line-height: 1.5;
 }
@@ -5848,98 +5854,275 @@ input, textarea, select {
   overflow-x: auto;
   padding-bottom: var(--space-md);
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  scrollbar-color: var(--border-color-strong) transparent;
 }
-.jf-clear-rail::-webkit-scrollbar {
-  height: 6px;
-}
+.jf-clear-rail::-webkit-scrollbar { height: 6px; }
 .jf-clear-rail::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--border-color-strong);
   border-radius: 4px;
 }
 .jf-clear-card {
-  flex: 0 0 210px;
-  background: #1c1c1c;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
+  flex: 0 0 220px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
   overflow: hidden;
   text-decoration: none;
-  color: #fff;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  color: var(--text-primary);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease, border-color 0.3s ease;
 }
 .jf-clear-card:hover {
-  transform: translateY(-4px);
-  border-color: #FF5252;
-  box-shadow: 0 12px 30px rgba(255, 82, 82, 0.2);
+  transform: translateY(-6px);
+  border-color: var(--crimson);
+  box-shadow: 0 16px 34px rgba(155, 0, 0, 0.14);
 }
 .jf-clear-media {
   position: relative;
   aspect-ratio: 3 / 4;
   overflow: hidden;
-  background: #262626;
+  background: var(--bg-secondary);
 }
 .jf-clear-media img {
   width: 100%; height: 100%;
   object-fit: cover;
   transition: transform 0.6s var(--jf-ease-out, cubic-bezier(0.16, 1, 0.3, 1));
 }
-.jf-clear-card:hover .jf-clear-media img {
-  transform: scale(1.06);
-}
+.jf-clear-card:hover .jf-clear-media img { transform: scale(1.06); }
+/* Notched price tag */
 .jf-clear-disc {
   position: absolute;
-  top: 10px; left: 10px;
-  background: #D84315;
+  top: 12px; left: 0;
+  background: var(--crimson);
   color: #fff;
-  padding: 4px 10px;
-  border-radius: var(--radius-full);
+  padding: 5px 12px 5px 14px;
   display: flex;
   align-items: center;
-  gap: 3px;
-  box-shadow: 0 4px 12px rgba(216, 67, 21, 0.4);
+  gap: 4px;
+  box-shadow: 0 4px 12px rgba(155, 0, 0, 0.32);
+  clip-path: polygon(0 0, 100% 0, calc(100% - 9px) 50%, 100% 100%, 0 100%);
 }
-.jf-clear-disc strong {
-  font-size: 0.72rem;
-  font-weight: 800;
-}
+.jf-clear-disc strong { font-size: 0.8rem; font-weight: 800; }
 .jf-clear-disc span {
-  font-size: 0.6rem;
+  font-size: 0.58rem;
   text-transform: uppercase;
+  letter-spacing: 0.08em;
   opacity: 0.9;
 }
-.jf-clear-body {
-  padding: var(--space-md);
-}
+.jf-clear-body { padding: var(--space-md); }
 .jf-clear-cat {
-  font-size: 0.68rem;
+  font-size: 0.66rem;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: rgba(255, 255, 255, 0.45);
-  margin: 0 0 2px;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+  margin: 0 0 3px;
 }
 .jf-clear-name {
   font-size: var(--text-sm);
   font-weight: 600;
-  color: #fff;
+  color: var(--text-primary);
   margin: 0 0 var(--space-xs);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.jf-clear-price {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-}
+.jf-clear-price { display: flex; align-items: baseline; gap: 8px; }
 .jf-clear-price .now {
-  font-size: var(--text-base);
+  font-size: var(--text-lg);
   font-weight: 800;
-  color: #FF5252;
+  color: var(--crimson);
 }
 .jf-clear-price .was {
   font-size: var(--text-xs);
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--text-secondary);
   text-decoration: line-through;
+}
+
+/* ============================================================
+   ONAM CELEBRATION — kasavu cream & gold festival band
+   ============================================================ */
+.jf-onam {
+  position: relative;
+  margin: var(--space-4xl) 0;
+  padding: clamp(var(--space-2xl), 5vw, var(--space-4xl)) 0;
+  overflow: hidden;
+  color: var(--text-primary);
+  background:
+    radial-gradient(120% 90% at 50% -10%, rgba(216, 121, 47, 0.12), transparent 60%),
+    linear-gradient(180deg, #FBF6EC 0%, #F6EAD2 100%);
+  border-top: 3px solid var(--gold);
+  border-bottom: 3px solid var(--gold);
+}
+/* Kasavu double-line inner frame */
+.jf-onam::after {
+  content: '';
+  position: absolute;
+  inset: 10px;
+  border: 1px solid rgba(184, 134, 11, 0.4);
+  border-radius: var(--radius-lg);
+  pointer-events: none;
+}
+/* Pookalam — concentric flower-carpet rings, bottom corners */
+.jf-onam-pookalam {
+  position: absolute;
+  width: 320px; height: 320px;
+  bottom: -150px; left: -120px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, transparent 30%, rgba(216, 121, 47, 0.16) 31% 40%, transparent 41%),
+    radial-gradient(circle, transparent 48%, rgba(155, 0, 0, 0.14) 49% 58%, transparent 59%),
+    radial-gradient(circle, transparent 66%, rgba(91, 112, 82, 0.16) 67% 76%, transparent 77%),
+    radial-gradient(circle, transparent 84%, rgba(184, 134, 11, 0.22) 85% 94%, transparent 95%);
+  pointer-events: none;
+}
+.jf-onam-pookalam.alt {
+  bottom: auto; left: auto;
+  top: -160px; right: -130px;
+  width: 300px; height: 300px;
+}
+.jf-onam-inner { position: relative; z-index: 1; }
+.jf-onam-head { text-align: center; margin-bottom: var(--space-2xl); }
+.jf-onam-eyebrow {
+  display: inline-block;
+  font-size: 0.7rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--gold);
+  margin-bottom: var(--space-md);
+}
+.jf-onam-eyebrow::before,
+.jf-onam-eyebrow::after {
+  content: '❀';
+  color: var(--terracotta);
+  margin: 0 10px;
+  font-size: 0.8em;
+}
+.jf-onam-head h2 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  font-weight: 700;
+  margin: 0 0 var(--space-md);
+  line-height: 1;
+}
+.jf-onam-head h2 .accent {
+  color: var(--gold);
+  font-style: italic;
+}
+.jf-onam-note {
+  max-width: 52ch;
+  margin: 0 auto;
+  font-size: var(--text-base);
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+.jf-onam-rail {
+  display: flex;
+  gap: var(--space-lg);
+  overflow-x: auto;
+  padding: var(--space-xs) 0 var(--space-lg);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(184, 134, 11, 0.5) transparent;
+}
+.jf-onam-rail::-webkit-scrollbar { height: 6px; }
+.jf-onam-rail::-webkit-scrollbar-thumb {
+  background: rgba(184, 134, 11, 0.5);
+  border-radius: 4px;
+}
+.jf-onam-card {
+  flex: 0 0 230px;
+  background: var(--warm-white);
+  border: 1px solid rgba(184, 134, 11, 0.28);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  text-decoration: none;
+  color: var(--text-primary);
+  box-shadow: 0 6px 18px rgba(184, 134, 11, 0.08);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s ease, border-color 0.35s ease;
+}
+.jf-onam-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--gold);
+  box-shadow: 0 20px 40px rgba(184, 134, 11, 0.22);
+}
+.jf-onam-media {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: var(--bg-secondary);
+}
+.jf-onam-media img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 0.7s var(--jf-ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+}
+.jf-onam-card:hover .jf-onam-media img { transform: scale(1.06); }
+.jf-onam-tag {
+  position: absolute;
+  top: 12px; left: 12px;
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 4px 11px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+.jf-onam-body {
+  padding: var(--space-md);
+  border-top: 2px solid var(--gold);
+}
+.jf-onam-cat {
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--terracotta);
+  margin: 0 0 3px;
+  font-weight: 600;
+}
+.jf-onam-name {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  margin: 0 0 var(--space-xs);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.jf-onam-price {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--gold);
+}
+.jf-onam-cta {
+  display: block;
+  width: fit-content;
+  margin: var(--space-xl) auto 0;
+  padding: var(--space-md) var(--space-2xl);
+  background: linear-gradient(120deg, var(--gold), var(--gold-light));
+  color: #1C1917;
+  font-weight: 700;
+  font-size: var(--text-sm);
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  border-radius: var(--radius-full);
+  box-shadow: 0 8px 22px rgba(184, 134, 11, 0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.jf-onam-cta:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 30px rgba(184, 134, 11, 0.4);
+}
+@media (max-width: 640px) {
+  .jf-onam-card { flex-basis: 180px; }
+  .jf-onam-pookalam { width: 220px; height: 220px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .jf-onam-card, .jf-onam-cta, .jf-onam-media img, .jf-clear-card, .jf-clear-media img {
+    transition: none;
+  }
 }
 /* ============================================================
    ADMIN PRODUCT FORM — image upload, colour rows, stock matrix

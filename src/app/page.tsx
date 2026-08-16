@@ -6,6 +6,7 @@ import CartDrawer from '@/components/layout/CartDrawer';
 import HeroSection from '@/components/home/HeroSection';
 import CraftMarquee from '@/components/home/CraftMarquee';
 import CollectionsGrid from '@/components/home/CollectionsGrid';
+import OnamCelebration from '@/components/home/OnamCelebration';
 import FeaturedProducts from '@/components/home/FeaturedProducts';
 import StatementBand from '@/components/home/StatementBand';
 import BrandStory from '@/components/home/BrandStory';
@@ -21,6 +22,7 @@ export default function Home() {
         <HeroSection />
         <CraftMarquee />
         <CollectionsGrid />
+        <OnamCelebration />
         <FeaturedProducts />
         <StatementBand />
         <BrandStory />
