@@ -6,9 +6,10 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Preloader() {
   const [loading, setLoading] = useState(true);
-  // The brand intro belongs to the storefront, not the admin console —
-  // staff shouldn't sit through it on every load.
-  const isAdmin = usePathname()?.startsWith('/admin');
+  // The brand intro is a landing moment — it plays on the home page only.
+  // On sub-pages (shop, product, admin) it would just be a full-screen
+  // overlay gating the content and swallowing trackpad/scroll events.
+  const isHome = usePathname() === '/';
 
   useEffect(() => {
     // Hide loader after 2.6 seconds (ink reveal + shimmer)
@@ -19,7 +20,7 @@ export default function Preloader() {
     return () => clearTimeout(timer);
   }, []);
 
-  if (isAdmin) return null;
+  if (!isHome) return null;
 
   return (
     <AnimatePresence>
