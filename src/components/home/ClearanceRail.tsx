@@ -15,20 +15,12 @@ export default function ClearanceRail() {
 
   return (
     <section className="jf-clear" aria-label="Clearance sale">
-      <div className="container">
-        <div className="jf-clear-head">
-          <div>
-            <span className="jf-clear-eyebrow">Final Markdowns</span>
-            <h2>
-              Clearance <span className="accent">Sale</span>
-            </h2>
-          </div>
-          <p className="jf-clear-note">
-            Last-chance pieces at their lowest price — limited sizes, while stock lasts.
-          </p>
-        </div>
-
+      <div className="container jf-clear-inner">
+        {/* The banner artwork carries the "Clearance Sale" messaging; products
+            stay hidden behind it and reveal as the shopper swipes the rail. */}
         <div className="jf-clear-rail">
+          {/* transparent lead spacer → banner shows first, first card peeks */}
+          <div className="jf-clear-spacer" aria-hidden="true" />
           {items.map((product) => (
             <Link key={product.id} href={`/product/${product.id}`} className="jf-clear-card">
               <div className="jf-clear-media">
@@ -49,6 +41,13 @@ export default function ClearanceRail() {
             </Link>
           ))}
         </div>
+
+        <span className="jf-clear-swipe" aria-hidden="true">
+          Swipe to shop the sale
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M5 12h14M13 6l6 6-6 6" />
+          </svg>
+        </span>
       </div>
     </section>
   );

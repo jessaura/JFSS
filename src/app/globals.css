@@ -5802,9 +5802,11 @@ input, textarea, select {
   border-radius: 0;
   padding: var(--space-4xl) 0;
   color: #E8EDF4;
+  /* Black-and-gold clearance banner; a light scrim unifies it and keeps text
+     legible, with the dark gradient kept beneath as a fallback. */
   background:
-    radial-gradient(75% 130% at 82% 0%, rgba(155, 0, 0, 0.28), transparent 58%),
-    radial-gradient(65% 120% at 4% 100%, rgba(46, 96, 138, 0.22), transparent 55%),
+    linear-gradient(180deg, rgba(8, 10, 14, 0.22) 0%, rgba(8, 10, 14, 0.34) 100%),
+    url('/clearance-sale.jpg') center / cover no-repeat,
     linear-gradient(160deg, #0A0D12 0%, #12161E 52%, #0A0D12 100%);
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
@@ -5945,6 +5947,45 @@ input, textarea, select {
   font-size: var(--text-xs);
   color: rgba(232, 237, 244, 0.4);
   text-decoration: line-through;
+}
+/* Peek-and-swipe carousel — banner leads, a sliver of the first card peeks,
+   products slide across as the shopper swipes the rail. */
+.jf-clear {
+  display: flex;
+  align-items: center;
+  min-height: clamp(440px, 46vw, 600px);
+}
+.jf-clear-inner { width: 100%; }
+/* transparent lead spacer keeps the banner in view; only ~96px of the first
+   card shows until the shopper swipes */
+.jf-clear-spacer {
+  flex: 0 0 calc(100% - 96px);
+  pointer-events: none;
+}
+.jf-clear-rail { scroll-snap-type: x proximity; scroll-padding-left: var(--space-lg); }
+.jf-clear-card { scroll-snap-align: start; }
+.jf-clear-swipe {
+  position: absolute;
+  right: var(--space-xl);
+  bottom: var(--space-lg);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(232, 237, 244, 0.85);
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 700;
+  pointer-events: none;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+}
+.jf-clear-swipe svg { animation: jf-swipe-bob 1.3s ease-in-out infinite; }
+@keyframes jf-swipe-bob {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(7px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .jf-clear-swipe svg { animation: none; }
 }
 
 /* ============================================================
