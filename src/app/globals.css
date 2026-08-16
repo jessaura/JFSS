@@ -5963,6 +5963,22 @@ input, textarea, select {
   transition: border-color 160ms ease, background 160ms ease;
 }
 .adm-upload-drop:hover { border-color: var(--crimson); background: #fff; }
+.adm-upload-drop.drag {
+  border-color: var(--crimson);
+  border-style: solid;
+  background: var(--crimson-overlay, rgba(155, 0, 0, 0.06));
+}
+.adm-upload-dropcue {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--crimson);
+  background: rgba(255, 255, 255, 0.7);
+  pointer-events: none;
+}
 .adm-upload-drop:focus-visible { outline: 2px solid var(--crimson); outline-offset: 2px; }
 .adm-upload-drop:disabled { cursor: default; opacity: 0.7; }
 .adm-upload-sm .adm-upload-drop { width: 72px; height: 90px; }

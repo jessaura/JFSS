@@ -28,6 +28,7 @@ export default function ImageUpload({
   const inputRef = useRef<HTMLInputElement>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [dragOver, setDragOver] = useState(false);
 
   async function upload(file: File) {
     if (!file.type.startsWith('image/')) {
@@ -63,19 +64,28 @@ export default function ImageUpload({
     <div className={`adm-upload adm-upload-${size}`}>
       <button
         type="button"
-        className="adm-upload-drop"
+        className={`adm-upload-drop ${dragOver ? 'drag' : ''}`}
         onClick={() => inputRef.current?.click()}
         disabled={busy}
-        aria-label={value ? 'Change image' : 'Upload image'}
+        aria-label={value ? 'Change image, or drop a file here' : 'Upload image, or drop a file here'}
+        onDragOver={(e) => { e.preventDefault(); if (!busy) setDragOver(true); }}
+        onDragLeave={() => setDragOver(false)}
+        onDrop={(e) => {
+          e.preventDefault();
+          setDragOver(false);
+          const f = e.dataTransfer.files?.[0];
+          if (f) upload(f);
+        }}
       >
         {value ? (
           <img src={value} alt="" className="adm-upload-preview" />
         ) : (
           <span className="adm-upload-placeholder">
             <Icon.plus />
-            <span>Upload</span>
+            <span>{dragOver ? 'Drop image' : 'Upload or drop'}</span>
           </span>
         )}
+        {dragOver && <span className="adm-upload-dropcue" aria-hidden="true">Drop to upload</span>}
         {busy && <span className="adm-upload-busy">Uploading…</span>}
       </button>
 
