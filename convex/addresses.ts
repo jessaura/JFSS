@@ -1,5 +1,5 @@
 import { mutation, query } from './_generated/server';
-import { v } from 'convex/values';
+import { v, ConvexError } from 'convex/values';
 import { getCurrentUser, getOrCreateUser } from './users';
 
 /** Current user's saved addresses (empty when signed out). */
@@ -27,7 +27,7 @@ export const add = mutation({
   args: { ...fields, isDefault: v.optional(v.boolean()) },
   handler: async (ctx, args) => {
     const user = await getOrCreateUser(ctx);
-    if (!user) throw new Error('Not authenticated');
+    if (!user) throw new ConvexError('Not authenticated — please sign in again.');
     const existing = await ctx.db
       .query('addresses')
       .withIndex('by_userId', (q) => q.eq('userId', user._id))
@@ -53,9 +53,9 @@ export const update = mutation({
   args: { id: v.id('addresses'), ...fields },
   handler: async (ctx, { id, ...rest }) => {
     const user = await getOrCreateUser(ctx);
-    if (!user) throw new Error('Not authenticated');
+    if (!user) throw new ConvexError('Not authenticated — please sign in again.');
     const addr = await ctx.db.get(id);
-    if (!addr || addr.userId !== user._id) throw new Error('Address not found');
+    if (!addr || addr.userId !== user._id) throw new ConvexError('Address not found');
     await ctx.db.patch(id, rest);
   },
 });
@@ -64,9 +64,9 @@ export const remove = mutation({
   args: { id: v.id('addresses') },
   handler: async (ctx, { id }) => {
     const user = await getOrCreateUser(ctx);
-    if (!user) throw new Error('Not authenticated');
+    if (!user) throw new ConvexError('Not authenticated — please sign in again.');
     const addr = await ctx.db.get(id);
-    if (!addr || addr.userId !== user._id) throw new Error('Address not found');
+    if (!addr || addr.userId !== user._id) throw new ConvexError('Address not found');
     await ctx.db.delete(id);
     // Promote another address to default if we removed the default one.
     if (addr.isDefault) {
@@ -83,9 +83,9 @@ export const setDefault = mutation({
   args: { id: v.id('addresses') },
   handler: async (ctx, { id }) => {
     const user = await getOrCreateUser(ctx);
-    if (!user) throw new Error('Not authenticated');
+    if (!user) throw new ConvexError('Not authenticated — please sign in again.');
     const target = await ctx.db.get(id);
-    if (!target || target.userId !== user._id) throw new Error('Address not found');
+    if (!target || target.userId !== user._id) throw new ConvexError('Address not found');
     const all = await ctx.db
       .query('addresses')
       .withIndex('by_userId', (q) => q.eq('userId', user._id))

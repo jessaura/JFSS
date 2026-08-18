@@ -1,6 +1,6 @@
 import { mutation, query } from './_generated/server';
 import type { QueryCtx, MutationCtx } from './_generated/server';
-import { v } from 'convex/values';
+import { v, ConvexError } from 'convex/values';
 
 /**
  * Resolves the Convex `users` row for the currently signed-in Clerk user.
@@ -63,7 +63,7 @@ export const getOrCreateCurrent = mutation({
   args: {},
   handler: async (ctx) => {
     const user = await getOrCreateUser(ctx);
-    if (!user) throw new Error('Not authenticated');
+    if (!user) throw new ConvexError('Not authenticated — your login was not recognised by the backend (Clerk JWT). Check CLERK_JWT_ISSUER_DOMAIN in Convex.');
     return user._id;
   },
 });
@@ -73,7 +73,7 @@ export const updateProfile = mutation({
   args: { phone: v.optional(v.string()), marketingOptIn: v.optional(v.boolean()) },
   handler: async (ctx, args) => {
     const user = await getOrCreateUser(ctx);
-    if (!user) throw new Error('Not authenticated');
+    if (!user) throw new ConvexError('Not authenticated — your login was not recognised by the backend (Clerk JWT). Check CLERK_JWT_ISSUER_DOMAIN in Convex.');
     const patch: { phone?: string; marketingOptIn?: boolean } = {};
     if (args.phone !== undefined) patch.phone = args.phone;
     if (args.marketingOptIn !== undefined) patch.marketingOptIn = args.marketingOptIn;
