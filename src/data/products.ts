@@ -43,12 +43,12 @@ export interface Product {
 export const products: Product[] = [
   {
     id: "j001",
-    name: "Diamond & Gold Plated Pendant Set",
+    name: "Diamond & gold plated pendant set",
     slug: "diamond-gold-plated-pendant-set-1",
-    price: 65,
-    originalPrice: 85,
-    shortDescription: "A.D. Diamond & Gold Plated Chen Pendant Set",
-    description: "Exquisite A.D. Diamond & Gold Plated Chen Pendant Set with matching earrings. Handcrafted detailing with traditional stone embellishments.",
+    price: 10,
+    originalPrice: 15,
+    shortDescription: "A.D. Dimond Golden Chen Pendal set D.No.000277",
+    description: "Exquisite A.D. Diamond Golden Chen Pendant Set with matching earrings. Handcrafted detailing with traditional stone embellishments.",
     category: "women",
     subcategory: "Jewellery",
     fabric: "Brass & Gold Plating",
@@ -66,11 +66,11 @@ export const products: Product[] = [
   },
   {
     id: "j002",
-    name: "Traditional Golden Chen Pendant Set",
-    slug: "traditional-golden-chen-pendant-set-2",
-    price: 58,
-    originalPrice: 75,
-    shortDescription: "A.D. Diamond Golden Chen Pendant Set No. 40.5",
+    name: "Diamond & gold plated pendant set",
+    slug: "diamond-gold-plated-pendant-set-2",
+    price: 10,
+    originalPrice: 15,
+    shortDescription: "A.D. Dimond Golden Chen Pendal set D.No.000157",
     description: "Classic South Asian A.D. Diamond Golden Chen Pendant Set featuring intricate floral motif and matching drop earrings.",
     category: "women",
     subcategory: "Jewellery",
@@ -89,11 +89,11 @@ export const products: Product[] = [
   },
   {
     id: "j003",
-    name: "Royal Emerald & Gold Pendant Set",
-    slug: "royal-emerald-gold-pendant-set-3",
-    price: 72,
-    originalPrice: 95,
-    shortDescription: "A.D. Diamond Golden Chen Pencil Set No. 38",
+    name: "Diamond & gold plated pendant set",
+    slug: "diamond-gold-plated-pendant-set-3",
+    price: 10,
+    originalPrice: 15,
+    shortDescription: "A.D. Dimond Golden Chen Pendal set D.No.000205",
     description: "Royal A.D. Diamond & Ruby-Emerald studded Golden Chen Pendant Set with crafted peacock motif detailing.",
     category: "women",
     subcategory: "Jewellery",
@@ -112,11 +112,11 @@ export const products: Product[] = [
   },
   {
     id: "j004",
-    name: "CNC Crafted Gold Plated Bangles",
-    slug: "cnc-crafted-gold-plated-bangles-4",
-    price: 45,
-    originalPrice: 60,
-    shortDescription: "Cnc Bangles D.no 00008 No. 25 Pair",
+    name: "Gold plated bangles",
+    slug: "gold-plated-bangles-4",
+    price: 10,
+    originalPrice: 15,
+    shortDescription: "Cnc Bangles D.no 00008 Pair",
     description: "Precision CNC cut gold plated bangles with textured geometric diamond cuts. Set of 2 bangles.",
     category: "women",
     subcategory: "Jewellery",
@@ -135,11 +135,11 @@ export const products: Product[] = [
   },
   {
     id: "j005",
-    name: "Statement Gold & Silver Two-Tone Bangles",
-    slug: "statement-gold-silver-two-tone-bangles-5",
-    price: 48,
-    originalPrice: 65,
-    shortDescription: "Cnc Bangles D.no 00027 No. 25 Pair",
+    name: "Gold plated bangles",
+    slug: "gold-plated-bangles-5",
+    price: 10,
+    originalPrice: 15,
+    shortDescription: "Cnc Bangles D.no 00027 Pair",
     description: "Elegant dual-tone gold and rhodium plated designer CNC bangles with leaf motif engravings. Set of 2.",
     category: "women",
     subcategory: "Jewellery",
@@ -4134,6 +4134,11 @@ export function getOnamProducts(list: Product[] = products): Product[] {
 export function discountPercent(p: Product): number {
   if (!p.originalPrice || p.originalPrice <= p.price) return 0;
   return Math.round(((p.originalPrice - p.price) / p.originalPrice) * 100);
+}
+
+export function formatPrice(price: number): string {
+  if (price % 1 === 0) return price.toString();
+  return price.toFixed(2);
 }
 
 export const testimonials: {

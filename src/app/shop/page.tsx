@@ -8,7 +8,7 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import CartDrawer from '@/components/layout/CartDrawer';
 import ClearanceRail from '@/components/home/ClearanceRail';
-import { products, Product, discountPercent, isUnpriced, colorAt } from '@/data/products';
+import { products, Product, discountPercent, isUnpriced, colorAt, formatPrice } from '@/data/products';
 import { getProductImage, hasPhoto } from '@/data/images';
 import { useCatalogue } from '@/components/providers/CatalogueProvider';
 import { useStore } from '@/store/store';
@@ -118,9 +118,9 @@ function ShopProductCard({ product }: { product: Product }) {
 
         <div className="jf-shop-foot">
           <span className={`jf-shop-price ${unpriced ? 'poa' : ''}`}>
-            {unpriced ? 'Price on request' : `£${product.price}`}
+            {unpriced ? 'Price on request' : `£${formatPrice(product.price)}`}
             {product.originalPrice && product.originalPrice > product.price && (
-              <span className="jf-shop-was">£{product.originalPrice}</span>
+              <span className="jf-shop-was">£{formatPrice(product.originalPrice)}</span>
             )}
           </span>
 
