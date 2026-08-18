@@ -98,4 +98,17 @@ export default defineSchema({
     whatsappNumber: v.string(),
     updatedAt: v.number(),
   }),
+
+  // Customer accounts. Identity is owned by Clerk; this row mirrors it (keyed
+  // by the Clerk user id) so orders/addresses/wishlist can reference a stable
+  // Convex id and the admin can list real customers. Upserted lazily on the
+  // first authenticated request — see convex/users.ts.
+  users: defineTable({
+    clerkId: v.string(),
+    email: v.string(),
+    name: v.string(),
+    phone: v.optional(v.string()),
+    marketingOptIn: v.boolean(),
+    createdAt: v.number(),
+  }).index('by_clerkId', ['clerkId']),
 });

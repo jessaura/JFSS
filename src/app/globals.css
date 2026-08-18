@@ -6264,3 +6264,84 @@ input, textarea, select {
 .jf-btn-whatsapp:hover { background: #1EBE5A; transform: translateY(-2px); }
 .jf-btn-whatsapp svg { flex: 0 0 auto; }
 .adm-settings { max-width: 520px; display: flex; flex-direction: column; gap: 14px; }
+
+/* ============================================================
+   ACCOUNTS — auth pages + account hub
+   ============================================================ */
+.navbar-login {
+  font-weight: 600;
+}
+.auth-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(var(--nav-height) + var(--space-2xl)) var(--space-xl) var(--space-4xl);
+  background:
+    radial-gradient(90% 60% at 50% 0%, var(--crimson-overlay), transparent 60%),
+    linear-gradient(180deg, var(--bg-primary), var(--bg-secondary));
+}
+.auth-fallback {
+  font-size: var(--text-base);
+  color: var(--text-secondary);
+}
+.auth-fallback a { color: var(--crimson); font-weight: 600; }
+
+.account {
+  padding-top: calc(var(--nav-height) + var(--space-3xl));
+  padding-bottom: var(--space-5xl);
+  min-height: 70vh;
+}
+.account-head { margin-bottom: var(--space-2xl); }
+.account-eyebrow {
+  display: block;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--crimson);
+  font-weight: 700;
+  margin-bottom: var(--space-sm);
+}
+.account-head h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 700;
+  margin: 0 0 var(--space-xs);
+}
+.account-head p { color: var(--text-secondary); margin: 0; }
+.account-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-lg);
+}
+.account-card {
+  position: relative;
+  display: block;
+  padding: var(--space-xl);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+.account-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--crimson);
+  box-shadow: 0 14px 30px rgba(179, 18, 42, 0.12);
+}
+.account-card h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  margin: 0 0 var(--space-xs);
+}
+.account-card p { color: var(--text-secondary); font-size: var(--text-sm); margin: 0; }
+.account-card-go {
+  position: absolute;
+  top: var(--space-lg);
+  right: var(--space-lg);
+  color: var(--crimson);
+  font-size: var(--text-lg);
+}
