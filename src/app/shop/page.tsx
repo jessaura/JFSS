@@ -160,7 +160,7 @@ export default function ShopPage() {
   const [search, setSearch] = useState('');
   const [onlySale, setOnlySale] = useState(false);
   const [sortBy, setSortBy] = useState('featured');
-  const [itemsPerPage, setItemsPerPage] = useState<number>(20);
+  const [itemsPerPage, setItemsPerPage] = useState<number>(1000);
   const [gridCols, setGridCols] = useState<number>(4);
   const [filtersOpen, setFiltersOpen] = useState(false);
 
@@ -382,9 +382,9 @@ export default function ShopPage() {
                   value={itemsPerPage}
                   onChange={(e) => setItemsPerPage(Number(e.target.value))}
                 >
+                  <option value={1000}>All</option>
                   <option value={20}>20</option>
                   <option value={40}>40</option>
-                  <option value={100}>All</option>
                 </select>
               </div>
             </div>

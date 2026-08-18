@@ -46,6 +46,18 @@ export default function ClearanceRail() {
   return (
     <section className="jf-clear" aria-label="Clearance sale">
       <div className="container jf-clear-inner">
+        <div className="jf-clear-head">
+          <div>
+            <span className="jf-clear-eyebrow">🔥 Limited Time Markdowns · Final Reductions</span>
+            <h2>
+              Clearance <span className="accent">Sale</span>
+            </h2>
+          </div>
+          <p className="jf-clear-note">
+            Exclusive markdowns on premium South Asian wear. Limited sizes &amp; quantities available — grab yours before they sell out!
+          </p>
+        </div>
+
         <div className="jf-clear-rail">
           <div className="jf-clear-track">
             {items.map((p) => card(p, false))}
