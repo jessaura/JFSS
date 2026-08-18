@@ -5948,44 +5948,29 @@ input, textarea, select {
   color: rgba(232, 237, 244, 0.4);
   text-decoration: line-through;
 }
-/* Peek-and-swipe carousel — banner leads, a sliver of the first card peeks,
-   products slide across as the shopper swipes the rail. */
+/* Auto-scrolling marquee — the products glide continuously across the banner.
+   Cards are rendered twice; the track slides -50% and loops seamlessly
+   (shared jf-slide keyframe). Pauses on hover. */
 .jf-clear {
   display: flex;
   align-items: center;
   min-height: clamp(440px, 46vw, 600px);
 }
 .jf-clear-inner { width: 100%; }
-/* transparent lead spacer keeps the banner in view; only ~96px of the first
-   card shows until the shopper swipes */
-.jf-clear-spacer {
-  flex: 0 0 calc(100% - 96px);
-  pointer-events: none;
+.jf-clear-rail {
+  display: block;
+  overflow: hidden;
 }
-.jf-clear-rail { scroll-snap-type: x proximity; scroll-padding-left: var(--space-lg); }
-.jf-clear-card { scroll-snap-align: start; }
-.jf-clear-swipe {
-  position: absolute;
-  right: var(--space-xl);
-  bottom: var(--space-lg);
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: rgba(232, 237, 244, 0.85);
-  font-size: 0.68rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  font-weight: 700;
-  pointer-events: none;
-  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5);
+.jf-clear-track {
+  display: flex;
+  gap: var(--space-lg);
+  width: max-content;
+  animation: jf-slide 40s linear infinite;
 }
-.jf-clear-swipe svg { animation: jf-swipe-bob 1.3s ease-in-out infinite; }
-@keyframes jf-swipe-bob {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(7px); }
-}
+.jf-clear-rail:hover .jf-clear-track { animation-play-state: paused; }
 @media (prefers-reduced-motion: reduce) {
-  .jf-clear-swipe svg { animation: none; }
+  .jf-clear-track { animation: none; }
+  .jf-clear-rail { overflow-x: auto; }
 }
 
 /* ============================================================
