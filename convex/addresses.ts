@@ -1,6 +1,6 @@
 import { mutation, query } from './_generated/server';
 import { v } from 'convex/values';
-import { getCurrentUser } from './users';
+import { getCurrentUser, getOrCreateUser } from './users';
 
 /** Current user's saved addresses (empty when signed out). */
 export const list = query({
@@ -26,7 +26,7 @@ const fields = {
 export const add = mutation({
   args: { ...fields, isDefault: v.optional(v.boolean()) },
   handler: async (ctx, args) => {
-    const user = await getCurrentUser(ctx);
+    const user = await getOrCreateUser(ctx);
     if (!user) throw new Error('Not authenticated');
     const existing = await ctx.db
       .query('addresses')
@@ -52,7 +52,7 @@ export const add = mutation({
 export const update = mutation({
   args: { id: v.id('addresses'), ...fields },
   handler: async (ctx, { id, ...rest }) => {
-    const user = await getCurrentUser(ctx);
+    const user = await getOrCreateUser(ctx);
     if (!user) throw new Error('Not authenticated');
     const addr = await ctx.db.get(id);
     if (!addr || addr.userId !== user._id) throw new Error('Address not found');
@@ -63,7 +63,7 @@ export const update = mutation({
 export const remove = mutation({
   args: { id: v.id('addresses') },
   handler: async (ctx, { id }) => {
-    const user = await getCurrentUser(ctx);
+    const user = await getOrCreateUser(ctx);
     if (!user) throw new Error('Not authenticated');
     const addr = await ctx.db.get(id);
     if (!addr || addr.userId !== user._id) throw new Error('Address not found');
@@ -82,7 +82,7 @@ export const remove = mutation({
 export const setDefault = mutation({
   args: { id: v.id('addresses') },
   handler: async (ctx, { id }) => {
-    const user = await getCurrentUser(ctx);
+    const user = await getOrCreateUser(ctx);
     if (!user) throw new Error('Not authenticated');
     const target = await ctx.db.get(id);
     if (!target || target.userId !== user._id) throw new Error('Address not found');

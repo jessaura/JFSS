@@ -29,6 +29,7 @@ export default function AddressesPage() {
   const [form, setForm] = useState(empty);
   const [busy, setBusy] = useState(false);
   const [adding, setAdding] = useState(false);
+  const [error, setError] = useState('');
 
   function set<K extends keyof typeof empty>(key: K, value: string) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -37,10 +38,13 @@ export default function AddressesPage() {
   async function submit(e: FormEvent) {
     e.preventDefault();
     setBusy(true);
+    setError('');
     try {
       await addAddress(form);
       setForm(empty);
       setAdding(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not save the address.');
     } finally {
       setBusy(false);
     }
@@ -108,6 +112,7 @@ export default function AddressesPage() {
                     <span>Country *</span>
                     <input className="jf-input" value={form.country} onChange={(e) => set('country', e.target.value)} required />
                   </label>
+                  {error && <p className="jf-checkout-error" role="alert">{error}</p>}
                   <div className="addr-actions">
                     <button className="jf-btn jf-btn-primary" disabled={busy}>{busy ? 'Saving…' : 'Save address'}</button>
                     <button type="button" className="jf-btn jf-btn-ghost" onClick={() => setAdding(false)}>Cancel</button>

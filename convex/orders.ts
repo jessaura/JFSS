@@ -1,6 +1,6 @@
 import { mutation, query } from './_generated/server';
 import { v } from 'convex/values';
-import { getCurrentUser } from './users';
+import { getOrCreateUser } from './users';
 
 /**
  * Public checkout endpoint — called by the storefront cart drawer.
@@ -38,7 +38,7 @@ export const place = mutation({
     // Link the order to the signed-in customer when present. The storefront
     // gates checkout behind login, so this is normally set; guests/legacy stay
     // unlinked.
-    const user = await getCurrentUser(ctx);
+    const user = await getOrCreateUser(ctx);
 
     const subtotal = args.items.reduce((s, i) => s + i.price * i.quantity, 0);
     const shipping = subtotal >= 75 ? 0 : 6;
