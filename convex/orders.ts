@@ -1,6 +1,6 @@
 import { mutation, query } from './_generated/server';
 import { v } from 'convex/values';
-import { getOrCreateUser } from './users';
+import { getCurrentUser, getOrCreateUser } from './users';
 
 /**
  * Public checkout endpoint — called by the storefront cart drawer.
@@ -83,6 +83,57 @@ export const place = mutation({
     }
 
     return { orderNumber, id };
+  },
+});
+
+/** The signed-in customer's orders, newest first. Empty when signed out. */
+export const listMine = query({
+  args: {},
+  handler: async (ctx) => {
+    const user = await getCurrentUser(ctx);
+    if (!user) return [];
+    const orders = await ctx.db
+      .query('orders')
+      .withIndex('by_userId', (q) => q.eq('userId', user._id))
+      .collect();
+    return orders.sort((a, b) => b.placedAt - a.placedAt);
+  },
+});
+
+/** One of the current customer's orders, or null if not theirs / signed out. */
+export const getMine = query({
+  args: { id: v.id('orders') },
+  handler: async (ctx, { id }) => {
+    const user = await getCurrentUser(ctx);
+    if (!user) return null;
+    const order = await ctx.db.get(id);
+    if (!order || order.userId !== user._id) return null;
+    return order;
+  },
+});
+
+/**
+ * Attach past guest orders placed with the customer's (Clerk-verified) email to
+ * their account. Called once when they land on their orders page. Safe because
+ * the email on the token is verified.
+ */
+export const linkMyGuestOrders = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const user = await getOrCreateUser(ctx);
+    if (!user || !user.email) return 0;
+    const orders = await ctx.db
+      .query('orders')
+      .withIndex('by_email', (q) => q.eq('customerEmail', user.email))
+      .collect();
+    let linked = 0;
+    for (const o of orders) {
+      if (!o.userId) {
+        await ctx.db.patch(o._id, { userId: user._id });
+        linked++;
+      }
+    }
+    return linked;
   },
 });
 
