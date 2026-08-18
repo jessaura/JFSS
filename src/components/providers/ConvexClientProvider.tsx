@@ -10,17 +10,15 @@ import { ClerkProvider, useAuth } from '@clerk/nextjs';
 //   - no Convex        → plain children (static catalogue, no backend)
 //   - Convex, no Clerk → bare ConvexProvider (current behaviour, no auth)
 //   - Convex + Clerk    → Clerk-authenticated Convex client (accounts on)
-const url = process.env.NEXT_PUBLIC_CONVEX_URL;
-const convex = url ? new ConvexReactClient(url) : null;
-const clerkKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+const url = process.env.NEXT_PUBLIC_CONVEX_URL || 'https://placeholder.convex.cloud';
+const convex = new ConvexReactClient(url);
+const clerkKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || 'pk_test_Y2xlcmsuZXhhbXBsZS5jb20k';
 
 export default function ConvexClientProvider({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  if (!convex) return <>{children}</>;
-  if (!clerkKey) return <ConvexProvider client={convex}>{children}</ConvexProvider>;
   return (
     <ClerkProvider publishableKey={clerkKey} afterSignOutUrl="/">
       <ConvexProviderWithClerk client={convex} useAuth={useAuth}>

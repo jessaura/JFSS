@@ -6476,3 +6476,561 @@ input, textarea, select {
 .set-actions { display: flex; align-items: center; gap: var(--space-md); }
 .set-saved { color: #2e6b4f; font-size: var(--text-sm); font-weight: 600; }
 .set-clerk { display: flex; justify-content: center; }
+
+/* ============================================================
+   REDESIGNED LUXURY SHOP PAGE (Reference Design Match)
+   ============================================================ */
+
+.jf-shop-page {
+  padding-top: calc(var(--nav-height) + var(--space-xl));
+  padding-bottom: var(--space-5xl);
+  min-height: 100vh;
+}
+
+/* --- Breadcrumb Trail --- */
+.jf-shop-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  margin-bottom: var(--space-md);
+  flex-wrap: wrap;
+}
+.jf-crumb-item {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+.jf-crumb-item a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.jf-crumb-item a:hover { color: var(--crimson); }
+.jf-crumb-sep { color: var(--border-color-strong); font-size: 0.9em; }
+.jf-crumb-active { color: var(--text-primary); font-weight: 600; }
+
+/* --- Header Row: Title + Show Filters Button --- */
+.jf-shop-head-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: var(--space-xl);
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+.jf-shop-title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 3.8vw, 3.2rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.1;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+.jf-shop-count-tag {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-color);
+  align-self: flex-start;
+  margin-top: 4px;
+}
+
+.jf-show-filters-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-color-strong);
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.jf-show-filters-btn:hover,
+.jf-show-filters-btn.active {
+  background: var(--crimson);
+  border-color: var(--crimson);
+  color: #fff;
+  box-shadow: 0 4px 14px rgba(155, 0, 0, 0.25);
+}
+
+/* --- Category Tabs Bar --- */
+.jf-shop-tabs-bar {
+  margin-bottom: var(--space-xl);
+  border-bottom: 1.5px solid var(--border-color);
+  padding-bottom: var(--space-sm);
+}
+.jf-shop-tabs-scroll {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 4px;
+}
+.jf-shop-tabs-scroll::-webkit-scrollbar { display: none; }
+
+.jf-shop-tab {
+  padding: 8px 18px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: 1.5px solid transparent;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.jf-shop-tab:hover {
+  color: var(--crimson);
+  background: rgba(155, 0, 0, 0.04);
+}
+.jf-shop-tab.active {
+  background: #6E1212; /* Rich deep maroon reference color */
+  color: #ffffff;
+  border-color: #6E1212;
+  box-shadow: 0 4px 12px rgba(110, 18, 18, 0.3);
+}
+
+/* --- Toolbar Row: Grid Switcher + Checkboxes + Selects --- */
+.jf-shop-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+  margin-bottom: var(--space-2xl);
+  flex-wrap: wrap;
+  padding: var(--space-sm) 0;
+}
+
+/* Grid Switcher Icons */
+.jf-grid-switcher {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg-card);
+  padding: 3px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+}
+.jf-grid-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.jf-grid-btn:hover { color: var(--text-primary); background: var(--bg-secondary); }
+.jf-grid-btn.active {
+  background: var(--text-primary);
+  color: var(--bg-primary);
+}
+
+/* Toolbar Actions */
+.jf-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  flex-wrap: wrap;
+}
+
+.jf-toolbar-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+.jf-toolbar-check input { display: none; }
+.jf-toolbar-check .jf-check-box {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  border: 1.5px solid var(--border-color-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-card);
+  transition: all 0.2s ease;
+}
+.jf-toolbar-check input:checked + .jf-check-box {
+  background: var(--crimson);
+  border-color: var(--crimson);
+}
+.jf-toolbar-check input:checked + .jf-check-box svg { stroke: #fff; }
+
+.jf-toolbar-select-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+}
+.jf-select-label { font-weight: 500; }
+.jf-toolbar-select-wrap select {
+  padding: 6px 26px 6px 12px;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-full);
+  background: var(--bg-card);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+  outline: none;
+  font-family: var(--font-body);
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  transition: border-color 0.2s ease;
+}
+.jf-toolbar-select-wrap select:focus-visible,
+.jf-toolbar-select-wrap select:hover {
+  border-color: var(--crimson);
+}
+
+/* --- Expandable Filter Drawer Panel --- */
+.jf-filter-panel {
+  overflow: hidden;
+  margin-bottom: var(--space-2xl);
+}
+.jf-filter-panel-inner {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: var(--space-xl);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+.jf-filter-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg-secondary);
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-full);
+  padding: 8px 16px;
+  margin-bottom: var(--space-xl);
+}
+.jf-filter-search input {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+}
+.jf-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-2xl);
+}
+.jf-facet-col h3 {
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-md);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 6px;
+}
+.jf-check-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  padding: 4px 0;
+  cursor: pointer;
+  transition: color 0.15s;
+}
+.jf-check-row:hover { color: var(--crimson); }
+.jf-check-row input { display: none; }
+.jf-check-row .jf-check-box {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1.5px solid var(--border-color-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-card);
+  transition: all 0.15s ease;
+}
+.jf-check-row input:checked + .jf-check-box {
+  background: var(--crimson);
+  border-color: var(--crimson);
+}
+.jf-check-row input:checked + .jf-check-box svg { stroke: #fff; }
+.jf-check-label { flex: 1; }
+.jf-check-count {
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  padding: 1px 6px;
+  border-radius: var(--radius-full);
+}
+
+.jf-price-range input[type="range"] {
+  width: 100%;
+  accent-color: var(--crimson);
+}
+.jf-price-range-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+.jf-filter-reset-row {
+  margin-top: var(--space-xl);
+  text-align: right;
+}
+.jf-btn-reset-all {
+  padding: 8px 18px;
+  border-radius: var(--radius-full);
+  background: rgba(155, 0, 0, 0.08);
+  border: none;
+  color: var(--crimson);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.jf-btn-reset-all:hover {
+  background: var(--crimson);
+  color: #fff;
+}
+
+/* --- Dynamic Product Grid (2, 3, 4, 5 columns) --- */
+.jf-shop-grid {
+  display: grid;
+  gap: var(--space-xl);
+  transition: all 0.3s ease;
+}
+.jf-shop-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+.jf-shop-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+.jf-shop-grid.cols-4 { grid-template-columns: repeat(4, 1fr); }
+.jf-shop-grid.cols-5 { grid-template-columns: repeat(5, 1fr); }
+
+/* --- Product Card (Reference Style Elevation) --- */
+.jf-shop-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-card);
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.jf-shop-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.08);
+  border-color: rgba(155, 0, 0, 0.2);
+}
+
+.jf-shop-media {
+  position: relative;
+  display: block;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: var(--bg-secondary);
+}
+.jf-shop-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.jf-shop-card:hover .jf-shop-media img {
+  transform: scale(1.06);
+}
+
+/* Floating Wishlist Button */
+.jf-card-wish-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  cursor: pointer;
+  z-index: 3;
+  transition: all 0.2s ease;
+}
+.jf-card-wish-btn:hover,
+.jf-card-wish-btn.on {
+  background: #fff;
+  color: var(--crimson);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Badges */
+.jf-card-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  z-index: 2;
+}
+.jf-badge-best { background: var(--crimson); color: #fff; }
+.jf-badge-sale { background: #D84315; color: #fff; }
+.jf-badge-soft { background: rgba(0, 0, 0, 0.6); color: #fff; backdrop-filter: blur(6px); }
+
+/* Card Body */
+.jf-shop-body {
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+.jf-shop-meta { margin-bottom: 2px; }
+.jf-shop-cat {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+}
+.jf-shop-name {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-decoration: none;
+  line-height: 1.35;
+  margin-bottom: 4px;
+  transition: color 0.2s ease;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.jf-shop-name:hover { color: var(--crimson); }
+
+.jf-shop-desc {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  margin: 0 0 var(--space-xs);
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.jf-shop-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: var(--space-xs);
+}
+.jf-shop-price {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.jf-shop-price.poa {
+  font-size: 0.72rem;
+  color: var(--crimson);
+  font-style: italic;
+}
+.jf-shop-was {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  text-decoration: line-through;
+  font-weight: 400;
+}
+
+/* Quick Add Button */
+.jf-quick-add-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.jf-quick-add-btn:hover {
+  background: var(--crimson);
+  border-color: var(--crimson);
+  color: #fff;
+}
+.jf-quick-add-btn.added {
+  background: #2E6B4F;
+  border-color: #2E6B4F;
+  color: #fff;
+}
+
+/* Empty State */
+.jf-shop-empty {
+  text-align: center;
+  padding: var(--space-4xl) var(--space-xl);
+  color: var(--text-secondary);
+}
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 1200px) {
+  .jf-shop-grid.cols-5 { grid-template-columns: repeat(4, 1fr); }
+}
+@media (max-width: 992px) {
+  .jf-shop-grid.cols-4,
+  .jf-shop-grid.cols-5 { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 768px) {
+  .jf-shop-grid.cols-3,
+  .jf-shop-grid.cols-4,
+  .jf-shop-grid.cols-5 { grid-template-columns: repeat(2, 1fr); gap: var(--space-md); }
+  .jf-shop-title { font-size: 1.8rem; }
+  .jf-grid-switcher { display: none; }
+}
+@media (max-width: 480px) {
+  .jf-shop-grid { grid-template-columns: repeat(2, 1fr) !important; gap: var(--space-xs); }
+  .jf-shop-body { padding: var(--space-xs); }
+  .jf-shop-name { font-size: 0.8rem; }
+  .jf-shop-price { font-size: 0.78rem; }
+  .jf-quick-add-btn { padding: 4px 8px; font-size: 0.65rem; }
+}

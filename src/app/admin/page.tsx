@@ -1,5 +1,7 @@
 'use client';
 
+export const dynamic = 'force-dynamic';
+
 import { useState, FormEvent, useCallback, useSyncExternalStore } from 'react';
 import Link from 'next/link';
 import { useConvex, useQuery } from 'convex/react';
