@@ -279,6 +279,11 @@ export default function ShopPage() {
       <CartDrawer />
 
       <main className="jf-shop-page">
+        {/* Top Clearance Sale Highlight Section */}
+        <div style={{ marginBottom: 'var(--space-2xl)' }}>
+          <ClearanceRail />
+        </div>
+
         <div className="container" ref={headerRef}>
           {/* Breadcrumb Trail */}
           <nav className="jf-shop-breadcrumb" aria-label="Breadcrumb">
@@ -383,11 +388,6 @@ export default function ShopPage() {
                 </select>
               </div>
             </div>
-          </div>
-
-          {/* Clearance Rail Highlight */}
-          <div style={{ margin: 'var(--space-xl) 0' }}>
-            <ClearanceRail />
           </div>
 
           {/* Collapsible Filter Panel */}
