@@ -26,6 +26,10 @@ interface StoreState {
   wishlist: string[];
   toggleWishlist: (productId: string) => void;
   isWishlisted: (productId: string) => boolean;
+  setWishlist: (productIds: string[]) => void;
+
+  /* Cart/wishlist hydration from the signed-in user's saved data (see AccountSync) */
+  setCart: (items: CartItem[]) => void;
 
   /* UI */
   mobileMenuOpen: boolean;
@@ -106,6 +110,9 @@ export const useStore = create<StoreState>((set, get) => ({
     });
   },
   isWishlisted: (productId) => get().wishlist.includes(productId),
+  setWishlist: (productIds) => set({ wishlist: productIds }),
+
+  setCart: (items) => set({ cart: items }),
 
   /* UI */
   mobileMenuOpen: false,

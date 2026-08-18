@@ -4,6 +4,10 @@ import Preloader from "@/components/common/Preloader";
 import SmoothScroll from "@/components/common/SmoothScroll";
 import ConvexClientProvider from "@/components/providers/ConvexClientProvider";
 import CatalogueProvider from "@/components/providers/CatalogueProvider";
+import AccountSync from "@/components/layout/AccountSync";
+
+// Only run the Clerk-backed sync when Clerk is configured (needs a provider).
+const clerkEnabled = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
 
 export const metadata: Metadata = {
   title: "JessAura — Modern South Asian Dailywear & Casual Fashion",
@@ -40,6 +44,7 @@ export default function RootLayout({
           <CatalogueProvider>
             <SmoothScroll />
             <Preloader />
+            {clerkEnabled && <AccountSync />}
             {children}
           </CatalogueProvider>
         </ConvexClientProvider>

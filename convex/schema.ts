@@ -126,4 +126,26 @@ export default defineSchema({
     country: v.string(),
     isDefault: v.boolean(),
   }).index('by_userId', ['userId']),
+
+  // Persistent wishlist — one row per saved product per user.
+  wishlist: defineTable({
+    userId: v.id('users'),
+    productId: v.string(),
+    addedAt: v.number(),
+  }).index('by_userId', ['userId']),
+
+  // Persistent cart — one row per user holding the line-item refs (the full
+  // product is re-hydrated from the catalogue on the client).
+  carts: defineTable({
+    userId: v.id('users'),
+    items: v.array(
+      v.object({
+        productId: v.string(),
+        color: v.string(),
+        size: v.string(),
+        quantity: v.number(),
+      })
+    ),
+    updatedAt: v.number(),
+  }).index('by_userId', ['userId']),
 });
