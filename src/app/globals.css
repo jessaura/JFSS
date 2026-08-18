@@ -6345,3 +6345,44 @@ input, textarea, select {
   color: var(--crimson);
   font-size: var(--text-lg);
 }
+
+/* ============================================================
+   ACCOUNTS — checkout login gate + address book
+   ============================================================ */
+.jf-checkout-gate { text-align: center; display: flex; flex-direction: column; gap: var(--space-sm); padding: var(--space-xl) 0; }
+.jf-checkout-gate h3 { font-family: var(--font-display); font-size: var(--text-2xl); margin: 0 0 var(--space-xs); }
+.jf-checkout-gate .jf-btn { width: 100%; }
+
+.addr-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--space-lg);
+}
+.addr-card {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  box-shadow: var(--shadow-sm);
+}
+.addr-card.is-default { border-color: var(--crimson); }
+.addr-card h3 { font-family: var(--font-display); font-size: var(--text-lg); margin: 0 0 var(--space-xs); }
+.addr-card p { color: var(--text-secondary); font-size: var(--text-sm); line-height: 1.6; margin: 0 0 var(--space-md); }
+.addr-default-tag {
+  position: absolute; top: var(--space-md); right: var(--space-md);
+  font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700;
+  color: #fff; background: var(--crimson); padding: 3px 8px; border-radius: var(--radius-full);
+}
+.addr-actions { display: flex; flex-wrap: wrap; gap: var(--space-sm); }
+.addr-actions .jf-btn { padding: 8px 14px; font-size: var(--text-xs); }
+.addr-remove { color: var(--crimson); }
+.addr-form { display: flex; flex-direction: column; gap: var(--space-sm); }
+.addr-add {
+  display: flex; align-items: center; justify-content: center; gap: var(--space-sm);
+  border: 1.5px dashed var(--border-color-strong); border-radius: var(--radius-lg);
+  background: transparent; color: var(--text-secondary); font-weight: 600; cursor: pointer;
+  min-height: 120px; font-size: var(--text-sm); transition: border-color 0.3s ease, color 0.3s ease;
+}
+.addr-add:hover { border-color: var(--crimson); color: var(--crimson); }
+.addr-add span { font-size: var(--text-xl); }

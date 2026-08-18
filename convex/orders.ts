@@ -1,5 +1,6 @@
 import { mutation, query } from './_generated/server';
 import { v } from 'convex/values';
+import { getCurrentUser } from './users';
 
 /**
  * Public checkout endpoint — called by the storefront cart drawer.
@@ -34,6 +35,11 @@ export const place = mutation({
   handler: async (ctx, args) => {
     if (args.items.length === 0) throw new Error('Cannot place an empty order');
 
+    // Link the order to the signed-in customer when present. The storefront
+    // gates checkout behind login, so this is normally set; guests/legacy stay
+    // unlinked.
+    const user = await getCurrentUser(ctx);
+
     const subtotal = args.items.reduce((s, i) => s + i.price * i.quantity, 0);
     const shipping = subtotal >= 75 ? 0 : 6;
     const orderNumber = `JA-${Date.now().toString(36).toUpperCase()}`;
@@ -46,6 +52,7 @@ export const place = mutation({
       total: subtotal + shipping,
       status: 'pending',
       placedAt: Date.now(),
+      ...(user ? { userId: user._id } : {}),
     });
 
     // Draw down inventory. When the product has a size × colour matrix, reduce

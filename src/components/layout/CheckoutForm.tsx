@@ -14,7 +14,23 @@ const CONVEX_READY = Boolean(process.env.NEXT_PUBLIC_CONVEX_URL);
  * writes a real order to Convex, then clears the cart. Payment is handled
  * offline for now — orders land as "pending" for the shop to confirm.
  */
-export default function CheckoutForm({ onClose }: { onClose: () => void }) {
+export type CheckoutInitial = {
+  name?: string;
+  email?: string;
+  phone?: string;
+  line1?: string;
+  city?: string;
+  postcode?: string;
+  country?: string;
+};
+
+export default function CheckoutForm({
+  onClose,
+  initial,
+}: {
+  onClose: () => void;
+  initial?: CheckoutInitial;
+}) {
   const convex = useConvex();
   const { cart, cartTotal, clearCart } = useStore();
   const [busy, setBusy] = useState(false);
@@ -23,13 +39,13 @@ export default function CheckoutForm({ onClose }: { onClose: () => void }) {
   // wa.me link built from the order, or '' when no WhatsApp number is configured.
   const [waUrl, setWaUrl] = useState('');
   const [form, setForm] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    line1: '',
-    city: '',
-    postcode: '',
-    country: 'United Kingdom',
+    name: initial?.name ?? '',
+    email: initial?.email ?? '',
+    phone: initial?.phone ?? '',
+    line1: initial?.line1 ?? '',
+    city: initial?.city ?? '',
+    postcode: initial?.postcode ?? '',
+    country: initial?.country ?? 'United Kingdom',
     notes: '',
   });
 

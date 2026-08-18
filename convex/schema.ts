@@ -82,10 +82,13 @@ export default defineSchema({
     ),
     notes: v.optional(v.string()),
     placedAt: v.number(),
+    // Set when a signed-in customer places the order; absent for legacy/guest.
+    userId: v.optional(v.id('users')),
   })
     .index('by_status', ['status'])
     .index('by_email', ['customerEmail'])
-    .index('by_placedAt', ['placedAt']),
+    .index('by_placedAt', ['placedAt'])
+    .index('by_userId', ['userId']),
 
   subscribers: defineTable({
     email: v.string(),
@@ -111,4 +114,16 @@ export default defineSchema({
     marketingOptIn: v.boolean(),
     createdAt: v.number(),
   }).index('by_clerkId', ['clerkId']),
+
+  // Saved delivery addresses, one owner each. Exactly one row per user is the
+  // default (enforced in convex/addresses.ts).
+  addresses: defineTable({
+    userId: v.id('users'),
+    label: v.string(),
+    line1: v.string(),
+    city: v.string(),
+    postcode: v.string(),
+    country: v.string(),
+    isDefault: v.boolean(),
+  }).index('by_userId', ['userId']),
 });

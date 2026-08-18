@@ -6,6 +6,11 @@ import { useStore } from '@/store/store';
 import { getProductImage } from '@/data/images';
 import Link from 'next/link';
 import CheckoutForm from './CheckoutForm';
+import CheckoutGate from './CheckoutGate';
+
+// When Clerk is on, checkout requires login (CheckoutGate). Without Clerk
+// (local/dev before setup) fall back to the original guest form.
+const clerkEnabled = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
 
 export default function CartDrawer() {
   const { cart, cartOpen, closeCart, updateQuantity, removeFromCart, cartTotal, cartCount } = useStore();
@@ -41,7 +46,11 @@ export default function CartDrawer() {
 
             {checkingOut ? (
               <div className="cart-drawer-items">
-                <CheckoutForm onClose={() => setCheckingOut(false)} />
+                {clerkEnabled ? (
+                  <CheckoutGate onClose={() => setCheckingOut(false)} />
+                ) : (
+                  <CheckoutForm onClose={() => setCheckingOut(false)} />
+                )}
               </div>
             ) : (
               <>
