@@ -1,11 +1,6 @@
 import { mutation, query } from './_generated/server';
 import { v } from 'convex/values';
-
-// Same admin gate as admin.ts / files.ts.
-function checkKey(adminKey: string) {
-  const expected = process.env.ADMIN_KEY;
-  if (!expected || adminKey !== expected) throw new Error('Invalid admin key');
-}
+import { checkAdmin } from './adminAuth';
 
 /**
  * Public store settings — currently just the WhatsApp order number, which is
@@ -23,7 +18,7 @@ export const get = query({
 export const update = mutation({
   args: { adminKey: v.string(), whatsappNumber: v.string() },
   handler: async (ctx, { adminKey, whatsappNumber }) => {
-    checkKey(adminKey);
+    await checkAdmin(ctx, adminKey);
     const existing = await ctx.db.query('settings').first();
     if (existing) {
       await ctx.db.patch(existing._id, { whatsappNumber, updatedAt: Date.now() });

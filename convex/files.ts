@@ -1,13 +1,6 @@
 import { mutation } from './_generated/server';
 import { v } from 'convex/values';
-
-// Same admin gate as admin.ts — checked against the ADMIN_KEY env var set in
-// the Convex dashboard. Duplicated (3 lines) rather than shared, since Convex
-// bundles each function module on its own.
-function checkKey(adminKey: string) {
-  const expected = process.env.ADMIN_KEY;
-  if (!expected || adminKey !== expected) throw new Error('Invalid admin key');
-}
+import { checkAdmin } from './adminAuth';
 
 /**
  * Image upload, two steps:
@@ -20,7 +13,7 @@ function checkKey(adminKey: string) {
 export const generateUploadUrl = mutation({
   args: { adminKey: v.string() },
   handler: async (ctx, { adminKey }) => {
-    checkKey(adminKey);
+    await checkAdmin(ctx, adminKey);
     return await ctx.storage.generateUploadUrl();
   },
 });
@@ -28,7 +21,7 @@ export const generateUploadUrl = mutation({
 export const urlForStorageId = mutation({
   args: { adminKey: v.string(), storageId: v.id('_storage') },
   handler: async (ctx, { adminKey, storageId }) => {
-    checkKey(adminKey);
+    await checkAdmin(ctx, adminKey);
     return await ctx.storage.getUrl(storageId);
   },
 });

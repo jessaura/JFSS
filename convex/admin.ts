@@ -1,15 +1,19 @@
 import { mutation, query } from './_generated/server';
 import { v } from 'convex/values';
+import { checkAdmin, isAdminIdentity } from './adminAuth';
 
-// Admin auth: every function takes adminKey and checks it against the
-// ADMIN_KEY env var set in the Convex dashboard (Settings → Environment
-// Variables). Not multi-user auth — honest protection for a small store.
+// Admin actions authorize two ways (see convex/adminAuth.ts): a signed-in Clerk
+// admin (email in ADMIN_EMAILS) OR the ADMIN_KEY passcode as a fallback.
+// checkKey below is the passcode-only check, kept for the verifyKey gate.
 function checkKey(adminKey: string) {
   const expected = process.env.ADMIN_KEY;
   if (!expected || adminKey !== expected) {
     throw new Error('Invalid admin key');
   }
 }
+
+/** Whether the current Clerk user is an admin — drives the admin UI gate. */
+export const isAdmin = query({ args: {}, handler: (ctx) => isAdminIdentity(ctx) });
 
 const orderStatus = v.union(
   v.literal('pending'),
@@ -60,7 +64,7 @@ export const verifyKey = query({
 export const createProduct = mutation({
   args: { adminKey: v.string(), product: v.object(productFields) },
   handler: async (ctx, { adminKey, product }) => {
-    checkKey(adminKey);
+    await checkAdmin(ctx, adminKey);
     const productId = `p${Date.now().toString(36)}`;
     return ctx.db.insert('products', { productId, ...product });
   },
@@ -75,7 +79,7 @@ export const createProduct = mutation({
 export const upsertProduct = mutation({
   args: { adminKey: v.string(), productId: v.string(), product: v.object(productFields) },
   handler: async (ctx, { adminKey, productId, product }) => {
-    checkKey(adminKey);
+    await checkAdmin(ctx, adminKey);
     const existing = await ctx.db
       .query('products')
       .withIndex('by_productId', (q) => q.eq('productId', productId))
@@ -123,7 +127,7 @@ export const updateProduct = mutation({
     }),
   },
   handler: async (ctx, { adminKey, id, patch }) => {
-    checkKey(adminKey);
+    await checkAdmin(ctx, adminKey);
     await ctx.db.patch(id, patch);
   },
 });
@@ -131,7 +135,7 @@ export const updateProduct = mutation({
 export const deleteProduct = mutation({
   args: { adminKey: v.string(), id: v.id('products') },
   handler: async (ctx, { adminKey, id }) => {
-    checkKey(adminKey);
+    await checkAdmin(ctx, adminKey);
     await ctx.db.delete(id);
   },
 });
@@ -141,7 +145,7 @@ export const deleteProduct = mutation({
 export const listOrders = query({
   args: { adminKey: v.string() },
   handler: async (ctx, { adminKey }) => {
-    checkKey(adminKey);
+    await checkAdmin(ctx, adminKey);
     return ctx.db.query('orders').withIndex('by_placedAt').order('desc').collect();
   },
 });
@@ -149,7 +153,7 @@ export const listOrders = query({
 export const updateOrderStatus = mutation({
   args: { adminKey: v.string(), id: v.id('orders'), status: orderStatus },
   handler: async (ctx, { adminKey, id, status }) => {
-    checkKey(adminKey);
+    await checkAdmin(ctx, adminKey);
     await ctx.db.patch(id, { status });
   },
 });
@@ -157,7 +161,7 @@ export const updateOrderStatus = mutation({
 export const updateOrderNotes = mutation({
   args: { adminKey: v.string(), id: v.id('orders'), notes: v.string() },
   handler: async (ctx, { adminKey, id, notes }) => {
-    checkKey(adminKey);
+    await checkAdmin(ctx, adminKey);
     await ctx.db.patch(id, { notes });
   },
 });
@@ -165,7 +169,7 @@ export const updateOrderNotes = mutation({
 export const deleteOrder = mutation({
   args: { adminKey: v.string(), id: v.id('orders') },
   handler: async (ctx, { adminKey, id }) => {
-    checkKey(adminKey);
+    await checkAdmin(ctx, adminKey);
     await ctx.db.delete(id);
   },
 });
@@ -178,7 +182,7 @@ export const deleteOrder = mutation({
 export const listCustomers = query({
   args: { adminKey: v.string() },
   handler: async (ctx, { adminKey }) => {
-    checkKey(adminKey);
+    await checkAdmin(ctx, adminKey);
     const orders = await ctx.db.query('orders').collect();
 
     const byEmail = new Map<
@@ -234,7 +238,7 @@ export const listCustomers = query({
 export const listSubscribers = query({
   args: { adminKey: v.string() },
   handler: async (ctx, { adminKey }) => {
-    checkKey(adminKey);
+    await checkAdmin(ctx, adminKey);
     const subs = await ctx.db.query('subscribers').collect();
     return subs.sort((a, b) => b.createdAt - a.createdAt);
   },
@@ -243,7 +247,7 @@ export const listSubscribers = query({
 export const deleteSubscriber = mutation({
   args: { adminKey: v.string(), id: v.id('subscribers') },
   handler: async (ctx, { adminKey, id }) => {
-    checkKey(adminKey);
+    await checkAdmin(ctx, adminKey);
     await ctx.db.delete(id);
   },
 });
@@ -253,7 +257,7 @@ export const deleteSubscriber = mutation({
 export const dashboard = query({
   args: { adminKey: v.string() },
   handler: async (ctx, { adminKey }) => {
-    checkKey(adminKey);
+    await checkAdmin(ctx, adminKey);
     const [orders, products, subscribers] = await Promise.all([
       ctx.db.query('orders').collect(),
       ctx.db.query('products').collect(),

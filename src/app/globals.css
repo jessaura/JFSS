@@ -7044,3 +7044,9 @@ input, textarea, select {
   .jf-shop-price { font-size: 0.78rem; }
   .jf-quick-add-btn { padding: 4px 8px; font-size: 0.65rem; }
 }
+
+/* Admin gate — Clerk login option above the passcode fallback */
+.adm-clerk { display: flex; flex-direction: column; gap: var(--space-sm); margin: var(--space-sm) 0 var(--space-md); }
+.adm-clerk-btn { width: 100%; text-align: center; text-decoration: none; }
+.adm-or { text-align: center; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--adm-ink-2, #57534E); }
+.navbar-admin { font-weight: 600; color: var(--crimson); }

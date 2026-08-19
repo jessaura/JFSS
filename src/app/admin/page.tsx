@@ -6,6 +6,7 @@ import { useState, FormEvent, useCallback, useSyncExternalStore } from 'react';
 import Link from 'next/link';
 import { useConvex, useQuery } from 'convex/react';
 import { anyApi } from 'convex/server';
+import { useUser, useClerk } from '@clerk/nextjs';
 import { Icon } from '@/components/admin/ui';
 import Dashboard from '@/components/admin/Dashboard';
 import Orders from '@/components/admin/Orders';
@@ -15,6 +16,7 @@ import Subscribers from '@/components/admin/Subscribers';
 import Settings from '@/components/admin/Settings';
 
 const CONVEX_READY = Boolean(process.env.NEXT_PUBLIC_CONVEX_URL);
+const CLERK_ENABLED = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
 
 const NAV = [
   { id: 'dashboard', label: 'Dashboard', icon: Icon.dashboard },
@@ -71,16 +73,43 @@ export default function AdminPage() {
     );
   }
 
-  return adminKey ? (
-    <Console adminKey={adminKey} onLogout={() => keyStore.set(null)} />
-  ) : (
-    <Gate onAuthed={(key) => keyStore.set(key)} />
-  );
+  // Passcode fallback still works even with Clerk on.
+  if (adminKey) return <Console adminKey={adminKey} onLogout={() => keyStore.set(null)} />;
+  if (CLERK_ENABLED) return <ClerkAdmin />;
+  return <Gate onAuthed={(key) => keyStore.set(key)} />;
 }
 
-/* ---------- Passcode gate ---------- */
+/* ---------- Clerk-admin path (log in once with your account) ---------- */
 
-function Gate({ onAuthed }: { onAuthed: (key: string) => void }) {
+function ClerkAdmin() {
+  const { isLoaded, isSignedIn } = useUser();
+  const { signOut } = useClerk();
+  const isAdmin = useQuery(anyApi.admin.isAdmin) as boolean | undefined;
+
+  // A signed-in admin gets straight in — the empty adminKey is authorized by
+  // the Clerk token server-side (see convex/adminAuth.ts).
+  if (isSignedIn && isAdmin === true) {
+    return <Console adminKey="" onLogout={() => signOut({ redirectUrl: '/' })} />;
+  }
+  if (!isLoaded || (isSignedIn && isAdmin === undefined)) {
+    return (
+      <div className="adm-shell adm-center">
+        <div className="adm-panel"><p className="adm-note">Checking access…</p></div>
+      </div>
+    );
+  }
+  return <Gate onAuthed={(key) => keyStore.set(key)} signedInNotAdmin={Boolean(isSignedIn)} />;
+}
+
+/* ---------- Passcode gate (+ Clerk login button when enabled) ---------- */
+
+function Gate({
+  onAuthed,
+  signedInNotAdmin,
+}: {
+  onAuthed: (key: string) => void;
+  signedInNotAdmin?: boolean;
+}) {
   const convex = useConvex();
   const [key, setKey] = useState('');
   const [show, setShow] = useState(false);
@@ -107,6 +136,22 @@ function Gate({ onAuthed }: { onAuthed: (key: string) => void }) {
         <img src="/images/JA logo.png" alt="" className="adm-gate-logo" />
         <h1 className="adm-brand">JessAura Admin</h1>
         <p className="adm-note">Sign in to manage orders, products and customers.</p>
+
+        {CLERK_ENABLED && (
+          <div className="adm-clerk">
+            {signedInNotAdmin ? (
+              <p className="adm-error" role="alert">
+                You’re signed in, but this account isn’t an admin. Ask the owner to add your
+                email to <code>ADMIN_EMAILS</code>, or use the passcode below.
+              </p>
+            ) : (
+              <Link href="/login?redirect_url=/admin" className="adm-btn adm-btn-primary adm-clerk-btn">
+                Log in with your account
+              </Link>
+            )}
+            <p className="adm-or">or use the admin passcode</p>
+          </div>
+        )}
 
         <label className="adm-field">
           <span className="adm-label">Admin passcode</span>

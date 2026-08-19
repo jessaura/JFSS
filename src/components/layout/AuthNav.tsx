@@ -2,6 +2,8 @@
 
 import Link from 'next/link';
 import { useUser, UserButton } from '@clerk/nextjs';
+import { useQuery } from 'convex/react';
+import { anyApi } from 'convex/server';
 
 /**
  * Navbar auth controls. Uses the client hook `useUser` (not the <SignedIn>/
@@ -11,6 +13,8 @@ import { useUser, UserButton } from '@clerk/nextjs';
  */
 export default function AuthNav() {
   const { isLoaded, isSignedIn } = useUser();
+  // Only fetches once signed in; shows the Admin shortcut for allow-listed admins.
+  const isAdmin = useQuery(anyApi.admin.isAdmin) as boolean | undefined;
 
   // Until Clerk hydrates, render nothing (avoids a signed-in/out flash and
   // any prerender-time auth access).
@@ -26,6 +30,9 @@ export default function AuthNav() {
 
   return (
     <>
+      {isAdmin && (
+        <Link href="/admin" className="navbar-link navbar-admin">Admin</Link>
+      )}
       <Link href="/account" className="navbar-icon-btn" aria-label="My account">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
           <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
