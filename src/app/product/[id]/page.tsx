@@ -7,7 +7,7 @@ import gsap from 'gsap';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import CartDrawer from '@/components/layout/CartDrawer';
-import { Product, isUnpriced, colorAt, variantStock } from '@/data/products';
+import { Product, isUnpriced, colorAt, variantStock, formatPrice } from '@/data/products';
 import { getProductImage } from '@/data/images';
 import { useProduct, useCatalogue } from '@/components/providers/CatalogueProvider';
 import { useStore } from '@/store/store';
@@ -271,7 +271,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ id: st
                 {isUnpriced(product) ? (
                   <span className="current product-poa">Price on request</span>
                 ) : (
-                  <span className="current">£{product.price}</span>
+                  <span className="current">£{formatPrice(product.price)}</span>
                 )}
                 {!isUnpriced(product) && product.originalPrice && (
                   <>
@@ -496,7 +496,7 @@ function RelatedCard({ product, index }: { product: Product; index: number }) {
               <span className="current product-poa">Price on request</span>
             ) : (
               <>
-                <span className="current">£{product.price}</span>
+                <span className="current">£{formatPrice(product.price)}</span>
                 {product.originalPrice && <span className="was">£{product.originalPrice}</span>}
               </>
             )}

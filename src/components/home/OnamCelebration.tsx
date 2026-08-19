@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { getOnamProducts, isUnpriced, colorAt } from '@/data/products';
+import { getOnamProducts, isUnpriced, colorAt, formatPrice } from '@/data/products';
 import { getProductImage } from '@/data/images';
 import { useCatalogue } from '@/components/providers/CatalogueProvider';
 
@@ -41,7 +41,7 @@ export default function OnamCelebration() {
                   <p className="jf-onam-cat">{product.subcategory}</p>
                   <h3 className="jf-onam-name">{product.name}</h3>
                   <span className="jf-onam-price">
-                    {isUnpriced(product) ? 'Price on request' : `£${product.price}`}
+                    {isUnpriced(product) ? 'Price on request' : `£${formatPrice(product.price)}`}
                   </span>
                 </div>
               </Link>

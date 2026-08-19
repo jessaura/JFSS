@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { getClearanceProducts, discountPercent } from '@/data/products';
+import { getClearanceProducts, discountPercent, formatPrice } from '@/data/products';
 import { getProductImage } from '@/data/images';
 
 /**
@@ -36,8 +36,8 @@ export default function ClearanceRail() {
         <p className="jf-clear-cat">{product.subcategory}</p>
         <h3 className="jf-clear-name">{product.name}</h3>
         <div className="jf-clear-price">
-          <span className="now">£{product.price}</span>
-          {product.originalPrice && <span className="was">£{product.originalPrice}</span>}
+          <span className="now">£{formatPrice(product.price)}</span>
+          {product.originalPrice && <span className="was">£{formatPrice(product.originalPrice)}</span>}
         </div>
       </div>
     </Link>

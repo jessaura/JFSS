@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { getFeaturedProducts, Product, isUnpriced } from '@/data/products';
+import { getFeaturedProducts, Product, isUnpriced, formatPrice } from '@/data/products';
 import { getProductImage } from '@/data/images';
 import { useStore } from '@/store/store';
 
@@ -56,7 +56,7 @@ function EditCard({ product }: { product: Product }) {
             <span className="poa">Price on request</span>
           ) : (
             <>
-              <span className="now">£{product.price}</span>
+              <span className="now">£{formatPrice(product.price)}</span>
               {product.originalPrice && <span className="was">£{product.originalPrice}</span>}
             </>
           )}

@@ -7,7 +7,7 @@ import { useQuery } from 'convex/react';
 import { anyApi } from 'convex/server';
 import HeroLoopingLogo from './HeroLoopingLogo';
 import HeroRoulette from './HeroRoulette';
-import { getFeaturedProducts, isUnpriced } from '@/data/products';
+import { getFeaturedProducts, isUnpriced, formatPrice } from '@/data/products';
 import { getProductImage } from '@/data/images';
 
 const CONVEX_READY = Boolean(process.env.NEXT_PUBLIC_CONVEX_URL);
@@ -97,7 +97,7 @@ export default function HeroSection() {
               <span className="jf-hero-float-text">
                 <span className="jf-hero-float-name">{product.name}</span>
                 <span className="jf-hero-float-price">
-                  {isUnpriced(product) ? 'Price on request' : `£${product.price}`}
+                  {isUnpriced(product) ? 'Price on request' : `£${formatPrice(product.price)}`}
                 </span>
               </span>
             </Link>

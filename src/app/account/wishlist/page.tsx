@@ -6,7 +6,7 @@ import Footer from '@/components/layout/Footer';
 import CartDrawer from '@/components/layout/CartDrawer';
 import { useStore } from '@/store/store';
 import { useCatalogue } from '@/components/providers/CatalogueProvider';
-import { colorAt, isUnpriced } from '@/data/products';
+import { colorAt, isUnpriced, formatPrice } from '@/data/products';
 import { getProductImage } from '@/data/images';
 
 export default function WishlistPage() {
@@ -49,7 +49,7 @@ export default function WishlistPage() {
                   </Link>
                   <div className="wish-body">
                     <Link href={`/product/${product.id}`} className="wish-name">{product.name}</Link>
-                    <span className="wish-price">{isUnpriced(product) ? 'Price on request' : `£${product.price}`}</span>
+                    <span className="wish-price">{isUnpriced(product) ? 'Price on request' : `£${formatPrice(product.price)}`}</span>
                     <div className="wish-actions">
                       {!isUnpriced(product) && (
                         <button
