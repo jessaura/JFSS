@@ -6865,10 +6865,13 @@ input, textarea, select {
 .jf-shop-media {
   position: relative;
   display: block;
-  aspect-ratio: 1 / 1;
+  /* Portrait, to match the product photos (all ~3/4) — a square crop pushed
+     full-body shots up and cut them awkwardly. */
+  aspect-ratio: 3 / 4;
   overflow: hidden;
   background: var(--bg-secondary);
 }
+.jf-shop-media img { object-position: center top; }
 .jf-shop-media img {
   width: 100%;
   height: 100%;
