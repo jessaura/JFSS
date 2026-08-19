@@ -213,7 +213,11 @@ export default function Products({
                       <img src={p.images[0] || IMAGE_PENDING} alt="" className="adm-thumb" />
                       <div className="adm-list-main">
                         <span className="adm-name">{p.name}</span>
-                        <span className="adm-muted">{p.subcategory} · {p.fabric}</span>
+                        <span className="adm-muted">
+                          <code className="adm-pid">{p.productId}</code>
+                          {p.subcategory ? ` · ${p.subcategory}` : ''}
+                          {p.fabric ? ` · ${p.fabric}` : ''}
+                        </span>
                       </div>
                     </div>
                   </td>

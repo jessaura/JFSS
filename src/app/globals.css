@@ -4232,6 +4232,16 @@ input, textarea, select {
 }
 .adm-name { font-weight: 600; color: var(--adm-ink); }
 .adm-muted { font-size: 0.76rem; color: var(--adm-ink-2); }
+.adm-pid {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--crimson);
+  background: rgba(179, 18, 42, 0.08);
+  padding: 1px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.02em;
+}
 .adm-muted a { color: inherit; }
 .adm-num { font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
 .adm-num-danger { color: var(--adm-danger); }
