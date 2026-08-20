@@ -2,6 +2,8 @@
 
 import { useQuery } from 'convex/react';
 import { anyApi } from 'convex/server';
+import { useCatalogue } from '@/components/providers/CatalogueProvider';
+import { totalStock } from '@/data/products';
 import { money, shortDate, Stat, StatusPill, Skeleton, EmptyState, Icon, OrderStatus } from './ui';
 
 type DashboardData = {
@@ -35,6 +37,18 @@ export default function Dashboard({
 }) {
   const data = useQuery(anyApi.admin.dashboard, { adminKey }) as DashboardData | undefined;
 
+  // Product totals come from the FULL catalogue (static + Convex overlay), not
+  // just the Convex rows — otherwise the count only reflects edited products.
+  const catalogue = useCatalogue();
+  const productCount = catalogue.length;
+  const featuredCount = catalogue.filter((p) => p.featured).length;
+  const manualSold = catalogue.reduce((n, p) => n + (p.sold ?? 0), 0);
+  const lowStock = catalogue
+    .map((p) => ({ name: p.name, stock: totalStock(p) }))
+    .filter((x) => x.stock <= 5)
+    .sort((a, b) => a.stock - b.stock)
+    .slice(0, 12);
+
   if (!data) return <Skeleton rows={6} />;
 
   return (
@@ -49,7 +63,8 @@ export default function Dashboard({
           sub={`${data.pending} new · ${data.toShip} to ship`}
           tone={data.pending + data.toShip > 0 ? 'accent' : undefined}
         />
-        <Stat label="Products" value={data.productCount} sub={`${data.featuredCount} featured`} />
+        <Stat label="Products" value={productCount} sub={`${featuredCount} featured`} />
+        <Stat label="Units sold (manual)" value={manualSold} sub="recorded in Products" />
         <Stat label="Subscribers" value={data.subscriberCount} />
       </div>
 
@@ -105,13 +120,13 @@ export default function Dashboard({
         </section>
       </div>
 
-      {data.lowStock.length > 0 && (
+      {lowStock.length > 0 && (
         <section className="adm-card adm-card-warn">
           <header className="adm-card-head">
             <h2><span className="adm-card-icon"><Icon.alert /></span> Low stock</h2>
           </header>
           <ul className="adm-list">
-            {data.lowStock.map((p) => (
+            {lowStock.map((p) => (
               <li key={p.name} className="adm-list-row">
                 <div className="adm-list-main"><span>{p.name}</span></div>
                 <span className={`adm-num ${p.stock === 0 ? 'adm-num-danger' : ''}`}>

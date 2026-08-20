@@ -37,6 +37,7 @@ export interface Product {
   rating: number;
   reviews: number;
   stock?: number;
+  sold?: number;
   variants?: ProductVariant[];
 }
 

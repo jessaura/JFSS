@@ -46,6 +46,7 @@ const productFields = {
   rating: v.number(),
   reviews: v.number(),
   stock: v.optional(v.number()),
+  sold: v.optional(v.number()),
   variants: v.optional(
     v.array(v.object({ size: v.string(), color: v.string(), quantity: v.number() }))
   ),

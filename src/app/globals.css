@@ -7053,3 +7053,9 @@ input, textarea, select {
 .adm-clerk-btn { width: 100%; text-align: center; text-decoration: none; }
 .adm-or { text-align: center; font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--adm-ink-2, #57534E); }
 .navbar-admin { font-weight: 600; color: var(--crimson); }
+
+/* Admin — manual sold control */
+.adm-sold { display: block; margin-top: 3px; font-size: 0.66rem; font-weight: 600; color: #2e6b4f; }
+.adm-btn-sold { color: #2e6b4f; border-color: rgba(46, 107, 79, 0.35); }
+.adm-btn-sold:hover:not(:disabled) { background: rgba(46, 107, 79, 0.1); }
+.adm-btn-sold:disabled { opacity: 0.4; cursor: not-allowed; }

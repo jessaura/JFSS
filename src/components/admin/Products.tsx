@@ -41,6 +41,7 @@ function toFields(p: Product & { stock?: number }) {
     rating: p.rating ?? 0,
     reviews: p.reviews ?? 0,
     ...(p.stock !== undefined ? { stock: p.stock } : {}),
+    ...(p.sold !== undefined ? { sold: p.sold } : {}),
     ...(p.variants ? { variants: p.variants } : {}),
   };
 }
@@ -125,6 +126,39 @@ export default function Products({
         ...prev,
         [p._id]: { ...(prev[p._id] || {}), stock: newStock },
       }));
+    }
+  }
+
+  // Record a manual (WhatsApp/offline) sale: reduce stock — drawing down a
+  // variant when the piece has a size×colour matrix — and tally units sold.
+  async function recordSale(p: ProductDoc, qty = 1) {
+    let variants = p.variants;
+    let stock = p.stock ?? 0;
+    if (variants && variants.length) {
+      let remaining = qty;
+      variants = variants.map((v) => {
+        if (remaining > 0 && v.quantity > 0) {
+          const take = Math.min(remaining, v.quantity);
+          remaining -= take;
+          return { ...v, quantity: v.quantity - take };
+        }
+        return v;
+      });
+      stock = variants.reduce((n, v) => n + v.quantity, 0);
+    } else {
+      stock = Math.max(0, stock - qty);
+    }
+    const sold = (p.sold ?? 0) + qty;
+    const patch: Partial<ProductDoc> = { stock, sold, ...(p.variants ? { variants } : {}) };
+    try {
+      await persist(p, patch);
+      notify(`Recorded ${qty} sold — ${p.name}`);
+    } catch {
+      setLocalOverrides((prev) => ({
+        ...prev,
+        [p._id]: { ...(prev[p._id] || {}), ...patch },
+      }));
+      notify(`Recorded ${qty} sold — ${p.name}`);
     }
   }
 
@@ -236,6 +270,7 @@ export default function Products({
                       value={p.stock ?? 0}
                       onChange={(e) => setStock(p, Number(e.target.value))}
                     />
+                    {(p.sold ?? 0) > 0 && <span className="adm-sold">{p.sold} sold</span>}
                   </td>
                   <td>
                     <div className="adm-flags">
@@ -254,6 +289,14 @@ export default function Products({
                   </td>
                   <td>
                     <div className="adm-actions">
+                      <button
+                        className="adm-btn adm-btn-sm adm-btn-sold"
+                        onClick={() => recordSale(p, 1)}
+                        disabled={(p.stock ?? 0) <= 0}
+                        title="Record one sold — reduces stock"
+                      >
+                        + Sold
+                      </button>
                       <button className="adm-btn adm-btn-sm" onClick={() => setEditing(p)}>Edit</button>
                       <button className="adm-btn adm-btn-sm adm-btn-danger" onClick={() => remove(p)}>Delete</button>
                     </div>

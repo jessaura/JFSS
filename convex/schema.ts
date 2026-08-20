@@ -30,6 +30,9 @@ export default defineSchema({
     reviews: v.number(),
     // Inventory. Optional so pre-existing seeded docs stay valid.
     stock: v.optional(v.number()),
+    // Cumulative units sold, recorded manually by the admin (WhatsApp/offline
+    // sales don't flow through checkout). Optional/back-compatible.
+    sold: v.optional(v.number()),
     // Size × colour stock matrix. `color` references a ProductColor.name
     // ('' for colourless pieces). When present, it is the source of truth for
     // availability; total stock is the sum of quantities.
