@@ -8,6 +8,9 @@ import { useStore } from '@/store/store';
 import { getProductImage } from '@/data/images';
 
 const CONVEX_READY = Boolean(process.env.NEXT_PUBLIC_CONVEX_URL);
+// Where order enquiries go on WhatsApp. Used unless the owner sets a different
+// number in Admin → Settings.
+const DEFAULT_WHATSAPP = '+44 7909707271';
 
 /**
  * Checkout sheet inside the cart drawer. Collects delivery details and
@@ -110,7 +113,7 @@ export default function CheckoutForm({
       const settings = (await convex.query(anyApi.settings.get, {})) as
         | { whatsappNumber?: string }
         | null;
-      setWaUrl(buildWaUrl(res.orderNumber, settings?.whatsappNumber ?? ''));
+      setWaUrl(buildWaUrl(res.orderNumber, settings?.whatsappNumber || DEFAULT_WHATSAPP));
       setPlaced(res.orderNumber);
       clearCart();
     } catch {
