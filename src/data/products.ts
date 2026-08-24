@@ -4046,6 +4046,236 @@ export const products: Product[] = [
     "rating": 0,
     "reviews": 0,
     "stock": 10
+  },
+  {
+    "id": "p110",
+    "name": "Kids Jeans - 96",
+    "slug": "kids-jeans-96-p110",
+    "price": 0,
+    "shortDescription": "Kids' Jeans",
+    "description": "Kids Jeans - 96. Boys' denim jeans.",
+    "category": "kids",
+    "subcategory": "Jeans",
+    "fabric": "Denim",
+    "colors": [
+      {
+        "name": "Stone Ash",
+        "hex": "#B7ADA1",
+        "image": ""
+      },
+      {
+        "name": "Stone Blue",
+        "hex": "#6C7A8A",
+        "image": ""
+      },
+      {
+        "name": "Ash Grey",
+        "hex": "#8C8F91",
+        "image": ""
+      }
+    ],
+    "sizes": [
+      "28",
+      "30",
+      "26"
+    ],
+    "images": [],
+    "tags": [
+      "jeans",
+      "kids",
+      "denim"
+    ],
+    "featured": false,
+    "new": true,
+    "bestSeller": false,
+    "rating": 0,
+    "reviews": 0,
+    "stock": 12,
+    "variants": [
+      {
+        "size": "28",
+        "color": "Stone Ash",
+        "quantity": 2
+      },
+      {
+        "size": "28",
+        "color": "Stone Blue",
+        "quantity": 2
+      },
+      {
+        "size": "30",
+        "color": "Ash Grey",
+        "quantity": 2
+      },
+      {
+        "size": "26",
+        "color": "Stone Ash",
+        "quantity": 2
+      },
+      {
+        "size": "26",
+        "color": "Stone Blue",
+        "quantity": 2
+      },
+      {
+        "size": "30",
+        "color": "Stone Blue",
+        "quantity": 2
+      }
+    ]
+  },
+  {
+    "id": "p111",
+    "name": "Kids Jeans - Trendy 99",
+    "slug": "kids-jeans-trendy-99-p111",
+    "price": 0,
+    "shortDescription": "Kids' Jeans",
+    "description": "Kids Jeans - Trendy 99. Boys' denim jeans.",
+    "category": "kids",
+    "subcategory": "Jeans",
+    "fabric": "Denim",
+    "colors": [],
+    "sizes": [
+      "28",
+      "30",
+      "26"
+    ],
+    "images": [],
+    "tags": [
+      "jeans",
+      "kids",
+      "denim"
+    ],
+    "featured": false,
+    "new": true,
+    "bestSeller": false,
+    "rating": 0,
+    "reviews": 0,
+    "stock": 6,
+    "variants": [
+      {
+        "size": "28",
+        "color": "",
+        "quantity": 2
+      },
+      {
+        "size": "30",
+        "color": "",
+        "quantity": 2
+      },
+      {
+        "size": "26",
+        "color": "",
+        "quantity": 2
+      }
+    ]
+  },
+  {
+    "id": "p112",
+    "name": "Kids Jeans - Red Stripe",
+    "slug": "kids-jeans-red-stripe-p112",
+    "price": 0,
+    "shortDescription": "Kids' Jeans",
+    "description": "Kids Jeans - Red Stripe. Boys' denim jeans.",
+    "category": "kids",
+    "subcategory": "Jeans",
+    "fabric": "Denim",
+    "colors": [
+      {
+        "name": "Stone Ash",
+        "hex": "#B7ADA1",
+        "image": ""
+      },
+      {
+        "name": "Grey Green",
+        "hex": "#7C8574",
+        "image": ""
+      },
+      {
+        "name": "Navy blue",
+        "hex": "#1E2A4A",
+        "image": ""
+      }
+    ],
+    "sizes": [
+      "28",
+      "30",
+      "26",
+      "22"
+    ],
+    "images": [],
+    "tags": [
+      "jeans",
+      "kids",
+      "denim"
+    ],
+    "featured": false,
+    "new": true,
+    "bestSeller": false,
+    "rating": 0,
+    "reviews": 0,
+    "stock": 6,
+    "variants": [
+      {
+        "size": "28",
+        "color": "",
+        "quantity": 2
+      },
+      {
+        "size": "30",
+        "color": "Stone Ash",
+        "quantity": 1
+      },
+      {
+        "size": "30",
+        "color": "Grey Green",
+        "quantity": 1
+      },
+      {
+        "size": "26",
+        "color": "Navy blue",
+        "quantity": 1
+      },
+      {
+        "size": "22",
+        "color": "Navy blue",
+        "quantity": 1
+      }
+    ]
+  },
+  {
+    "id": "p113",
+    "name": "Kids Jeans - RDN",
+    "slug": "kids-jeans-rdn-p113",
+    "price": 0,
+    "shortDescription": "Kids' Jeans",
+    "description": "Kids Jeans - RDN. Boys' denim jeans.",
+    "category": "kids",
+    "subcategory": "Jeans",
+    "fabric": "Denim",
+    "colors": [],
+    "sizes": [
+      "28"
+    ],
+    "images": [],
+    "tags": [
+      "jeans",
+      "kids",
+      "denim"
+    ],
+    "featured": false,
+    "new": true,
+    "bestSeller": false,
+    "rating": 0,
+    "reviews": 0,
+    "stock": 2,
+    "variants": [
+      {
+        "size": "28",
+        "color": "",
+        "quantity": 2
+      }
+    ]
   }
 ];
 
