@@ -1,4 +1,5 @@
 import { mutation, query } from './_generated/server';
+import type { MutationCtx } from './_generated/server';
 import { v } from 'convex/values';
 import { checkAdmin, isAdminIdentity } from './adminAuth';
 
@@ -172,6 +173,59 @@ export const deleteOrder = mutation({
   handler: async (ctx, { adminKey, id }) => {
     await checkAdmin(ctx, adminKey);
     await ctx.db.delete(id);
+  },
+});
+
+/** Adjust each ordered item's stock/variant + sold tally by `sign` (+1 sell, -1 revert). */
+async function applyOrderStock(
+  ctx: MutationCtx,
+  items: { productId: string; size: string; color: string; quantity: number }[],
+  sign: 1 | -1
+) {
+  for (const item of items) {
+    const product = await ctx.db
+      .query('products')
+      .withIndex('by_productId', (q) => q.eq('productId', item.productId))
+      .unique();
+    if (!product) continue;
+    const patch: Record<string, unknown> = {};
+    if (product.variants && product.variants.length) {
+      const variants = product.variants.map((v) =>
+        v.size === item.size && v.color === item.color
+          ? { ...v, quantity: Math.max(0, v.quantity - sign * item.quantity) }
+          : v
+      );
+      patch.variants = variants;
+      patch.stock = variants.reduce((n, v) => n + v.quantity, 0);
+    } else if (typeof product.stock === 'number') {
+      patch.stock = Math.max(0, product.stock - sign * item.quantity);
+    }
+    patch.sold = Math.max(0, (product.sold ?? 0) + sign * item.quantity);
+    await ctx.db.patch(product._id, patch);
+  }
+}
+
+/** Mark an order Sold: draw its items out of stock once, tally sold, set delivered. */
+export const markOrderSold = mutation({
+  args: { adminKey: v.string(), id: v.id('orders') },
+  handler: async (ctx, { adminKey, id }) => {
+    await checkAdmin(ctx, adminKey);
+    const order = await ctx.db.get(id);
+    if (!order) throw new Error('Order not found');
+    if (!order.stockApplied) await applyOrderStock(ctx, order.items, 1);
+    await ctx.db.patch(id, { stockApplied: true, status: 'delivered' });
+  },
+});
+
+/** Mark an order Unsold: restore stock if it had been applied, set cancelled. */
+export const markOrderUnsold = mutation({
+  args: { adminKey: v.string(), id: v.id('orders') },
+  handler: async (ctx, { adminKey, id }) => {
+    await checkAdmin(ctx, adminKey);
+    const order = await ctx.db.get(id);
+    if (!order) throw new Error('Order not found');
+    if (order.stockApplied) await applyOrderStock(ctx, order.items, -1);
+    await ctx.db.patch(id, { stockApplied: false, status: 'cancelled' });
   },
 });
 

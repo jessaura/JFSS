@@ -25,6 +25,7 @@ type Order = {
   status: OrderStatus;
   notes?: string;
   placedAt: number;
+  stockApplied?: boolean;
 };
 
 export default function Orders({
@@ -63,6 +64,18 @@ export default function Orders({
     await convex.mutation(anyApi.admin.updateOrderStatus, { adminKey, id: order._id, status });
     setOpen((o) => (o && o._id === order._id ? { ...o, status } : o));
     notify(`${order.orderNumber} marked ${status}`);
+  }
+
+  async function markSold(order: Order) {
+    await convex.mutation(anyApi.admin.markOrderSold, { adminKey, id: order._id });
+    setOpen((o) => (o && o._id === order._id ? { ...o, stockApplied: true, status: 'delivered' } : o));
+    notify(`${order.orderNumber} marked sold — stock updated`);
+  }
+
+  async function markUnsold(order: Order) {
+    await convex.mutation(anyApi.admin.markOrderUnsold, { adminKey, id: order._id });
+    setOpen((o) => (o && o._id === order._id ? { ...o, stockApplied: false, status: 'cancelled' } : o));
+    notify(`${order.orderNumber} marked unsold — stock restored`);
   }
 
   async function remove(order: Order) {
@@ -149,16 +162,22 @@ export default function Orders({
                   <td>
                     <div className="adm-actions">
                       <button className="adm-btn adm-btn-sm" onClick={() => setOpen(o)}>Open</button>
-                      {o.status === 'pending' && (
-                        <button className="adm-btn adm-btn-sm adm-btn-accent" onClick={() => setStatus(o, 'paid')}>
-                          Mark paid
-                        </button>
-                      )}
-                      {o.status === 'paid' && (
-                        <button className="adm-btn adm-btn-sm adm-btn-accent" onClick={() => setStatus(o, 'shipped')}>
-                          Ship
-                        </button>
-                      )}
+                      <button
+                        className={`adm-btn adm-btn-sm adm-btn-sold ${o.stockApplied ? 'on' : ''}`}
+                        onClick={() => markSold(o)}
+                        disabled={o.stockApplied}
+                        title="Mark sold — reduces the ordered items from stock"
+                      >
+                        {o.stockApplied ? '✓ Sold' : 'Sold'}
+                      </button>
+                      <button
+                        className="adm-btn adm-btn-sm"
+                        onClick={() => markUnsold(o)}
+                        disabled={!o.stockApplied}
+                        title="Mark unsold — restores stock"
+                      >
+                        Unsold
+                      </button>
                     </div>
                   </td>
                 </tr>

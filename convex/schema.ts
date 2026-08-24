@@ -87,6 +87,9 @@ export default defineSchema({
     placedAt: v.number(),
     // Set when a signed-in customer places the order; absent for legacy/guest.
     userId: v.optional(v.id('users')),
+    // True once the admin marked the order "Sold" and drew its items out of
+    // stock. Checkout no longer touches stock (orders are WhatsApp enquiries).
+    stockApplied: v.optional(v.boolean()),
   })
     .index('by_status', ['status'])
     .index('by_email', ['customerEmail'])

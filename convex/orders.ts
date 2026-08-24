@@ -55,32 +55,9 @@ export const place = mutation({
       ...(user ? { userId: user._id } : {}),
     });
 
-    // Draw down inventory. When the product has a size × colour matrix, reduce
-    // the exact variant bought and keep the stock total in sync; otherwise fall
-    // back to the flat stock number.
-    for (const item of args.items) {
-      const product = await ctx.db
-        .query('products')
-        .withIndex('by_productId', (q) => q.eq('productId', item.productId))
-        .unique();
-      if (!product) continue;
-
-      if (product.variants && product.variants.length) {
-        const variants = product.variants.map((v) =>
-          v.size === item.size && v.color === item.color
-            ? { ...v, quantity: Math.max(0, v.quantity - item.quantity) }
-            : v
-        );
-        await ctx.db.patch(product._id, {
-          variants,
-          stock: variants.reduce((n, v) => n + v.quantity, 0),
-        });
-      } else if (typeof product.stock === 'number') {
-        await ctx.db.patch(product._id, {
-          stock: Math.max(0, product.stock - item.quantity),
-        });
-      }
-    }
+    // Stock is NOT drawn down here — a checkout is a WhatsApp enquiry, not a
+    // confirmed sale. The admin decides via "Sold" / "Unsold" in the Orders
+    // panel (see convex/admin.ts markOrderSold / markOrderUnsold).
 
     return { orderNumber, id };
   },
