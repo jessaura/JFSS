@@ -4049,8 +4049,8 @@ export const products: Product[] = [
   },
   {
     "id": "p110",
-    "name": "Kids Jeans - 96",
-    "slug": "kids-jeans-96-p110",
+    "name": "Boys Stone-Wash Graphic Jeans",
+    "slug": "boys-stone-wash-graphic-jeans-p110",
     "price": 0,
     "shortDescription": "Kids' Jeans",
     "description": "Kids Jeans - 96. Boys' denim jeans.",
@@ -4126,8 +4126,8 @@ export const products: Product[] = [
   },
   {
     "id": "p111",
-    "name": "Kids Jeans - Trendy 99",
-    "slug": "kids-jeans-trendy-99-p111",
+    "name": "Boys Grey Faded Slim Jeans",
+    "slug": "boys-grey-faded-slim-jeans-p111",
     "price": 0,
     "shortDescription": "Kids' Jeans",
     "description": "Kids Jeans - Trendy 99. Boys' denim jeans.",
@@ -4172,8 +4172,8 @@ export const products: Product[] = [
   },
   {
     "id": "p112",
-    "name": "Kids Jeans - Red Stripe",
-    "slug": "kids-jeans-red-stripe-p112",
+    "name": "Boys Striped-Belt Denim Jeans",
+    "slug": "boys-striped-belt-denim-jeans-p112",
     "price": 0,
     "shortDescription": "Kids' Jeans",
     "description": "Kids Jeans - Red Stripe. Boys' denim jeans.",
@@ -4245,8 +4245,8 @@ export const products: Product[] = [
   },
   {
     "id": "p113",
-    "name": "Kids Jeans - RDN",
-    "slug": "kids-jeans-rdn-p113",
+    "name": "Boys Charcoal Belted Jeans",
+    "slug": "boys-charcoal-belted-jeans-p113",
     "price": 0,
     "shortDescription": "Kids' Jeans",
     "description": "Kids Jeans - RDN. Boys' denim jeans.",
