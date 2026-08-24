@@ -3091,7 +3091,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p072",
@@ -3117,7 +3117,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p073",
@@ -3143,7 +3143,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p074",
@@ -3169,7 +3169,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p075",
@@ -3195,7 +3195,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p076",
@@ -3220,7 +3220,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p077",
@@ -3245,7 +3245,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p078",
@@ -3270,7 +3270,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p079",
@@ -3295,7 +3295,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p080",
@@ -3320,7 +3320,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p081",
@@ -3345,7 +3345,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p082",
@@ -3370,7 +3370,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p083",
@@ -3395,7 +3395,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p084",
@@ -3420,7 +3420,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p085",
@@ -3445,7 +3445,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p086",
@@ -3470,7 +3470,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p087",
@@ -3495,7 +3495,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p088",
@@ -3520,7 +3520,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p089",
@@ -3545,7 +3545,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p090",
@@ -3570,7 +3570,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p091",
@@ -3595,7 +3595,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p092",
@@ -3620,7 +3620,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p093",
@@ -3645,7 +3645,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p094",
@@ -3670,7 +3670,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p095",
@@ -3695,7 +3695,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p096",
@@ -3720,7 +3720,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p097",
@@ -3745,7 +3745,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p098",
@@ -3770,7 +3770,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p099",
@@ -3795,7 +3795,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p100",
@@ -3820,7 +3820,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p101",
@@ -3845,7 +3845,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p102",
@@ -3870,7 +3870,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p103",
@@ -3895,7 +3895,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p104",
@@ -3920,7 +3920,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p105",
@@ -3945,7 +3945,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p106",
@@ -3970,7 +3970,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p107",
@@ -3995,7 +3995,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p108",
@@ -4020,7 +4020,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p109",
@@ -4045,7 +4045,7 @@ export const products: Product[] = [
     "bestSeller": false,
     "rating": 0,
     "reviews": 0,
-    "stock": 10
+    "stock": 1
   },
   {
     "id": "p110",
