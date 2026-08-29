@@ -355,8 +355,8 @@ function ProductForm({
   const [error, setError] = useState('');
   const [form, setForm] = useState({
     name: product?.name ?? '',
-    price: product?.price ?? 0,
-    originalPrice: product?.originalPrice ?? 0,
+    price: product?.price !== undefined ? String(product.price) : '0',
+    originalPrice: product?.originalPrice !== undefined ? String(product.originalPrice) : '0',
     category: product?.category ?? 'women',
     subcategory: product?.subcategory ?? '',
     fabric: product?.fabric ?? '',
@@ -504,10 +504,26 @@ function ProductForm({
           <legend>Pricing</legend>
           <div className="adm-grid">
             <Field label="Price (£)" hint="0 = price on request">
-              <input className="adm-input" type="number" min="0" step="1" value={form.price} onChange={(e) => set('price', Number(e.target.value))} />
+              <input
+                className="adm-input"
+                type="number"
+                min="0"
+                step="any"
+                placeholder="e.g. 32.90"
+                value={form.price}
+                onChange={(e) => set('price', e.target.value)}
+              />
             </Field>
             <Field label="Original price (£)" hint="0 = no markdown">
-              <input className="adm-input" type="number" min="0" step="1" value={form.originalPrice} onChange={(e) => set('originalPrice', Number(e.target.value))} />
+              <input
+                className="adm-input"
+                type="number"
+                min="0"
+                step="any"
+                placeholder="e.g. 45.00"
+                value={form.originalPrice}
+                onChange={(e) => set('originalPrice', e.target.value)}
+              />
             </Field>
           </div>
         </fieldset>
