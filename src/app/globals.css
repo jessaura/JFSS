@@ -7676,4 +7676,487 @@ input, textarea, select {
   }
 }
 
+/* ==========================================================================
+   LUXURY EVERYDAY STAPLES SECTION (web-design-engineer & emil-design-eng)
+   ========================================================================== */
+
+.jf-luxury-staples {
+  padding: clamp(64px, 8vw, 110px) 0;
+  background: var(--bg-primary, #FAF7F2);
+  position: relative;
+  overflow: hidden;
+  border-top: 1px solid rgba(197, 168, 128, 0.2);
+  border-bottom: 1px solid rgba(197, 168, 128, 0.2);
+}
+
+.jf-staples-masthead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-xl);
+  margin-bottom: clamp(24px, 3.5vw, 36px);
+  flex-wrap: wrap;
+}
+
+.jf-staples-head {
+  max-width: 580px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.jf-staples-eyebrow {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--crimson, #6E1212);
+}
+
+.jf-staples-heading {
+  font-family: var(--font-display, 'Playfair Display', serif);
+  font-size: clamp(2.2rem, 4.5vw, 3.4rem);
+  font-weight: 600;
+  color: var(--text-primary, #1C1917);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.jf-staples-heading .accent-gold {
+  font-style: italic;
+  color: var(--gold, #C5A880);
+  background: linear-gradient(135deg, #B89047 0%, #E8D09B 50%, #A67C33 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.jf-staples-lede {
+  font-size: clamp(0.92rem, 1.3vw, 1.05rem);
+  line-height: 1.6;
+  color: var(--text-secondary, #57534E);
+  margin: 4px 0 0;
+}
+
+.jf-staples-ctrl-group {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.jf-staples-nav-arrows {
+  display: flex;
+  gap: 8px;
+}
+
+.jf-staples-arrow-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid var(--border-color, #E8E2D9);
+  background: var(--bg-card, #FFFFFF);
+  color: var(--text-primary, #1C1917);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+}
+
+.jf-staples-arrow-btn:hover {
+  background: var(--crimson, #6E1212);
+  color: #fff;
+  border-color: var(--crimson, #6E1212);
+  transform: scale(1.06);
+}
+
+.jf-staples-viewall-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 999px;
+  border: 1px solid var(--border-color, #D6CEBE);
+  background: var(--bg-card, #FFFFFF);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text-primary, #1C1917);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.jf-staples-viewall-btn:hover {
+  background: var(--crimson, #6E1212);
+  color: #fff;
+  border-color: var(--crimson, #6E1212);
+  box-shadow: 0 4px 14px rgba(110, 18, 18, 0.2);
+}
+
+/* Category Filter Tabs Bar */
+.jf-staples-tabs-bar {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+  margin-bottom: 28px;
+  scrollbar-width: none;
+}
+
+.jf-staples-tabs-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.jf-staples-tab-pill {
+  position: relative;
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background: transparent;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary, #78716C);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+  z-index: 1;
+}
+
+.jf-staples-tab-pill:hover {
+  color: var(--text-primary, #1C1917);
+}
+
+.jf-staples-tab-pill.active {
+  color: #fff;
+}
+
+.jf-staples-tab-active-bg {
+  position: absolute;
+  inset: 0;
+  background: var(--charcoal, #1C1917);
+  border-radius: 999px;
+  z-index: -1;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Carousel Track */
+.jf-staples-track-wrap {
+  position: relative;
+  margin: 0 calc(-1 * clamp(16px, 3vw, 32px));
+  padding: 0 clamp(16px, 3vw, 32px);
+}
+
+.jf-staples-track {
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 12px 4px 28px;
+  scrollbar-width: none;
+}
+
+.jf-staples-track::-webkit-scrollbar {
+  display: none;
+}
+
+/* Luxury Product Card */
+.jf-staples-card {
+  flex: 0 0 310px;
+  scroll-snap-align: start;
+  background: var(--bg-card, #FFFFFF);
+  border: 1px solid rgba(197, 168, 128, 0.25);
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  text-align: left;
+}
+
+.jf-staples-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(197, 168, 128, 0.4);
+}
+
+/* Media Frame */
+.jf-staples-media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  background: #EFEBE4;
+  overflow: hidden;
+}
+
+.jf-staples-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.jf-staples-card:hover .jf-staples-img {
+  transform: scale(1.05);
+}
+
+/* Badges */
+.jf-staples-badges {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  z-index: 3;
+}
+
+.jf-staples-fabric-pill {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: rgba(28, 25, 23, 0.88);
+  backdrop-filter: blur(6px);
+  color: #F7EBD9;
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(197, 168, 128, 0.3);
+}
+
+.jf-staples-new-pill {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  background: var(--crimson, #6E1212);
+  color: #fff;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.jf-staples-best-pill {
+  font-size: 0.65rem;
+  font-weight: 700;
+  background: #8A6A1F;
+  color: #fff;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.jf-staples-disc-pill {
+  font-size: 0.65rem;
+  font-weight: 700;
+  background: #2E6B4F;
+  color: #fff;
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+/* Wishlist Heart */
+.jf-staples-fav {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--border-color, #E8E2D9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary, #78716C);
+  cursor: pointer;
+  z-index: 3;
+  transition: all 0.2s ease;
+}
+
+.jf-staples-fav:hover {
+  transform: scale(1.12);
+  border-color: var(--gold, #C5A880);
+  color: var(--gold, #C5A880);
+}
+
+.jf-staples-fav.wishlisted {
+  color: var(--gold, #C5A880);
+}
+
+/* Hover Action Tray */
+.jf-staples-hover-actions {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  gap: 8px;
+  z-index: 4;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+.jf-staples-card:hover .jf-staples-hover-actions {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.jf-staples-quickview-btn {
+  flex: 1;
+  height: 40px;
+  border-radius: 8px;
+  background: rgba(28, 25, 23, 0.92);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s ease;
+}
+
+.jf-staples-quickview-btn:hover {
+  background: var(--crimson, #6E1212);
+}
+
+.jf-staples-quickadd-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  color: var(--charcoal, #1C1917);
+  border: 1px solid var(--border-color, #E8E2D9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.jf-staples-quickadd-btn:hover {
+  background: var(--crimson, #6E1212);
+  color: #fff;
+  border-color: var(--crimson, #6E1212);
+}
+
+/* Card Body */
+.jf-staples-body {
+  padding: 16px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: #fff;
+}
+
+.jf-staples-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.jf-staples-category {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--crimson, #6E1212);
+}
+
+.jf-staples-swatches {
+  display: flex;
+  gap: 4px;
+}
+
+.jf-staples-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+}
+
+.jf-staples-title {
+  font-family: var(--font-display, 'Playfair Display', serif);
+  font-size: 1.12rem;
+  font-weight: 600;
+  color: var(--text-primary, #1C1917);
+  line-height: 1.3;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.jf-staples-sizes {
+  font-size: 0.72rem;
+  color: var(--text-secondary, #78716C);
+  display: flex;
+  gap: 4px;
+}
+
+.jf-staples-size-label {
+  font-weight: 600;
+  color: var(--text-secondary, #78716C);
+}
+
+.jf-staples-size-list {
+  font-weight: 500;
+  color: var(--text-primary, #1C1917);
+}
+
+.jf-staples-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 4px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.jf-staples-price {
+  font-family: var(--font-display, 'Playfair Display', serif);
+  font-size: 1.22rem;
+  font-weight: 700;
+  color: var(--crimson, #6E1212);
+}
+
+.jf-staples-original-price {
+  font-size: 0.86rem;
+  color: var(--text-secondary, #A8A29E);
+  text-decoration: line-through;
+}
+
+.jf-staples-poa {
+  font-style: italic;
+  color: var(--text-secondary, #78716C);
+  font-size: 0.95rem;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .jf-staples-card {
+    flex: 0 0 260px;
+  }
+  .jf-staples-heading {
+    font-size: 2.2rem;
+  }
+  .jf-staples-hover-actions {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+}
+
+
 
