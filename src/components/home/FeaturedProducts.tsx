@@ -13,25 +13,36 @@ import { useCatalogue } from '@/components/providers/CatalogueProvider';
 gsap.registerPlugin(ScrollTrigger);
 
 function EditCard({ product }: { product: Product }) {
-  const { toggleWishlist, isWishlisted } = useStore();
+  const { toggleWishlist, isWishlisted, openQuickView } = useStore();
   const wishlisted = isWishlisted(product.id);
+
+  const handleOpen = (e: React.MouseEvent) => {
+    e.preventDefault();
+    openQuickView(product);
+  };
 
   return (
     <div className="jf-edit-card">
-      <Link href={`/product/${product.id}`}>
-        <div className="jf-edit-media">
-          <img src={getProductImage(product.id)} alt={product.name} loading="lazy" />
-          {product.new ? (
-            <span className="jf-rcard-badge jf-badge-new">New</span>
-          ) : product.bestSeller ? (
-            <span className="jf-rcard-badge jf-badge-best">★ Bestseller</span>
-          ) : null}
-        </div>
-      </Link>
+      <div
+        className="jf-edit-media"
+        onClick={handleOpen}
+        style={{ cursor: 'pointer' }}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => e.key === 'Enter' && openQuickView(product)}
+      >
+        <img src={getProductImage(product.id)} alt={product.name} loading="lazy" />
+        {product.new ? (
+          <span className="jf-rcard-badge jf-badge-new">New</span>
+        ) : product.bestSeller ? (
+          <span className="jf-rcard-badge jf-badge-best">★ Bestseller</span>
+        ) : null}
+      </div>
       <button
         className="jf-edit-fav"
         onClick={(e) => {
           e.preventDefault();
+          e.stopPropagation();
           toggleWishlist(product.id);
         }}
         aria-label={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
@@ -49,7 +60,13 @@ function EditCard({ product }: { product: Product }) {
           <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
         </svg>
       </button>
-      <Link href={`/product/${product.id}`}>
+      <div
+        onClick={handleOpen}
+        style={{ cursor: 'pointer' }}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => e.key === 'Enter' && openQuickView(product)}
+      >
         <p className="jf-edit-cat">{product.subcategory}</p>
         <h3 className="jf-edit-name">{product.name}</h3>
         <div className="jf-edit-price">
@@ -62,7 +79,7 @@ function EditCard({ product }: { product: Product }) {
             </>
           )}
         </div>
-      </Link>
+      </div>
     </div>
   );
 }

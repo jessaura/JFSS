@@ -50,17 +50,27 @@ const PRICE_MAX = pricedProducts.length ? Math.max(...pricedProducts.map((p) => 
 /* ---------- Elevated Product Card ---------- */
 
 function ShopProductCard({ product }: { product: Product }) {
-  const { toggleWishlist, isWishlisted, addToCart } = useStore();
+  const { toggleWishlist, isWishlisted, addToCart, openQuickView } = useStore();
   const [added, setAdded] = useState(false);
   const wishlisted = isWishlisted(product.id);
   const disc = discountPercent(product);
   const unpriced = isUnpriced(product);
 
+  const handleOpenModal = (e: React.MouseEvent) => {
+    e.preventDefault();
+    openQuickView(product);
+  };
+
   const handleAdd = (e: React.MouseEvent) => {
     e.preventDefault();
-    addToCart(product, colorAt(product), product.sizes[0] ?? 'One size');
-    setAdded(true);
-    setTimeout(() => setAdded(false), 1800);
+    e.stopPropagation();
+    if (product.sizes.length > 1) {
+      openQuickView(product);
+    } else {
+      addToCart(product, colorAt(product), product.sizes[0] ?? 'One size');
+      setAdded(true);
+      setTimeout(() => setAdded(false), 1800);
+    }
   };
 
   return (
@@ -72,7 +82,14 @@ function ShopProductCard({ product }: { product: Product }) {
       exit={{ opacity: 0, scale: 0.96 }}
       transition={{ duration: 0.3 }}
     >
-      <Link href={`/product/${product.id}`} className="jf-shop-media">
+      <div
+        className="jf-shop-media"
+        onClick={handleOpenModal}
+        style={{ cursor: 'pointer' }}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => e.key === 'Enter' && openQuickView(product)}
+      >
         <img
           src={product.images[0] || getProductImage(product.id)}
           alt={product.name}
@@ -84,6 +101,7 @@ function ShopProductCard({ product }: { product: Product }) {
           className={`jf-card-wish-btn ${wishlisted ? 'on' : ''}`}
           onClick={(e) => {
             e.preventDefault();
+            e.stopPropagation();
             toggleWishlist(product.id);
           }}
           aria-label={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
@@ -101,16 +119,21 @@ function ShopProductCard({ product }: { product: Product }) {
         ) : !product.images.length && !hasPhoto(product.id) ? (
           <span className="jf-card-badge jf-badge-soft">Photo soon</span>
         ) : null}
-      </Link>
+      </div>
 
       <div className="jf-shop-body">
         <div className="jf-shop-meta">
           <span className="jf-shop-cat">{product.subcategory || product.category}</span>
         </div>
 
-        <Link href={`/product/${product.id}`} className="jf-shop-name">
+        <button
+          type="button"
+          onClick={handleOpenModal}
+          className="jf-shop-name"
+          style={{ background: 'none', border: 'none', padding: 0, textAlign: 'left', cursor: 'pointer' }}
+        >
           {product.name}
-        </Link>
+        </button>
 
         {product.shortDescription && (
           <p className="jf-shop-desc">{product.shortDescription}</p>

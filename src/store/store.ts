@@ -36,6 +36,11 @@ interface StoreState {
   toggleMobileMenu: () => void;
   closeMobileMenu: () => void;
 
+  /* Quick View Modal */
+  quickViewProduct: Product | null;
+  openQuickView: (product: Product) => void;
+  closeQuickView: () => void;
+
   /* Filters */
   activeCategory: string;
   activeType: string;
@@ -118,6 +123,11 @@ export const useStore = create<StoreState>((set, get) => ({
   mobileMenuOpen: false,
   toggleMobileMenu: () => set({ mobileMenuOpen: !get().mobileMenuOpen }),
   closeMobileMenu: () => set({ mobileMenuOpen: false }),
+
+  /* Quick View Modal */
+  quickViewProduct: null,
+  openQuickView: (product) => set({ quickViewProduct: product }),
+  closeQuickView: () => set({ quickViewProduct: null }),
 
   /* Filters */
   activeCategory: 'all',

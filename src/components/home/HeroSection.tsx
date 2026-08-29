@@ -10,6 +10,7 @@ import HeroRoulette from './HeroRoulette';
 import { getFeaturedProducts, isUnpriced, formatPrice } from '@/data/products';
 import { getProductImage } from '@/data/images';
 import { useCatalogue } from '@/components/providers/CatalogueProvider';
+import { useStore } from '@/store/store';
 
 const CONVEX_READY = Boolean(process.env.NEXT_PUBLIC_CONVEX_URL);
 
@@ -27,6 +28,7 @@ const FLOAT_SPOTS = [
 export default function HeroSection() {
   const heroRef = useRef<HTMLElement>(null);
   const catalogue = useCatalogue();
+  const { openQuickView } = useStore();
   const floats = getFeaturedProducts(catalogue).slice(0, 4);
 
   useEffect(() => {
@@ -89,11 +91,14 @@ export default function HeroSection() {
           <HeroRoulette />
 
           {floats.map((product, i) => (
-            <Link
+            <div
               key={product.id}
-              href={`/product/${product.id}`}
+              onClick={() => openQuickView(product)}
               className="jf-hero-float"
-              style={FLOAT_SPOTS[i]}
+              style={{ ...FLOAT_SPOTS[i], cursor: 'pointer' }}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => e.key === 'Enter' && openQuickView(product)}
             >
               <img src={getProductImage(product.id)} alt="" loading="lazy" />
               <span className="jf-hero-float-text">
@@ -102,7 +107,7 @@ export default function HeroSection() {
                   {isUnpriced(product) ? 'Price on request' : `£${formatPrice(product.price)}`}
                 </span>
               </span>
-            </Link>
+            </div>
           ))}
         </div>
       </div>

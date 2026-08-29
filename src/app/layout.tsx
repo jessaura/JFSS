@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Preloader from "@/components/common/Preloader";
 import SmoothScroll from "@/components/common/SmoothScroll";
+import ProductModal from "@/components/common/ProductModal";
 import ConvexClientProvider from "@/components/providers/ConvexClientProvider";
 import CatalogueProvider from "@/components/providers/CatalogueProvider";
 import AccountSync from "@/components/layout/AccountSync";
@@ -44,6 +45,7 @@ export default function RootLayout({
           <CatalogueProvider>
             <SmoothScroll />
             <Preloader />
+            <ProductModal />
             {clerkEnabled && <AccountSync />}
             {children}
           </CatalogueProvider>

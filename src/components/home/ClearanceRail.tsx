@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { getClearanceProducts, discountPercent, formatPrice } from '@/data/products';
 import { getProductImage } from '@/data/images';
 import { useCatalogue } from '@/components/providers/CatalogueProvider';
+import { useStore } from '@/store/store';
 
 /**
  * Clearance Sale band for the Shop page — a dark, loud strip highlighting
@@ -16,16 +17,20 @@ import { useCatalogue } from '@/components/providers/CatalogueProvider';
  */
 export default function ClearanceRail() {
   const catalogue = useCatalogue();
+  const { openQuickView } = useStore();
   const items = getClearanceProducts(catalogue);
   if (items.length === 0) return null;
 
   const card = (product: (typeof items)[number], clone: boolean) => (
-    <Link
+    <div
       key={`${product.id}${clone ? '-c' : ''}`}
-      href={`/product/${product.id}`}
+      onClick={() => openQuickView(product)}
       className="jf-clear-card"
+      style={{ cursor: 'pointer' }}
+      role="button"
+      tabIndex={clone ? -1 : 0}
       aria-hidden={clone || undefined}
-      tabIndex={clone ? -1 : undefined}
+      onKeyDown={(e) => !clone && e.key === 'Enter' && openQuickView(product)}
     >
       <div className="jf-clear-media">
         <img src={getProductImage(product.id)} alt={product.name} loading="lazy" />
@@ -42,7 +47,7 @@ export default function ClearanceRail() {
           {product.originalPrice && <span className="was">£{formatPrice(product.originalPrice)}</span>}
         </div>
       </div>
-    </Link>
+    </div>
   );
 
   return (
