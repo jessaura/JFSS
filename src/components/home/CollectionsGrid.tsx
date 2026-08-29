@@ -4,18 +4,62 @@ import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { collections, products } from '@/data/products';
-import { IMAGE_PENDING } from '@/data/images';
 
 gsap.registerPlugin(ScrollTrigger);
 
-// Each collection shows a real photographed piece from that category, so the
-// tiles reflect actual stock rather than stand-in art.
-const collectionImages = collections.map(
-  (col) =>
-    products.find((p) => p.category === col.id && p.images.length)?.images[0] ??
-    IMAGE_PENDING
-);
+interface CategoryTile {
+  id: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  image: string;
+  bgPosition: string;
+  tag: string;
+  link: string;
+}
+
+const CATEGORY_TILES: CategoryTile[] = [
+  {
+    id: 'women',
+    title: "Women's Edit",
+    subtitle: 'Linen Dresses & Occasion',
+    description: 'Slub linen midis, botanical floral prints, and flowing sarees crafted for effortless grace.',
+    image: '/images/womens-collection.png',
+    bgPosition: 'center 18%',
+    tag: 'Slub Linen & Midis',
+    link: '/shop?category=women',
+  },
+  {
+    id: 'men',
+    title: "Men's Everyday",
+    subtitle: 'Shirts, Polos & Kurtas',
+    description: 'Breathable linen kurtas, Nehru jackets, and tailored everyday silhouettes.',
+    image: '/images/mens-collection.png',
+    bgPosition: 'center 22%',
+    tag: 'Artisanal Kurtas',
+    link: '/shop?category=men',
+  },
+  {
+    id: 'kids',
+    title: 'Kids & Juniors',
+    subtitle: 'Breathable Cotton Sets',
+    description: 'Soft organic cottons, gentle playful kurtas, and easy dailywear for boys and girls.',
+    image: '/images/kids-collection.jpg',
+    bgPosition: 'center 15%',
+    tag: 'Pure Cotton Dailywear',
+    link: '/shop?category=kids',
+  },
+  {
+    id: 'unisex',
+    title: 'Festive & Shared Weaves',
+    subtitle: 'Artisanal Kerala Edits',
+    description: 'Celebration sets, Kasavu gold borders, and heritage handcrafted textiles.',
+    image: '/images/festive-collection.png',
+    bgPosition: 'center 20%',
+    tag: 'Kasavu Gold & Handlooms',
+    link: '/shop?type=festive',
+  },
+];
 
 export default function CollectionsGrid() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -26,26 +70,12 @@ export default function CollectionsGrid() {
 
     const ctx = gsap.context(() => {
       gsap.from('.jf-col-card', {
-        y: 56,
+        y: 40,
         opacity: 0,
         duration: 0.8,
-        stagger: 0.12,
+        stagger: 0.1,
         ease: 'power3.out',
-        scrollTrigger: { trigger: sectionRef.current, start: 'top 72%' },
-      });
-
-      // Parallax the card backgrounds via background-position (keeps the
-      // hover-scale transform on the same element untouched).
-      gsap.utils.toArray<HTMLElement>('.jf-col-bg').forEach((bg) => {
-        gsap.fromTo(
-          bg,
-          { backgroundPosition: '50% 22%' },
-          {
-            backgroundPosition: '50% 78%',
-            ease: 'none',
-            scrollTrigger: { trigger: bg, scrub: true, start: 'top bottom', end: 'bottom top' },
-          }
-        );
+        scrollTrigger: { trigger: sectionRef.current, start: 'top 78%' },
       });
     }, sectionRef);
 
@@ -53,7 +83,7 @@ export default function CollectionsGrid() {
   }, []);
 
   return (
-    <section className="jf-collections" ref={sectionRef}>
+    <section className="jf-collections" ref={sectionRef} aria-label="Casual Wardrobe Collections">
       <div className="container">
         <div className="jf-collections-head">
           <div className="jf-head">
@@ -61,33 +91,51 @@ export default function CollectionsGrid() {
             <h2 className="jf-h2">
               Four ways to dress <span className="accent">every day</span>
             </h2>
+            <p className="jf-lede">
+              Explore thoughtfully curated edits across pure slub linens, breathable cottons, and timeless South Asian cuts.
+            </p>
           </div>
           <Link href="/shop" className="jf-collections-viewall">
-            View all collections
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <span>View all collections</span>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M5 12h14M12 5l7 7-7 7" />
             </svg>
           </Link>
         </div>
 
         <div className="jf-mosaic">
-          {collections.map((col, i) => (
-            <Link key={col.id} href={`/shop?category=${col.id}`} className={`jf-col-card jf-mosaic-${i}`}>
+          {CATEGORY_TILES.map((col, i) => (
+            <Link
+              key={col.id}
+              href={col.link}
+              className={`jf-col-card jf-mosaic-${i}`}
+              aria-label={`Explore ${col.title}`}
+            >
               <div
                 className="jf-col-bg"
-                style={{ backgroundImage: `url(${collectionImages[i]})` }}
+                style={{
+                  backgroundImage: `url("${col.image}")`,
+                  backgroundPosition: col.bgPosition,
+                }}
               />
+              <div className="jf-col-scrim" />
+              
               <div className="jf-col-content">
-                <span className="jf-col-index">{String(i + 1).padStart(2, '0')} / 04</span>
-                <span className="jf-col-sub">{col.subtitle}</span>
-                <h3 className="jf-col-title">{col.title}</h3>
-                <p className="jf-col-desc">{col.description}</p>
-                <span className="jf-col-go">
-                  Explore
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M5 12h14M12 5l7 7-7 7" />
-                  </svg>
-                </span>
+                <div className="jf-col-top">
+                  <span className="jf-col-index">{String(i + 1).padStart(2, '0')} / 04</span>
+                  <span className="jf-col-pill">{col.tag}</span>
+                </div>
+                <div className="jf-col-bottom">
+                  <span className="jf-col-sub">{col.subtitle}</span>
+                  <h3 className="jf-col-title">{col.title}</h3>
+                  <p className="jf-col-desc">{col.description}</p>
+                  <span className="jf-col-go">
+                    <span>Explore Collection</span>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                  </span>
+                </div>
               </div>
             </Link>
           ))}
