@@ -1,14 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useStore } from '@/store/store';
-import { isUnpriced, colorAt, variantStock, discountPercent, formatPrice } from '@/data/products';
+import { isUnpriced, colorAt, variantStock, discountPercent, formatPrice, Product } from '@/data/products';
 import { getProductImage } from '@/data/images';
+import { useCatalogue } from '@/components/providers/CatalogueProvider';
 
 export default function ProductModal() {
-  const { quickViewProduct, closeQuickView, addToCart, toggleWishlist, isWishlisted, openCart } = useStore();
+  const { quickViewProduct, openQuickView, closeQuickView, addToCart, toggleWishlist, isWishlisted, openCart } = useStore();
+  const catalogue = useCatalogue();
   const product = quickViewProduct;
 
   const [activeColor, setActiveColor] = useState(0);
@@ -63,6 +64,10 @@ export default function ProductModal() {
   const shownImage = selectedColor.image || product.images[0] || getProductImage(product.id);
   const colorThumbs = product.colors.filter((c) => c.image);
 
+  const relatedProducts = catalogue
+    .filter((p) => p.category === product.category && p.id !== product.id)
+    .slice(0, 3);
+
   const handleAddToCart = () => {
     if (!activeSize || activeSizeOut || isUnpriced(product)) return;
     addToCart(product, selectedColor, activeSize, quantity);
@@ -73,6 +78,24 @@ export default function ProductModal() {
       openCart();
     }, 600);
   };
+
+  const menSizes = [
+    { size: 'S', chest: '36"', waist: '30"', hip: '37"', length: '28"' },
+    { size: 'M', chest: '38"', waist: '32"', hip: '39"', length: '29"' },
+    { size: 'L', chest: '40"', waist: '34"', hip: '41"', length: '30"' },
+    { size: 'XL', chest: '42"', waist: '36"', hip: '43"', length: '31"' },
+    { size: 'XXL', chest: '44"', waist: '38"', hip: '45"', length: '32"' },
+  ];
+
+  const womenSizes = [
+    { size: 'XS', bust: '32"', waist: '26"', hip: '35"', length: '38"' },
+    { size: 'S', bust: '34"', waist: '28"', hip: '37"', length: '39"' },
+    { size: 'M', bust: '36"', waist: '30"', hip: '39"', length: '40"' },
+    { size: 'L', bust: '38"', waist: '32"', hip: '41"', length: '41"' },
+    { size: 'XL', bust: '40"', waist: '34"', hip: '43"', length: '42"' },
+  ];
+
+  const sizeChart = product.category === 'men' ? menSizes : womenSizes;
 
   return (
     <AnimatePresence>
@@ -117,7 +140,7 @@ export default function ProductModal() {
 
                 {/* Badges */}
                 <div className="jf-modal-badges">
-                  {disc > 0 && <span className="jf-badge-sale">-{disc}% OFF</span>}
+                  {disc > 0 && <span className="jf-badge-sale">−{disc}% OFF</span>}
                   {product.new && <span className="jf-badge-new">New In</span>}
                   {product.bestSeller && <span className="jf-badge-best">★ Bestseller</span>}
                 </div>
@@ -131,7 +154,10 @@ export default function ProductModal() {
                       key={c.name}
                       type="button"
                       className={`jf-modal-thumb-btn ${idx === activeColor ? 'active' : ''}`}
-                      onClick={() => setActiveColor(idx)}
+                      onClick={() => {
+                        setActiveColor(idx);
+                        setActiveSize('');
+                      }}
                       title={c.name}
                     >
                       <img src={c.image || shownImage} alt={c.name} />
@@ -139,13 +165,37 @@ export default function ProductModal() {
                   ))}
                 </div>
               )}
+
+              {/* Related Pieces Quick Switcher */}
+              {relatedProducts.length > 0 && (
+                <div className="jf-modal-related-box">
+                  <span className="jf-modal-related-title">You May Also Like</span>
+                  <div className="jf-modal-related-row">
+                    {relatedProducts.map((rp) => (
+                      <button
+                        key={rp.id}
+                        type="button"
+                        className="jf-modal-related-item"
+                        onClick={() => openQuickView(rp)}
+                        title={rp.name}
+                      >
+                        <img src={rp.images[0] || getProductImage(rp.id)} alt={rp.name} />
+                        <span className="jf-modal-related-name">{rp.name}</span>
+                        <span className="jf-modal-related-price">£{formatPrice(rp.price)}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
-            {/* Right: Product Details & Controls */}
+            {/* Right: Complete Product Specification & Purchase Controls */}
             <div className="jf-modal-content">
               {/* Category & Tags */}
               <div className="jf-modal-meta">
-                <span className="jf-modal-category">{product.subcategory || product.category}</span>
+                <span className="jf-modal-category">
+                  {[product.subcategory, product.category].filter(Boolean).join(' · ')}
+                </span>
                 {product.stock !== undefined && product.stock <= 4 && product.stock > 0 && (
                   <span className="jf-modal-stock-warn">⚡ Only {product.stock} left in stock</span>
                 )}
@@ -160,7 +210,7 @@ export default function ProductModal() {
                   {'★'.repeat(Math.round(product.rating || 5))}
                   {'☆'.repeat(5 - Math.round(product.rating || 5))}
                 </div>
-                <span className="jf-review-count">({product.reviews || 12} reviews)</span>
+                <span className="jf-review-count">({product.reviews || 12} verified reviews)</span>
               </div>
 
               {/* Price */}
@@ -178,9 +228,9 @@ export default function ProductModal() {
                 )}
               </div>
 
-              {/* Short Description */}
+              {/* Comprehensive Description */}
               <p className="jf-modal-desc">
-                {product.shortDescription || product.description}
+                {product.description || product.shortDescription}
               </p>
 
               {/* Color Selector */}
@@ -197,7 +247,10 @@ export default function ProductModal() {
                         type="button"
                         className={`jf-modal-swatch ${idx === activeColor ? 'active' : ''}`}
                         style={{ backgroundColor: c.hex }}
-                        onClick={() => setActiveColor(idx)}
+                        onClick={() => {
+                          setActiveColor(idx);
+                          setActiveSize('');
+                        }}
                         title={c.name}
                         aria-label={`Select ${c.name} color`}
                       />
@@ -210,13 +263,13 @@ export default function ProductModal() {
               {product.sizes.length > 0 && (
                 <div className="jf-modal-option-group">
                   <div className="jf-modal-option-header">
-                    <span className="jf-modal-option-label">Size:</span>
+                    <span className="jf-modal-option-label">Size: <strong style={{ color: 'var(--charcoal, #1C1917)' }}>{activeSize || 'Select a size'}</strong></span>
                     <button
                       type="button"
                       className="jf-modal-size-guide-btn"
                       onClick={() => setShowSizeGuide(!showSizeGuide)}
                     >
-                      📏 Size Guide
+                      📏 {showSizeGuide ? 'Hide Size Guide' : 'View Size Guide'}
                     </button>
                   </div>
                   <div className="jf-modal-sizes">
@@ -230,6 +283,7 @@ export default function ProductModal() {
                           disabled={isOut}
                           className={`jf-modal-size-btn ${activeSize === s ? 'active' : ''} ${isOut ? 'disabled' : ''}`}
                           onClick={() => setActiveSize(s)}
+                          title={isOut ? 'Out of stock in this colour' : undefined}
                         >
                           {s}
                           {isOut && <span className="jf-size-strike" />}
@@ -239,6 +293,45 @@ export default function ProductModal() {
                   </div>
                 </div>
               )}
+
+              {/* Interactive Size Guide Drawer */}
+              <AnimatePresence>
+                {showSizeGuide && (
+                  <motion.div
+                    className="jf-modal-size-guide-box"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                  >
+                    <h4>{product.category === 'men' ? "Men's" : "Women's"} Size Chart (Inches)</h4>
+                    <table className="jf-modal-size-table">
+                      <thead>
+                        <tr>
+                          <th>Size</th>
+                          <th>{product.category === 'men' ? 'Chest' : 'Bust'}</th>
+                          <th>Waist</th>
+                          <th>Hip</th>
+                          <th>Length</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {sizeChart.map((row) => (
+                          <tr key={row.size}>
+                            <td><strong>{row.size}</strong></td>
+                            <td>{'chest' in row ? row.chest : (row as typeof womenSizes[0]).bust}</td>
+                            <td>{row.waist}</td>
+                            <td>{row.hip}</td>
+                            <td>{row.length}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                    <p style={{ fontSize: '0.72rem', color: 'var(--text-secondary, #78716C)', marginTop: 8 }}>
+                      • <strong>Bust/Chest:</strong> Measure fullest part • <strong>Waist:</strong> Measure natural waistline • <strong>Length:</strong> Measure from shoulder.
+                    </p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
               {/* Quantity & Actions */}
               <div className="jf-modal-actions-row">
@@ -274,6 +367,8 @@ export default function ProductModal() {
                     'Out of Stock'
                   ) : isUnpriced(product) ? (
                     'Price on Request'
+                  ) : !activeSize && product.sizes.length > 0 ? (
+                    'Select a Size'
                   ) : (
                     'Add to Bag · £' + formatPrice(product.price * quantity)
                   )}
@@ -298,63 +393,24 @@ export default function ProductModal() {
                 </button>
               </div>
 
-              {/* Size Guide Drawer (inline collapse) */}
-              <AnimatePresence>
-                {showSizeGuide && (
-                  <motion.div
-                    className="jf-modal-size-guide-box"
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                  >
-                    <h4>Size Guide (Inches)</h4>
-                    <table className="jf-modal-size-table">
-                      <thead>
-                        <tr>
-                          <th>Size</th>
-                          <th>Bust / Chest</th>
-                          <th>Waist</th>
-                          <th>Hip</th>
-                          <th>Length</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr><td>S</td><td>34" - 36"</td><td>28" - 30"</td><td>37"</td><td>40"</td></tr>
-                        <tr><td>M</td><td>36" - 38"</td><td>30" - 32"</td><td>39"</td><td>41"</td></tr>
-                        <tr><td>L</td><td>38" - 40"</td><td>32" - 34"</td><td>41"</td><td>42"</td></tr>
-                        <tr><td>XL</td><td>40" - 42"</td><td>34" - 36"</td><td>43"</td><td>42"</td></tr>
-                        <tr><td>XXL</td><td>42" - 44"</td><td>36" - 38"</td><td>45"</td><td>43"</td></tr>
-                      </tbody>
-                    </table>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Extra Highlights */}
+              {/* Detailed Full Specifications Matrix */}
               <div className="jf-modal-features">
                 <div className="jf-feature-item">
                   <span className="jf-feat-icon">🧵</span>
-                  <span><strong>Fabric:</strong> {product.fabric || '100% Premium Pure Slub Linen & Cotton'}</span>
+                  <span><strong>Fabric & Craft:</strong> {product.fabric || '100% Premium Pure Slub Linen & Breathable Cotton'}</span>
                 </div>
                 <div className="jf-feature-item">
                   <span className="jf-feat-icon">📦</span>
-                  <span><strong>Delivery:</strong> Free UK shipping on orders over £50</span>
+                  <span><strong>Shipping & Delivery:</strong> Free UK shipping on orders over £50 (2-3 business days)</span>
                 </div>
                 <div className="jf-feature-item">
                   <span className="jf-feat-icon">🔄</span>
-                  <span><strong>Returns:</strong> 14-day hassle-free returns & exchanges</span>
+                  <span><strong>Returns & Guarantee:</strong> 14-day hassle-free returns & easy exchanges</span>
                 </div>
-              </div>
-
-              {/* Full Page Link */}
-              <div className="jf-modal-footer-link">
-                <Link
-                  href={`/product/${product.id}`}
-                  onClick={closeQuickView}
-                  className="jf-link-full-page"
-                >
-                  View full product specification page →
-                </Link>
+                <div className="jf-feature-item">
+                  <span className="jf-feat-icon">💬</span>
+                  <span><strong>Customer Assistance:</strong> Have questions? Instant WhatsApp support available.</span>
+                </div>
               </div>
             </div>
           </div>

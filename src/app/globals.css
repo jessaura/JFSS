@@ -7590,6 +7590,73 @@ input, textarea, select {
   opacity: 0.75;
 }
 
+/* Related Products Rail inside Modal */
+.jf-modal-related-box {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color, #E8E2D9);
+}
+
+.jf-modal-related-title {
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary, #78716C);
+}
+
+.jf-modal-related-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.jf-modal-related-item {
+  background: var(--bg-card, #FFFFFF);
+  border: 1px solid var(--border-color, #E8E2D9);
+  border-radius: 8px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.jf-modal-related-item:hover {
+  border-color: var(--crimson, #6E1212);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+}
+
+.jf-modal-related-item img {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 4px;
+}
+
+.jf-modal-related-name {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-primary, #1C1917);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.jf-modal-related-price {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--crimson, #6E1212);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .jf-modal-grid {
@@ -7608,4 +7675,5 @@ input, textarea, select {
     max-height: 94vh;
   }
 }
+
 
