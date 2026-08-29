@@ -96,7 +96,7 @@ export default function FeaturedProducts() {
           <div className="jf-head">
             <span className="jf-eyebrow">Everyday Staples</span>
             <h2 className="jf-h2">
-              The <span className="accent">Edit</span>
+              Featured <span className="accent">Collection</span>
             </h2>
             <p className="jf-lede">Handpicked cottons and breezy linens, ready to wear straight from the rail.</p>
           </div>

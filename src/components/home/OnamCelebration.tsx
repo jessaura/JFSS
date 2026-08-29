@@ -49,7 +49,7 @@ export default function OnamCelebration() {
           })}
         </div>
 
-        <Link href="/shop" className="jf-onam-cta">Shop the Onam edit</Link>
+        <Link href="/shop" className="jf-onam-cta">Shop the Onam collection</Link>
       </div>
     </section>
   );
