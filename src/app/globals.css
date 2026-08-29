@@ -8644,6 +8644,615 @@ input, textarea, select {
   }
 }
 
+/* ==========================================================================
+   LUXURY SHOP PAGE & DEPARTMENT SALONS (web-design-engineer & emil-design-eng)
+   ========================================================================== */
+
+.jf-luxury-shop {
+  min-height: 100vh;
+  background: var(--bg-primary, #FAF7F2);
+  padding-bottom: clamp(64px, 8vw, 110px);
+}
+
+/* Hero Section */
+.jf-shop-hero {
+  padding: clamp(48px, 6vw, 72px) 0 clamp(24px, 3.5vw, 36px);
+  background: linear-gradient(180deg, rgba(197, 168, 128, 0.08) 0%, transparent 100%);
+  border-bottom: 1px solid rgba(197, 168, 128, 0.16);
+}
+
+.jf-shop-hero-copy {
+  max-width: 680px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 32px;
+}
+
+.jf-shop-hero-eyebrow {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--crimson, #6E1212);
+}
+
+.jf-shop-hero-title {
+  font-family: var(--font-display, 'Playfair Display', serif);
+  font-size: clamp(2.4rem, 5vw, 3.8rem);
+  font-weight: 600;
+  color: var(--text-primary, #1C1917);
+  line-height: 1.08;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.jf-shop-hero-title .accent-gold {
+  font-style: italic;
+  color: var(--gold, #C5A880);
+  background: linear-gradient(135deg, #B89047 0%, #E8D09B 50%, #A67C33 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.jf-shop-hero-desc {
+  font-size: clamp(0.95rem, 1.4vw, 1.1rem);
+  line-height: 1.6;
+  color: var(--text-secondary, #57534E);
+  margin: 2px 0 0;
+}
+
+/* Department Navigation Cards Bar */
+.jf-dept-cards-wrap {
+  position: relative;
+  margin: 0 calc(-1 * clamp(16px, 3vw, 32px));
+  padding: 0 clamp(16px, 3vw, 32px);
+}
+
+.jf-dept-cards-track {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding: 6px 2px 14px;
+  scrollbar-width: none;
+  scroll-snap-type: x mandatory;
+}
+
+.jf-dept-cards-track::-webkit-scrollbar {
+  display: none;
+}
+
+.jf-dept-nav-card {
+  flex: 0 0 190px;
+  height: 130px;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(197, 168, 128, 0.25);
+  background: #1C1917;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-end;
+  padding: 14px;
+  text-align: left;
+  scroll-snap-align: start;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.jf-dept-nav-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+  border-color: var(--gold, #C5A880);
+}
+
+.jf-dept-nav-card.active {
+  border-color: var(--crimson, #6E1212);
+  box-shadow: 0 8px 24px rgba(110, 18, 18, 0.18), 0 0 0 1px var(--crimson, #6E1212);
+}
+
+.jf-dept-nav-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center 20%;
+  transition: transform 0.6s ease;
+  z-index: 1;
+}
+
+.jf-dept-nav-card:hover .jf-dept-nav-bg {
+  transform: scale(1.08);
+}
+
+.jf-dept-nav-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(14, 11, 9, 0.25) 0%, rgba(14, 11, 9, 0.88) 100%);
+  z-index: 2;
+}
+
+.jf-dept-nav-content {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.jf-dept-nav-tag {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--champagne-gold, #C5A880);
+}
+
+.jf-dept-nav-title {
+  font-family: var(--font-display, 'Playfair Display', serif);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #FAF7F2;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.jf-dept-nav-active-bar {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--crimson, #6E1212);
+  z-index: 4;
+}
+
+/* Sticky Toolbar */
+.jf-shop-toolbar-sticky {
+  position: sticky;
+  top: 72px;
+  z-index: 20;
+  background: rgba(250, 247, 242, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(197, 168, 128, 0.2);
+  padding: 12px 0;
+  transition: all 0.2s ease;
+}
+
+.jf-shop-toolbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.jf-shop-search-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #FFFFFF;
+  border: 1px solid rgba(197, 168, 128, 0.3);
+  padding: 8px 14px;
+  border-radius: 999px;
+  min-width: 260px;
+  flex: 1;
+  max-width: 380px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+}
+
+.jf-shop-search-pill svg {
+  color: var(--text-secondary, #78716C);
+}
+
+.jf-shop-search-pill input {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-family: var(--font-body);
+  font-size: 0.84rem;
+  color: var(--text-primary, #1C1917);
+  width: 100%;
+}
+
+.jf-search-clear {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  color: var(--text-secondary, #78716C);
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+/* Subcategory Pills */
+.jf-subcat-pills {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 2px 0;
+}
+
+.jf-subcat-pills::-webkit-scrollbar {
+  display: none;
+}
+
+.jf-subcat-pill {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(197, 168, 128, 0.25);
+  background: var(--bg-card, #FFFFFF);
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--text-secondary, #78716C);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.jf-subcat-pill:hover {
+  border-color: var(--gold, #C5A880);
+  color: var(--text-primary, #1C1917);
+}
+
+.jf-subcat-pill.active {
+  background: var(--charcoal, #1C1917);
+  border-color: var(--charcoal, #1C1917);
+  color: #FAF7F2;
+}
+
+.jf-toolbar-right-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.jf-toolbar-select {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary, #78716C);
+}
+
+.jf-toolbar-select select {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(197, 168, 128, 0.25);
+  background: var(--bg-card, #FFFFFF);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: var(--text-primary, #1C1917);
+  outline: none;
+  cursor: pointer;
+}
+
+.jf-sale-toggle-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(197, 168, 128, 0.25);
+  background: var(--bg-card, #FFFFFF);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary, #78716C);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.jf-sale-toggle-pill .jf-sale-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #A8A29E;
+  transition: background 0.2s ease;
+}
+
+.jf-sale-toggle-pill.active {
+  border-color: #2E6B4F;
+  color: #2E6B4F;
+  background: rgba(46, 107, 79, 0.08);
+}
+
+.jf-sale-toggle-pill.active .jf-sale-dot {
+  background: #2E6B4F;
+}
+
+.jf-grid-view-ctrls {
+  display: flex;
+  border: 1px solid rgba(197, 168, 128, 0.25);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #FFFFFF;
+}
+
+.jf-grid-view-btn {
+  padding: 6px 10px;
+  border: none;
+  background: transparent;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary, #78716C);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.jf-grid-view-btn:not(:last-child) {
+  border-right: 1px solid rgba(197, 168, 128, 0.18);
+}
+
+.jf-grid-view-btn.active {
+  background: var(--charcoal, #1C1917);
+  color: #FAF7F2;
+}
+
+/* Main Shop Content */
+.jf-shop-main-content {
+  padding-top: 36px;
+}
+
+/* Salons Container */
+.jf-salons-container {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(48px, 6vw, 72px);
+}
+
+.jf-salon-section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-bottom: clamp(36px, 5vw, 56px);
+  border-bottom: 1px solid rgba(197, 168, 128, 0.2);
+}
+
+.jf-salon-section:last-child {
+  border-bottom: none;
+}
+
+.jf-salon-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.jf-salon-copy {
+  max-width: 580px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.jf-salon-eyebrow {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--crimson, #6E1212);
+}
+
+.jf-salon-title {
+  font-family: var(--font-display, 'Playfair Display', serif);
+  font-size: clamp(1.8rem, 3.2vw, 2.4rem);
+  font-weight: 600;
+  color: var(--text-primary, #1C1917);
+  margin: 0;
+  line-height: 1.15;
+}
+
+.jf-salon-desc {
+  font-size: 0.88rem;
+  line-height: 1.5;
+  color: var(--text-secondary, #57534E);
+  margin: 0;
+}
+
+.jf-salon-view-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 999px;
+  border: 1px solid var(--border-color, #D6CEBE);
+  background: var(--bg-card, #FFFFFF);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-primary, #1C1917);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.jf-salon-view-btn:hover {
+  background: var(--crimson, #6E1212);
+  color: #fff;
+  border-color: var(--crimson, #6E1212);
+  box-shadow: 0 4px 14px rgba(110, 18, 18, 0.2);
+}
+
+.jf-salon-count-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(197, 168, 128, 0.2);
+  color: var(--charcoal, #1C1917);
+}
+
+.jf-salon-view-btn:hover .jf-salon-count-badge {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.jf-salon-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+/* Focused Department View */
+.jf-focused-department-view {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.jf-focused-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(197, 168, 128, 0.2);
+}
+
+.jf-focused-title-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.jf-focused-title {
+  font-family: var(--font-display, 'Playfair Display', serif);
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-weight: 600;
+  color: var(--text-primary, #1C1917);
+  margin: 0;
+}
+
+.jf-focused-count-pill {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-secondary, #78716C);
+}
+
+.jf-reset-all-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(197, 168, 128, 0.25);
+  background: #FFFFFF;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--crimson, #6E1212);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.jf-reset-all-btn:hover {
+  background: rgba(110, 18, 18, 0.08);
+}
+
+/* Luxury Grid */
+.jf-luxury-grid {
+  display: grid;
+  gap: 24px;
+}
+
+.jf-luxury-grid.cols-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.jf-luxury-grid.cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.jf-luxury-grid.cols-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+/* Empty State */
+.jf-shop-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: clamp(64px, 10vw, 110px) 20px;
+  background: #FFFFFF;
+  border: 1px dashed rgba(197, 168, 128, 0.4);
+  border-radius: 16px;
+  gap: 12px;
+}
+
+.jf-empty-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(197, 168, 128, 0.12);
+  color: var(--gold, #C5A880);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.jf-shop-empty-state h3 {
+  font-family: var(--font-display, 'Playfair Display', serif);
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--text-primary, #1C1917);
+  margin: 0;
+}
+
+.jf-shop-empty-state p {
+  font-size: 0.88rem;
+  color: var(--text-secondary, #78716C);
+  max-width: 42ch;
+  margin: 0;
+}
+
+/* Responsive Breakpoints */
+@media (max-width: 1200px) {
+  .jf-salon-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .jf-luxury-grid.cols-4 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 860px) {
+  .jf-salon-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .jf-luxury-grid.cols-4,
+  .jf-luxury-grid.cols-3 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .jf-shop-toolbar-inner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .jf-shop-search-pill {
+    max-width: none;
+  }
+}
+
+@media (max-width: 560px) {
+  .jf-salon-grid {
+    grid-template-columns: 1fr;
+  }
+  .jf-luxury-grid.cols-4,
+  .jf-luxury-grid.cols-3,
+  .jf-luxury-grid.cols-2 {
+    grid-template-columns: 1fr;
+  }
+  .jf-dept-nav-card {
+    flex: 0 0 160px;
+    height: 115px;
+  }
+}
+
+
 
 
 

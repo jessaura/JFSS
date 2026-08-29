@@ -7,67 +7,95 @@ import gsap from 'gsap';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import CartDrawer from '@/components/layout/CartDrawer';
-import ClearanceRail from '@/components/home/ClearanceRail';
-import { products, Product, discountPercent, isUnpriced, colorAt, formatPrice } from '@/data/products';
+import { Product, discountPercent, isUnpriced, colorAt, formatPrice } from '@/data/products';
 import { getProductImage, hasPhoto } from '@/data/images';
 import { useCatalogue } from '@/components/providers/CatalogueProvider';
 import { useStore } from '@/store/store';
 
-/* ---------- Facets built from catalogue ---------- */
+/* ---------- Department Navigation Tabs ---------- */
 
-const CATEGORY_LABELS: Record<string, string> = {
-  men: 'Menwear',
-  women: 'Womenwear',
-  kids: 'Kids',
-  unisex: 'Unisex',
-};
+interface DepartmentTab {
+  id: string;
+  label: string;
+  subtitle: string;
+  tag: string;
+  image: string;
+}
 
-const MAIN_TABS = [
-  { id: 'all', label: 'All Collection' },
-  { id: 'women', label: 'Womenwear' },
-  { id: 'men', label: 'Menwear' },
-  { id: 'Dresses', label: 'Dresses', subcategory: true },
-  { id: 'Jewellery', label: 'Jewellery', subcategory: true },
-  { id: 'Kurtis', label: 'Kurtis', subcategory: true },
-  { id: 'Saris', label: 'Saris', subcategory: true },
-  { id: 'Sweater', label: 'Sweaters', subcategory: true },
-  { id: 'Tops', label: 'Tops', subcategory: true },
-  { id: 'Shirts', label: 'Shirts', subcategory: true },
-  { id: 'kids', label: 'Kids' },
+const DEPARTMENTS: DepartmentTab[] = [
+  {
+    id: 'all',
+    label: 'All Curated Salons',
+    subtitle: 'Full Store Catalog',
+    tag: 'All Departments',
+    image: '/images/hero-casual.png',
+  },
+  {
+    id: 'dresses',
+    label: 'Linen Dresses',
+    subtitle: 'Hand-Painted Botanicals',
+    tag: '100% Slub Linen',
+    image: '/dresses/dress_1.jpg',
+  },
+  {
+    id: 'women',
+    label: "Women's Collection",
+    subtitle: 'Kurtis, Tops & Sets',
+    tag: 'Dailywear & Occasion',
+    image: '/images/womens-collection.png',
+  },
+  {
+    id: 'men',
+    label: "Men's Everyday",
+    subtitle: 'Linen Shirts & Kurtas',
+    tag: 'Artisanal Kurtas',
+    image: '/images/mens-collection.png',
+  },
+  {
+    id: 'festive',
+    label: 'Festive Kerala Edit',
+    subtitle: 'Kasavu Gold & Sarees',
+    tag: 'Celebration Weaves',
+    image: '/images/festive-collection.png',
+  },
+  {
+    id: 'kids',
+    label: 'Kids & Juniors',
+    subtitle: 'Soft Cotton Dailywear',
+    tag: 'Boys & Girls',
+    image: '/images/kids-collection.jpg',
+  },
+  {
+    id: 'clearance',
+    label: 'Clearance Archive',
+    subtitle: 'Last Chance Pieces',
+    tag: 'Up to 60% Off',
+    image: '/clearance-sale.jpg',
+  },
 ];
 
-const categoryFacets = (['women', 'men', 'kids', 'unisex'] as const)
-  .map((value) => ({ value, label: CATEGORY_LABELS[value], count: products.filter((p) => p.category === value).length }))
-  .filter((f) => f.count > 0);
+/* ---------- Luxury Product Card Component ---------- */
 
-const typeFacets = [...new Set(products.map((p) => p.subcategory).filter(Boolean))]
-  .sort()
-  .map((value) => ({ value, count: products.filter((p) => p.subcategory === value).length }));
-
-const pricedProducts = products.filter((p) => !isUnpriced(p));
-const PRICE_MAX = pricedProducts.length ? Math.max(...pricedProducts.map((p) => p.price)) : 0;
-
-/* ---------- Elevated Product Card ---------- */
-
-function ShopProductCard({ product }: { product: Product }) {
+function LuxuryShopCard({ product }: { product: Product }) {
   const { toggleWishlist, isWishlisted, addToCart, openQuickView } = useStore();
   const [added, setAdded] = useState(false);
   const wishlisted = isWishlisted(product.id);
   const disc = discountPercent(product);
   const unpriced = isUnpriced(product);
+  const selectedColor = colorAt(product);
 
-  const handleOpenModal = (e: React.MouseEvent) => {
+  const handleOpen = (e: React.MouseEvent) => {
     e.preventDefault();
     openQuickView(product);
   };
 
-  const handleAdd = (e: React.MouseEvent) => {
+  const handleQuickAdd = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (product.sizes.length > 1) {
       openQuickView(product);
     } else {
-      addToCart(product, colorAt(product), product.sizes[0] ?? 'One size');
+      addToCart(product, selectedColor, product.sizes[0] ?? 'One size', 1);
       setAdded(true);
       setTimeout(() => setAdded(false), 1800);
     }
@@ -75,96 +103,128 @@ function ShopProductCard({ product }: { product: Product }) {
 
   return (
     <motion.article
-      className="jf-shop-card"
       layout
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0, scale: 0.96 }}
+      animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.96 }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+      className="jf-staples-card"
+      onClick={handleOpen}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => e.key === 'Enter' && openQuickView(product)}
+      aria-label={`View ${product.name}`}
     >
-      <div
-        className="jf-shop-media"
-        onClick={handleOpenModal}
-        style={{ cursor: 'pointer' }}
-        role="button"
-        tabIndex={0}
-        onKeyDown={(e) => e.key === 'Enter' && openQuickView(product)}
-      >
+      <div className="jf-staples-media">
         <img
           src={product.images[0] || getProductImage(product.id)}
           alt={product.name}
           loading="lazy"
+          className="jf-staples-img"
         />
 
-        {/* Wishlist Floating Button */}
+        {/* Top Badges */}
+        <div className="jf-staples-badges">
+          {product.fabric ? (
+            <span className="jf-staples-fabric-pill">{product.fabric.replace('100% ', '')}</span>
+          ) : (
+            <span className="jf-staples-fabric-pill">Artisan Weave</span>
+          )}
+          {product.new && <span className="jf-staples-new-pill">New In</span>}
+          {product.bestSeller && <span className="jf-staples-best-pill">★ Bestseller</span>}
+          {disc > 0 && <span className="jf-staples-disc-pill">−{disc}%</span>}
+          {!product.images.length && !hasPhoto(product.id) && (
+            <span className="jf-staples-fabric-pill">Photo Soon</span>
+          )}
+        </div>
+
+        {/* Wishlist Button */}
         <button
-          className={`jf-card-wish-btn ${wishlisted ? 'on' : ''}`}
+          type="button"
+          className={`jf-staples-fav ${wishlisted ? 'wishlisted' : ''}`}
           onClick={(e) => {
-            e.preventDefault();
             e.stopPropagation();
+            e.preventDefault();
             toggleWishlist(product.id);
           }}
           aria-label={wishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill={wishlisted ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg
+            width="17"
+            height="17"
+            viewBox="0 0 24 24"
+            fill={wishlisted ? 'var(--gold, #C5A880)' : 'none'}
+            stroke={wishlisted ? 'var(--gold, #C5A880)' : 'currentColor'}
+            strokeWidth="2"
+          >
             <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
           </svg>
         </button>
 
-        {/* Badges */}
-        {product.bestSeller ? (
-          <span className="jf-card-badge jf-badge-best">Bestseller</span>
-        ) : disc > 0 ? (
-          <span className="jf-card-badge jf-badge-sale">−{disc}%</span>
-        ) : !product.images.length && !hasPhoto(product.id) ? (
-          <span className="jf-card-badge jf-badge-soft">Photo soon</span>
-        ) : null}
-      </div>
-
-      <div className="jf-shop-body">
-        <div className="jf-shop-meta">
-          <span className="jf-shop-cat">{product.subcategory || product.category}</span>
-        </div>
-
-        <button
-          type="button"
-          onClick={handleOpenModal}
-          className="jf-shop-name"
-          style={{ background: 'none', border: 'none', padding: 0, textAlign: 'left', cursor: 'pointer' }}
-        >
-          {product.name}
-        </button>
-
-        {product.shortDescription && (
-          <p className="jf-shop-desc">{product.shortDescription}</p>
-        )}
-
-        <div className="jf-shop-foot">
-          <span className={`jf-shop-price ${unpriced ? 'poa' : ''}`}>
-            {unpriced ? 'Price on request' : `£${formatPrice(product.price)}`}
-            {product.originalPrice && product.originalPrice > product.price && (
-              <span className="jf-shop-was">£{formatPrice(product.originalPrice)}</span>
-            )}
-          </span>
-
+        {/* Hover Action Bar */}
+        <div className="jf-staples-hover-actions">
+          <button
+            type="button"
+            className="jf-staples-quickview-btn"
+            onClick={handleOpen}
+          >
+            <span>Quick View</span>
+          </button>
           {!unpriced && (
             <button
-              className={`jf-quick-add-btn ${added ? 'added' : ''}`}
-              onClick={handleAdd}
-              aria-label={`Add ${product.name} to bag`}
+              type="button"
+              className="jf-staples-quickadd-btn"
+              onClick={handleQuickAdd}
+              title={added ? 'Added to bag' : 'Add to Bag'}
+              aria-label="Add to bag"
             >
               {added ? (
-                <>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 6L9 17l-5-5" /></svg>
-                  Added
-                </>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#2E6B4F" strokeWidth="2.5">
+                  <path d="M20 6L9 17l-5-5" />
+                </svg>
               ) : (
-                <>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" /><path d="M3 6h18" /><path d="M16 10a4 4 0 01-8 0" /></svg>
-                  Add
-                </>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                  <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
+                  <path d="M3 6h18" />
+                  <path d="M16 10a4 4 0 01-8 0" />
+                </svg>
               )}
             </button>
+          )}
+        </div>
+      </div>
+
+      <div className="jf-staples-body">
+        <div className="jf-staples-meta-row">
+          <span className="jf-staples-category">{product.subcategory || product.category}</span>
+          {product.colors.length > 1 && (
+            <div className="jf-staples-swatches" aria-hidden="true">
+              {product.colors.map((c) => (
+                <span key={c.name} className="jf-staples-dot" style={{ backgroundColor: c.hex }} />
+              ))}
+            </div>
+          )}
+        </div>
+
+        <h3 className="jf-staples-title">{product.name}</h3>
+
+        {product.sizes.length > 0 && (
+          <div className="jf-staples-sizes">
+            <span className="jf-staples-size-label">Sizes:</span>
+            <span className="jf-staples-size-list">{product.sizes.join(' · ')}</span>
+          </div>
+        )}
+
+        <div className="jf-staples-price-row">
+          {unpriced ? (
+            <span className="jf-staples-poa">Price on request</span>
+          ) : (
+            <>
+              <span className="jf-staples-price">£{formatPrice(product.price)}</span>
+              {product.originalPrice && product.originalPrice > product.price && (
+                <span className="jf-staples-original-price">£{formatPrice(product.originalPrice)}</span>
+              )}
+            </>
           )}
         </div>
       </div>
@@ -172,20 +232,63 @@ function ShopProductCard({ product }: { product: Product }) {
   );
 }
 
+/* ---------- Department Salon Section Component ---------- */
+
+function DepartmentSalon({
+  eyebrow,
+  title,
+  description,
+  count,
+  products,
+  onViewDepartment,
+}: {
+  eyebrow: string;
+  title: string;
+  description: string;
+  count: number;
+  products: Product[];
+  onViewDepartment: () => void;
+}) {
+  if (products.length === 0) return null;
+
+  return (
+    <section className="jf-salon-section">
+      <div className="jf-salon-head">
+        <div className="jf-salon-copy">
+          <span className="jf-salon-eyebrow">{eyebrow}</span>
+          <h2 className="jf-salon-title">{title}</h2>
+          <p className="jf-salon-desc">{description}</p>
+        </div>
+        <button type="button" className="jf-salon-view-btn" onClick={onViewDepartment}>
+          <span>View all in {title}</span>
+          <span className="jf-salon-count-badge">{count}</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+
+      <div className="jf-salon-grid">
+        {products.slice(0, 4).map((product) => (
+          <LuxuryShopCard key={product.id} product={product} />
+        ))}
+      </div>
+    </section>
+  );
+}
+
 /* ---------- Main Shop Page Component ---------- */
 
 export default function ShopPage() {
   const catalogue = useCatalogue();
-  const [activeTab, setActiveTab] = useState('all');
-  const [cats, setCats] = useState<Set<string>>(new Set());
-  const [selTypes, setSelTypes] = useState<Set<string>>(new Set());
-  const [maxPrice, setMaxPrice] = useState(PRICE_MAX);
+  const [activeDept, setActiveDept] = useState<string>('all');
+  const [activeSubcat, setActiveSubcat] = useState<string>('all');
   const [search, setSearch] = useState('');
   const [onlySale, setOnlySale] = useState(false);
   const [sortBy, setSortBy] = useState('featured');
-  const [itemsPerPage, setItemsPerPage] = useState<number>(1000);
   const [gridCols, setGridCols] = useState<number>(4);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [fabricFilter, setFabricFilter] = useState<string>('all');
 
   const headerRef = useRef<HTMLDivElement>(null);
 
@@ -193,386 +296,419 @@ export default function ShopPage() {
     if (!headerRef.current) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const ctx = gsap.context(() => {
-      gsap.from('.jf-shop-head-copy > *', { y: 15, opacity: 0, duration: 0.6, stagger: 0.08, ease: 'power3.out' });
+      gsap.from('.jf-shop-hero-copy > *', { y: 20, opacity: 0, duration: 0.7, stagger: 0.08, ease: 'power3.out' });
     }, headerRef);
     return () => ctx.revert();
   }, []);
 
-  // Handle Tab Switch
-  function handleTabClick(tab: typeof MAIN_TABS[number]) {
-    setActiveTab(tab.id);
-    if (tab.id === 'all') {
-      setCats(new Set());
-      setSelTypes(new Set());
-    } else if (tab.subcategory) {
-      setCats(new Set());
-      setSelTypes(new Set([tab.id]));
-    } else {
-      setCats(new Set([tab.id]));
-      setSelTypes(new Set());
+  // Department Collections Splitting
+  const dressesList = useMemo(() => {
+    return catalogue.filter(
+      (p) =>
+        p.id.startsWith('d') ||
+        p.subcategory?.toLowerCase().includes('dress') ||
+        p.tags?.some((t) => t.toLowerCase().includes('dress'))
+    );
+  }, [catalogue]);
+
+  const womenList = useMemo(() => {
+    return catalogue.filter(
+      (p) =>
+        (p.category === 'women' || p.tags?.includes('women')) &&
+        !p.id.startsWith('d') &&
+        !p.subcategory?.toLowerCase().includes('dress')
+    );
+  }, [catalogue]);
+
+  const menList = useMemo(() => {
+    return catalogue.filter((p) => p.category === 'men' || p.tags?.includes('men'));
+  }, [catalogue]);
+
+  const festiveList = useMemo(() => {
+    return catalogue.filter(
+      (p) =>
+        p.subcategory?.toLowerCase().includes('sari') ||
+        p.subcategory?.toLowerCase().includes('set mundu') ||
+        p.tags?.some((t) => t.toLowerCase().includes('festive') || t.toLowerCase().includes('onam'))
+    );
+  }, [catalogue]);
+
+  const kidsList = useMemo(() => {
+    return catalogue.filter((p) => p.category === 'kids' || p.tags?.includes('kids'));
+  }, [catalogue]);
+
+  const clearanceList = useMemo(() => {
+    return catalogue.filter((p) => p.clearance || discountPercent(p) > 0);
+  }, [catalogue]);
+
+  // Subcategories available for active department
+  const subcategoriesForDept = useMemo(() => {
+    let source = catalogue;
+    if (activeDept === 'dresses') source = dressesList;
+    else if (activeDept === 'women') source = catalogue.filter((p) => p.category === 'women');
+    else if (activeDept === 'men') source = menList;
+    else if (activeDept === 'festive') source = festiveList;
+    else if (activeDept === 'kids') source = kidsList;
+    else if (activeDept === 'clearance') source = clearanceList;
+
+    const subs = Array.from(new Set(source.map((p) => p.subcategory).filter(Boolean))).sort();
+    return ['all', ...subs];
+  }, [activeDept, catalogue, dressesList, menList, festiveList, kidsList, clearanceList]);
+
+  // Filtered Products for Focused View
+  const filteredProducts = useMemo(() => {
+    let list = catalogue;
+
+    // 1. Department Filter
+    if (activeDept === 'dresses') list = dressesList;
+    else if (activeDept === 'women') list = catalogue.filter((p) => p.category === 'women');
+    else if (activeDept === 'men') list = menList;
+    else if (activeDept === 'festive') list = festiveList;
+    else if (activeDept === 'kids') list = kidsList;
+    else if (activeDept === 'clearance') list = clearanceList;
+
+    // 2. Subcategory Filter
+    if (activeSubcat !== 'all') {
+      list = list.filter((p) => p.subcategory === activeSubcat);
     }
-  }
 
-  function toggleSet(set: Set<string>, setter: (s: Set<string>) => void, value: string) {
-    const next = new Set(set);
-    next.has(value) ? next.delete(value) : next.add(value);
-    setter(next);
-  }
-
-  const priceActive = maxPrice < PRICE_MAX;
-  const anyFilter = cats.size > 0 || selTypes.size > 0 || priceActive || search.trim() !== '' || onlySale;
-
-  function resetAll() {
-    setActiveTab('all');
-    setCats(new Set());
-    setSelTypes(new Set());
-    setMaxPrice(PRICE_MAX);
-    setSearch('');
-    setOnlySale(false);
-  }
-
-  // Active Category Name for Display
-  const currentTitle = useMemo(() => {
-    if (activeTab !== 'all') {
-      const found = MAIN_TABS.find((t) => t.id === activeTab);
-      if (found) return found.label;
-    }
-    if (cats.size === 1) {
-      const cat = Array.from(cats)[0];
-      return CATEGORY_LABELS[cat] || cat;
-    }
-    if (selTypes.size === 1) {
-      return Array.from(selTypes)[0];
-    }
-    return 'Collection';
-  }, [activeTab, cats, selTypes]);
-
-  // Breadcrumb Trail
-  const breadcrumbItems = useMemo(() => {
-    const trail = [{ label: 'Home', href: '/' }];
-    if (cats.size === 1) {
-      const catVal = Array.from(cats)[0];
-      trail.push({ label: CATEGORY_LABELS[catVal] || catVal, href: '#' });
-    } else {
-      trail.push({ label: 'Womenwear', href: '#' });
+    // 3. Fabric Filter
+    if (fabricFilter !== 'all') {
+      list = list.filter((p) => p.fabric?.toLowerCase().includes(fabricFilter.toLowerCase()));
     }
 
-    if (selTypes.size === 1) {
-      trail.push({ label: Array.from(selTypes)[0], href: '#' });
-    } else if (currentTitle !== 'Collection' && currentTitle !== 'Womenwear') {
-      trail.push({ label: currentTitle, href: '#' });
+    // 4. Sale Only
+    if (onlySale) {
+      list = list.filter((p) => p.clearance || discountPercent(p) > 0);
     }
 
-    return trail;
-  }, [cats, selTypes, currentTitle]);
+    // 5. Search
+    if (search.trim()) {
+      const q = search.trim().toLowerCase();
+      list = list.filter(
+        (p) =>
+          p.name.toLowerCase().includes(q) ||
+          p.subcategory?.toLowerCase().includes(q) ||
+          p.description?.toLowerCase().includes(q) ||
+          p.tags?.some((t) => t.toLowerCase().includes(q))
+      );
+    }
 
-  // Filtered Products
-  const filtered = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    let out = catalogue.filter((p) => {
-      if (cats.size && !cats.has(p.category)) return false;
-      if (selTypes.size && !selTypes.has(p.subcategory)) return false;
-      if (priceActive && (isUnpriced(p) || p.price > maxPrice)) return false;
-      if (onlySale && discountPercent(p) <= 0 && !p.clearance) return false;
-      if (q && !p.name.toLowerCase().includes(q) && !p.subcategory.toLowerCase().includes(q)) return false;
-      return true;
-    });
-
+    // 6. Sort
     const byPrice = (dir: 1 | -1) => (a: Product, b: Product) => {
       if (isUnpriced(a) !== isUnpriced(b)) return isUnpriced(a) ? 1 : -1;
       return (a.price - b.price) * dir;
     };
 
     switch (sortBy) {
-      case 'price-low': out = out.sort(byPrice(1)); break;
-      case 'price-high': out = out.sort(byPrice(-1)); break;
-      case 'newest': out = out.sort((a, b) => (b.new ? 1 : 0) - (a.new ? 1 : 0)); break;
-      default: out = out.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+      case 'price-low':
+        list = [...list].sort(byPrice(1));
+        break;
+      case 'price-high':
+        list = [...list].sort(byPrice(-1));
+        break;
+      case 'newest':
+        list = [...list].sort((a, b) => (b.new ? 1 : 0) - (a.new ? 1 : 0));
+        break;
+      default:
+        list = [...list].sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
     }
 
-    if (itemsPerPage > 0) {
-      out = out.slice(0, itemsPerPage);
-    }
-    return out;
-  }, [catalogue, cats, selTypes, priceActive, maxPrice, search, onlySale, sortBy, itemsPerPage]);
+    return list;
+  }, [catalogue, activeDept, activeSubcat, fabricFilter, onlySale, search, sortBy, dressesList, menList, festiveList, kidsList, clearanceList]);
+
+  const activeDepartmentMeta = useMemo(() => {
+    return DEPARTMENTS.find((d) => d.id === activeDept) ?? DEPARTMENTS[0];
+  }, [activeDept]);
+
+  const isSalonsMode = activeDept === 'all' && !search.trim() && fabricFilter === 'all' && !onlySale;
+
+  const resetFilters = () => {
+    setActiveDept('all');
+    setActiveSubcat('all');
+    setFabricFilter('all');
+    setOnlySale(false);
+    setSearch('');
+    setSortBy('featured');
+  };
 
   return (
     <>
       <Navbar />
       <CartDrawer />
 
-      <main className="jf-shop-page">
-        {/* Top Clearance Sale Highlight Section */}
-        <div style={{ marginBottom: 'var(--space-2xl)' }}>
-          <ClearanceRail />
-        </div>
-
-        <div className="container" ref={headerRef}>
-          {/* Breadcrumb Trail */}
-          <nav className="jf-shop-breadcrumb" aria-label="Breadcrumb">
-            {breadcrumbItems.map((item, idx) => (
-              <span key={idx} className="jf-crumb-item">
-                {idx > 0 && <span className="jf-crumb-sep">&rsaquo;</span>}
-                {item.href !== '#' ? (
-                  <Link href={item.href}>{item.label}</Link>
+      <main className="jf-luxury-shop">
+        {/* Editorial Shop Header */}
+        <section className="jf-shop-hero" ref={headerRef}>
+          <div className="container">
+            <div className="jf-shop-hero-copy">
+              <span className="jf-shop-hero-eyebrow">THE ATELIER COLLECTION · LONDON</span>
+              <h1 className="jf-shop-hero-title">
+                {activeDept === 'all' ? (
+                  <>
+                    The Curated <span className="accent-gold">Wardrobe</span>
+                  </>
                 ) : (
-                  <span className="jf-crumb-active">{item.label}</span>
+                  <>
+                    {activeDepartmentMeta.label.split(' ')[0]}{' '}
+                    <span className="accent-gold">{activeDepartmentMeta.label.split(' ').slice(1).join(' ') || 'Edit'}</span>
+                  </>
                 )}
-              </span>
-            ))}
-          </nav>
-
-          {/* Main Title + Show Filters Button Row */}
-          <header className="jf-shop-head-row">
-            <div className="jf-shop-head-copy">
-              <h1 className="jf-shop-title">
-                {currentTitle}
-                <span className="jf-shop-count-tag">{filtered.length}</span>
               </h1>
+              <p className="jf-shop-hero-desc">
+                {activeDept === 'all'
+                  ? 'Pure slub linens, breathable cottons, and timeless South Asian everyday elegance, organized into curated department salons.'
+                  : activeDepartmentMeta.subtitle}
+              </p>
             </div>
 
-            <button
-              className={`jf-show-filters-btn ${filtersOpen ? 'active' : ''}`}
-              onClick={() => setFiltersOpen((open) => !open)}
-            >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
-              </svg>
-              <span>{filtersOpen ? 'Hide filters' : 'Show filters'}</span>
-            </button>
-          </header>
-
-          {/* Category Tabs Bar */}
-          <nav className="jf-shop-tabs-bar" aria-label="Collection categories">
-            <div className="jf-shop-tabs-scroll">
-              {MAIN_TABS.map((tab) => (
-                <button
-                  key={tab.id}
-                  className={`jf-shop-tab ${activeTab === tab.id ? 'active' : ''}`}
-                  onClick={() => handleTabClick(tab)}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-          </nav>
-
-          {/* Toolbar Controls Row (Grid Switcher, Sale Toggle, Sorting, Per Page) */}
-          <div className="jf-shop-toolbar">
-            {/* Grid Column Switcher (2, 3, 4, 5 cols) */}
-            <div className="jf-grid-switcher" aria-label="Grid layout switcher">
-              {[2, 3, 4, 5].map((cols) => (
-                <button
-                  key={cols}
-                  className={`jf-grid-btn grid-${cols} ${gridCols === cols ? 'active' : ''}`}
-                  onClick={() => setGridCols(cols)}
-                  title={`${cols} Columns View`}
-                >
-                  <GridIcon cols={cols} />
-                </button>
-              ))}
-            </div>
-
-            <div className="jf-toolbar-actions">
-              {/* Show Only Sale Checkbox */}
-              <label className="jf-toolbar-check">
-                <input
-                  type="checkbox"
-                  checked={onlySale}
-                  onChange={(e) => setOnlySale(e.target.checked)}
-                />
-                <span className="jf-check-box" aria-hidden="true">
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2"><path d="M20 6L9 17l-5-5" /></svg>
-                </span>
-                <span>Show only products on sale</span>
-              </label>
-
-              {/* Sort Dropdown */}
-              <div className="jf-toolbar-select-wrap">
-                <span className="jf-select-label">Sort by</span>
-                <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-                  <option value="featured">Default sorting</option>
-                  <option value="newest">Newest pieces</option>
-                  <option value="price-low">Price: Low to High</option>
-                  <option value="price-high">Price: High to Low</option>
-                </select>
-              </div>
-
-              {/* Show Items Per Page */}
-              <div className="jf-toolbar-select-wrap">
-                <span className="jf-select-label">Show</span>
-                <select
-                  value={itemsPerPage}
-                  onChange={(e) => setItemsPerPage(Number(e.target.value))}
-                >
-                  <option value={1000}>All</option>
-                  <option value={20}>20</option>
-                  <option value={40}>40</option>
-                </select>
+            {/* Department Navigation Cards Bar */}
+            <div className="jf-dept-cards-wrap" role="tablist" aria-label="Browse by department">
+              <div className="jf-dept-cards-track">
+                {DEPARTMENTS.map((dept) => {
+                  const isActive = activeDept === dept.id;
+                  return (
+                    <button
+                      key={dept.id}
+                      type="button"
+                      role="tab"
+                      aria-selected={isActive}
+                      className={`jf-dept-nav-card ${isActive ? 'active' : ''}`}
+                      onClick={() => {
+                        setActiveDept(dept.id);
+                        setActiveSubcat('all');
+                      }}
+                    >
+                      <div
+                        className="jf-dept-nav-bg"
+                        style={{ backgroundImage: `url("${dept.image}")` }}
+                      />
+                      <div className="jf-dept-nav-overlay" />
+                      <div className="jf-dept-nav-content">
+                        <span className="jf-dept-nav-tag">{dept.tag}</span>
+                        <h4 className="jf-dept-nav-title">{dept.label}</h4>
+                      </div>
+                      {isActive && <div className="jf-dept-nav-active-bar" />}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>
+        </section>
 
-          {/* Collapsible Filter Panel */}
-          <AnimatePresence>
-            {filtersOpen && (
-              <motion.div
-                className="jf-filter-panel"
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: 'auto', opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.35, ease: 'easeInOut' }}
-              >
-                <div className="jf-filter-panel-inner">
-                  <div className="jf-filter-search">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.35-4.35" /></svg>
-                    <input
-                      placeholder="Search collection by keyword..."
-                      value={search}
-                      onChange={(e) => setSearch(e.target.value)}
-                    />
-                  </div>
-
-                  <div className="jf-filter-grid">
-                    {/* Category Filter */}
-                    <div className="jf-facet-col">
-                      <h3>Category</h3>
-                      {categoryFacets.map((f) => (
-                        <CheckRow
-                          key={f.value}
-                          label={f.label}
-                          count={f.count}
-                          checked={cats.has(f.value)}
-                          onChange={() => toggleSet(cats, setCats, f.value)}
-                        />
-                      ))}
-                    </div>
-
-                    {/* Garment Type Filter */}
-                    <div className="jf-facet-col">
-                      <h3>Garment</h3>
-                      {typeFacets.map((f) => (
-                        <CheckRow
-                          key={f.value}
-                          label={f.value}
-                          count={f.count}
-                          checked={selTypes.has(f.value)}
-                          onChange={() => toggleSet(selTypes, setSelTypes, f.value)}
-                        />
-                      ))}
-                    </div>
-
-                    {/* Price Slider */}
-                    {PRICE_MAX > 0 && (
-                      <div className="jf-facet-col">
-                        <h3>Maximum Price</h3>
-                        <div className="jf-price-range">
-                          <input
-                            type="range"
-                            min={0}
-                            max={PRICE_MAX}
-                            step={1}
-                            value={maxPrice}
-                            onChange={(e) => setMaxPrice(Number(e.target.value))}
-                          />
-                          <div className="jf-price-range-labels">
-                            <span>£0</span>
-                            <span>{priceActive ? `up to £${maxPrice}` : `£${PRICE_MAX}`}</span>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {anyFilter && (
-                    <div className="jf-filter-reset-row">
-                      <button className="jf-btn-reset-all" onClick={resetAll}>
-                        Reset all filters
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Product Grid Area */}
-          <section className="jf-shop-results">
-            {filtered.length === 0 ? (
-              <div className="jf-shop-empty">
-                <p>No pieces match your selected filters.</p>
-                <button className="jf-btn jf-btn-ghost" onClick={resetAll}>
-                  Reset filters
-                </button>
+        {/* Global Toolbar & Quick Filter Bar */}
+        <div className="jf-shop-toolbar-sticky">
+          <div className="container">
+            <div className="jf-shop-toolbar-inner">
+              {/* Search input */}
+              <div className="jf-shop-search-pill">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <circle cx="11" cy="11" r="7" />
+                  <path d="M21 21l-4.35-4.35" />
+                </svg>
+                <input
+                  type="text"
+                  placeholder="Search fabric, cut, or piece…"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  aria-label="Search products"
+                />
+                {search && (
+                  <button type="button" onClick={() => setSearch('')} className="jf-search-clear">
+                    ×
+                  </button>
+                )}
               </div>
-            ) : (
-              <motion.div className={`jf-shop-grid cols-${gridCols}`} layout>
-                <AnimatePresence>
-                  {filtered.map((p) => (
-                    <ShopProductCard key={p.id} product={p} />
+
+              {/* Subcategories (Visible when inside a specific department) */}
+              {activeDept !== 'all' && subcategoriesForDept.length > 2 && (
+                <div className="jf-subcat-pills" role="tablist" aria-label="Filter by subcategory">
+                  {subcategoriesForDept.map((sub) => (
+                    <button
+                      key={sub}
+                      type="button"
+                      className={`jf-subcat-pill ${activeSubcat === sub ? 'active' : ''}`}
+                      onClick={() => setActiveSubcat(sub)}
+                    >
+                      {sub === 'all' ? `All ${activeDepartmentMeta.label}` : sub}
+                    </button>
                   ))}
-                </AnimatePresence>
-              </motion.div>
-            )}
-          </section>
+                </div>
+              )}
+
+              {/* Actions & Filters Toggle */}
+              <div className="jf-toolbar-right-group">
+                {/* Fabric Quick Filter */}
+                <div className="jf-toolbar-select">
+                  <span>Fabric:</span>
+                  <select value={fabricFilter} onChange={(e) => setFabricFilter(e.target.value)}>
+                    <option value="all">All Fabrics</option>
+                    <option value="linen">Slub Linen</option>
+                    <option value="cotton">Organic Cotton</option>
+                    <option value="silk">Chanderi Silk</option>
+                  </select>
+                </div>
+
+                {/* Sort dropdown */}
+                <div className="jf-toolbar-select">
+                  <span>Sort:</span>
+                  <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                    <option value="featured">Featured Picks</option>
+                    <option value="newest">New Arrivals</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                  </select>
+                </div>
+
+                {/* Sale Toggle */}
+                <button
+                  type="button"
+                  className={`jf-sale-toggle-pill ${onlySale ? 'active' : ''}`}
+                  onClick={() => setOnlySale(!onlySale)}
+                >
+                  <span className="jf-sale-dot" />
+                  <span>Sale Items</span>
+                </button>
+
+                {/* Grid Column Selector */}
+                <div className="jf-grid-view-ctrls">
+                  {[2, 3, 4].map((cols) => (
+                    <button
+                      key={cols}
+                      type="button"
+                      className={`jf-grid-view-btn ${gridCols === cols ? 'active' : ''}`}
+                      onClick={() => setGridCols(cols)}
+                      title={`${cols} Columns View`}
+                      aria-label={`${cols} columns`}
+                    >
+                      {cols === 2 ? 'II' : cols === 3 ? 'III' : 'IIII'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content Area */}
+        <div className="container jf-shop-main-content">
+          {/* MODE A: Curated Department Salons Mode (When "All" is active and not searching) */}
+          {isSalonsMode ? (
+            <div className="jf-salons-container">
+              {/* Department 1: The Linen Dress Atelier */}
+              <DepartmentSalon
+                eyebrow="100% PURE SLUB LINEN · HAND-PAINTED"
+                title="The Linen Dress Atelier"
+                description="Breathable midi silhouettes with artisan botanical floral artwork. Cut for effortless summer grace."
+                count={dressesList.length}
+                products={dressesList}
+                onViewDepartment={() => setActiveDept('dresses')}
+              />
+
+              {/* Department 2: Women's Tops & Kurtis Salon */}
+              <DepartmentSalon
+                eyebrow="DAILYWEAR SILHOUETTES · BREATHABLE COTTONS"
+                title="Women's Tops & Kurtis"
+                description="Everyday blouses, casual tunics, and comfortable dailywear crafted with delicate block details."
+                count={womenList.length}
+                products={womenList}
+                onViewDepartment={() => setActiveDept('women')}
+              />
+
+              {/* Department 3: Men's Everyday & Kurtas */}
+              <DepartmentSalon
+                eyebrow="REFINED TAILORING · ARTISANAL WEAVES"
+                title="Men's Everyday Collection"
+                description="Breathable linen kurtas, tailored casual shirts, and classic polos designed for all-day comfort."
+                count={menList.length}
+                products={menList}
+                onViewDepartment={() => setActiveDept('men')}
+              />
+
+              {/* Department 4: Festive Kerala Weaves */}
+              <DepartmentSalon
+                eyebrow="KASAVU GOLD BORDERS · CELEBRATION"
+                title="Festive Kerala Edit"
+                description="Traditional handloom set sarees, Kasavu borders, and heritage occasionwear."
+                count={festiveList.length}
+                products={festiveList}
+                onViewDepartment={() => setActiveDept('festive')}
+              />
+
+              {/* Department 5: Kids Capsule */}
+              {kidsList.length > 0 && (
+                <DepartmentSalon
+                  eyebrow="GENTLE ON SKIN · ORGANIC COTTON"
+                  title="Kids & Juniors Capsule"
+                  description="Soft breathable cotton sets and playful kurtas for boys and girls."
+                  count={kidsList.length}
+                  products={kidsList}
+                  onViewDepartment={() => setActiveDept('kids')}
+                />
+              )}
+
+              {/* Department 6: Clearance Rail */}
+              {clearanceList.length > 0 && (
+                <DepartmentSalon
+                  eyebrow="LAST CHANCE ARCHIVE · SPECIAL OFFERS"
+                  title="Clearance Archive"
+                  description="End-of-season markdown favorites and last chance stock."
+                  count={clearanceList.length}
+                  products={clearanceList}
+                  onViewDepartment={() => setActiveDept('clearance')}
+                />
+              )}
+            </div>
+          ) : (
+            /* MODE B: Focused Department Grid View */
+            <div className="jf-focused-department-view">
+              <div className="jf-focused-header">
+                <div className="jf-focused-title-wrap">
+                  <h2 className="jf-focused-title">
+                    {activeDept === 'all' ? 'Filtered Search Results' : activeDepartmentMeta.label}
+                  </h2>
+                  <span className="jf-focused-count-pill">{filteredProducts.length} pieces</span>
+                </div>
+                {(search || fabricFilter !== 'all' || onlySale || activeSubcat !== 'all') && (
+                  <button type="button" className="jf-reset-all-btn" onClick={resetFilters}>
+                    <span>Clear all filters</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M18 6L6 18M6 6l12 12" />
+                    </svg>
+                  </button>
+                )}
+              </div>
+
+              {filteredProducts.length === 0 ? (
+                <div className="jf-shop-empty-state">
+                  <div className="jf-empty-icon">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                      <circle cx="11" cy="11" r="7" />
+                      <path d="M21 21l-4.35-4.35" />
+                    </svg>
+                  </div>
+                  <h3>No pieces match your selected filters</h3>
+                  <p>Try resetting your search query or selecting a different department.</p>
+                  <button type="button" className="jf-staples-viewall-btn" onClick={resetFilters}>
+                    Reset all filters
+                  </button>
+                </div>
+              ) : (
+                <motion.div className={`jf-luxury-grid cols-${gridCols}`} layout>
+                  <AnimatePresence>
+                    {filteredProducts.map((product) => (
+                      <LuxuryShopCard key={product.id} product={product} />
+                    ))}
+                  </AnimatePresence>
+                </motion.div>
+              )}
+            </div>
+          )}
         </div>
       </main>
 
       <Footer />
     </>
-  );
-}
-
-/* ---------- Building Blocks & Icons ---------- */
-
-function CheckRow({ label, count, checked, onChange }: { label: string; count: number; checked: boolean; onChange: () => void }) {
-  return (
-    <label className="jf-check-row">
-      <input type="checkbox" checked={checked} onChange={onChange} />
-      <span className="jf-check-box" aria-hidden="true">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.2"><path d="M20 6L9 17l-5-5" /></svg>
-      </span>
-      <span className="jf-check-label">{label}</span>
-      <span className="jf-check-count">{count}</span>
-    </label>
-  );
-}
-
-function GridIcon({ cols }: { cols: number }) {
-  if (cols === 2) {
-    return (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-        <rect x="2" y="4" width="9" height="16" rx="1.5" />
-        <rect x="13" y="4" width="9" height="16" rx="1.5" />
-      </svg>
-    );
-  }
-  if (cols === 3) {
-    return (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-        <rect x="2" y="4" width="5.5" height="16" rx="1" />
-        <rect x="9.25" y="4" width="5.5" height="16" rx="1" />
-        <rect x="16.5" y="4" width="5.5" height="16" rx="1" />
-      </svg>
-    );
-  }
-  if (cols === 4) {
-    return (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-        <rect x="2" y="4" width="4" height="16" rx="1" />
-        <rect x="7.33" y="4" width="4" height="16" rx="1" />
-        <rect x="12.66" y="4" width="4" height="16" rx="1" />
-        <rect x="18" y="4" width="4" height="16" rx="1" />
-      </svg>
-    );
-  }
-  return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-      <rect x="2" y="4" width="3" height="16" rx="0.5" />
-      <rect x="6.2" y="4" width="3" height="16" rx="0.5" />
-      <rect x="10.4" y="4" width="3" height="16" rx="0.5" />
-      <rect x="14.6" y="4" width="3" height="16" rx="0.5" />
-      <rect x="18.8" y="4" width="3" height="16" rx="0.5" />
-    </svg>
   );
 }
