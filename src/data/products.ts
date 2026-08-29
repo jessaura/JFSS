@@ -44,8 +44,8 @@ export interface Product {
 export const products: Product[] = [
   {
     id: "d001",
-    name: "Mauve Floral Hand-Painted Linen Dress",
-    slug: "mauve-floral-hand-painted-linen-dress",
+    name: "Mauve Floral Dress",
+    slug: "mauve-floral-dress",
     price: 32.9,
     originalPrice: 45,
     shortDescription: "Hand-painted botanical floral A-line midi dress in breathable organic linen.",
@@ -72,8 +72,8 @@ export const products: Product[] = [
   },
   {
     id: "d002",
-    name: "Sunshine Yellow Floral Linen Midi Dress",
-    slug: "sunshine-yellow-floral-linen-midi-dress",
+    name: "Yellow Floral Dress",
+    slug: "yellow-floral-dress",
     price: 32.9,
     originalPrice: 45,
     shortDescription: "Bright marigold floral hand-painted A-line dress with 3/4 sleeves.",
@@ -100,8 +100,8 @@ export const products: Product[] = [
   },
   {
     id: "d003",
-    name: "Blush Rose Embroidered Linen A-Line Dress",
-    slug: "blush-rose-embroidered-linen-a-line-dress",
+    name: "Blush Rose Dress",
+    slug: "blush-rose-dress",
     price: 32.9,
     originalPrice: 45,
     shortDescription: "Exquisite floral vine embroidery on a soft blush rose flared linen silhouette.",
@@ -128,8 +128,8 @@ export const products: Product[] = [
   },
   {
     id: "d004",
-    name: "Seafoam Mint Floral Embroidered Linen Dress",
-    slug: "seafoam-mint-floral-embroidered-linen-dress",
+    name: "Seafoam Mint Dress",
+    slug: "seafoam-mint-dress",
     price: 32.9,
     originalPrice: 45,
     shortDescription: "Fresh seafoam turquoise midi dress with embroidered neckline and hemline flora.",
@@ -156,8 +156,8 @@ export const products: Product[] = [
   },
   {
     id: "d005",
-    name: "Sage Green Floral Appliqué Maxi Dress",
-    slug: "sage-green-floral-applique-maxi-dress",
+    name: "Sage Green Maxi Dress",
+    slug: "sage-green-maxi-dress",
     price: 32.9,
     originalPrice: 48,
     shortDescription: "Floor-sweeping flared maxi dress featuring textured floral appliqué and leaf embroidery.",
