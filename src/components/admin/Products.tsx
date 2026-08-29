@@ -8,6 +8,11 @@ import { products as localProducts } from '@/data/products';
 import { money, Field, Skeleton, EmptyState, Icon } from './ui';
 import { IMAGE_PENDING } from '@/data/images';
 import ImageUpload from './ImageUpload';
+import {
+  getStoredCatalogueOverrides,
+  saveStoredCatalogueOverride,
+  removeStoredCatalogueOverride,
+} from '@/components/providers/CatalogueProvider';
 
 type ProductDoc = Product & { _id: string; productId: string; stock?: number };
 
@@ -59,9 +64,9 @@ export default function Products({
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState<'all' | ProductDoc['category']>('all');
 
-  // Local overrides for offline / non-seeded environment
+  // Local overrides with localStorage persistence & broadcast
   type Override = Partial<ProductDoc> & { _deleted?: boolean };
-  const [localOverrides, setLocalOverrides] = useState<Record<string, Override>>({});
+  const [localOverrides, setLocalOverrides] = useState<Record<string, Override>>(() => getStoredCatalogueOverrides());
 
   const allProducts: ProductDoc[] = useMemo(() => {
     // Always start from the full static catalogue, keyed by productId, then
@@ -77,7 +82,7 @@ export default function Products({
 
     return [...byId.values()]
       .map((p) => {
-        const patch = localOverrides[p._id] || localOverrides[p.id];
+        const patch = localOverrides[p.productId] || localOverrides[p.id] || localOverrides[p._id];
         return patch ? { ...p, ...patch } : p;
       })
       .filter((p) => !(p as Override)._deleted);
@@ -95,6 +100,7 @@ export default function Products({
   // upsert by productId so a change persists to Convex even for a piece that
   // until now only lived in the static catalogue (unknown Convex id).
   async function persist(p: ProductDoc, patch: Partial<ProductDoc>) {
+    saveStoredCatalogueOverride(p.productId || p.id, patch);
     await convex.mutation(anyApi.admin.upsertProduct, {
       adminKey,
       productId: p.productId,
@@ -104,29 +110,31 @@ export default function Products({
 
   async function toggle(p: ProductDoc, flag: (typeof FLAGS)[number]) {
     const newValue = !p[flag];
+    saveStoredCatalogueOverride(p.productId || p.id, { [flag]: newValue });
+    setLocalOverrides((prev) => ({
+      ...prev,
+      [p.productId || p.id]: { ...(prev[p.productId || p.id] || {}), [flag]: newValue },
+      [p._id]: { ...(prev[p._id] || {}), [flag]: newValue },
+    }));
+    notify(`Updated ${p.name} (${flag}: ${newValue ? 'ON' : 'OFF'})`);
     try {
       await persist(p, { [flag]: newValue });
-      notify(`Updated ${p.name}`);
     } catch {
-      // Local fallback state
-      setLocalOverrides((prev) => ({
-        ...prev,
-        [p._id]: { ...(prev[p._id] || {}), [flag]: newValue },
-      }));
-      notify(`Updated ${p.name} (${flag}: ${newValue ? 'ON' : 'OFF'})`);
+      // Local broadcast already stored
     }
   }
 
   async function setStock(p: ProductDoc, stock: number) {
     const newStock = Math.max(0, stock);
+    saveStoredCatalogueOverride(p.productId || p.id, { stock: newStock });
+    setLocalOverrides((prev) => ({
+      ...prev,
+      [p.productId || p.id]: { ...(prev[p.productId || p.id] || {}), stock: newStock },
+      [p._id]: { ...(prev[p._id] || {}), stock: newStock },
+    }));
     try {
       await persist(p, { stock: newStock });
-    } catch {
-      setLocalOverrides((prev) => ({
-        ...prev,
-        [p._id]: { ...(prev[p._id] || {}), stock: newStock },
-      }));
-    }
+    } catch {}
   }
 
   // Record a manual (WhatsApp/offline) sale: reduce stock — drawing down a
@@ -150,29 +158,31 @@ export default function Products({
     }
     const sold = (p.sold ?? 0) + qty;
     const patch: Partial<ProductDoc> = { stock, sold, ...(p.variants ? { variants } : {}) };
+    saveStoredCatalogueOverride(p.productId || p.id, patch);
+    setLocalOverrides((prev) => ({
+      ...prev,
+      [p.productId || p.id]: { ...(prev[p.productId || p.id] || {}), ...patch },
+      [p._id]: { ...(prev[p._id] || {}), ...patch },
+    }));
+    notify(`Recorded ${qty} sold — ${p.name}`);
     try {
       await persist(p, patch);
-      notify(`Recorded ${qty} sold — ${p.name}`);
-    } catch {
-      setLocalOverrides((prev) => ({
-        ...prev,
-        [p._id]: { ...(prev[p._id] || {}), ...patch },
-      }));
-      notify(`Recorded ${qty} sold — ${p.name}`);
-    }
+    } catch {}
   }
 
   async function remove(p: ProductDoc) {
     if (!confirm(`Delete "${p.name}"? This cannot be undone.`)) return;
+    removeStoredCatalogueOverride(p.productId || p.id);
+    removeStoredCatalogueOverride(p._id);
+    setLocalOverrides((prev) => ({
+      ...prev,
+      [p.productId || p.id]: { ...(prev[p.productId || p.id] || {}), _deleted: true },
+      [p._id]: { ...(prev[p._id] || {}), _deleted: true },
+    }));
+    notify(`Deleted ${p.name}`);
     try {
       await convex.mutation(anyApi.admin.deleteProduct, { adminKey, id: p._id });
-    } catch {
-      setLocalOverrides((prev) => ({
-        ...prev,
-        [p._id]: { ...(prev[p._id] || {}), _deleted: true },
-      }));
-    }
-    notify(`Deleted ${p.name}`);
+    } catch {}
   }
 
   return (
@@ -313,7 +323,13 @@ export default function Products({
           adminKey={adminKey}
           product={editing === 'new' ? null : editing}
           onClose={() => setEditing(null)}
-          onSaved={(name) => {
+          onSaved={(name, updatedFields, savedPid) => {
+            if (updatedFields && savedPid) {
+              setLocalOverrides((prev) => ({
+                ...prev,
+                [savedPid]: { ...(prev[savedPid] || {}), ...updatedFields },
+              }));
+            }
             setEditing(null);
             notify(`Saved ${name}`);
           }}
@@ -332,7 +348,7 @@ function ProductForm({
   adminKey: string;
   product: ProductDoc | null;
   onClose: () => void;
-  onSaved: (name: string) => void;
+  onSaved: (name: string, updated?: Partial<ProductDoc>, pid?: string) => void;
 }) {
   const convex = useConvex();
   const [busy, setBusy] = useState(false);
@@ -432,14 +448,12 @@ function ProductForm({
       rating: product?.rating ?? 0,
       reviews: product?.reviews ?? 0,
     };
+    saveStoredCatalogueOverride(productId, full);
     try {
       await convex.mutation(anyApi.admin.upsertProduct, { adminKey, productId, product: full });
-      onSaved(form.name);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Save failed — check the fields and try again.');
-    } finally {
-      setBusy(false);
-    }
+    } catch {}
+    onSaved(form.name, full, productId);
+    setBusy(false);
   }
 
   return (

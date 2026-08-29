@@ -8,6 +8,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { getFeaturedProducts, Product, isUnpriced, formatPrice } from '@/data/products';
 import { getProductImage } from '@/data/images';
 import { useStore } from '@/store/store';
+import { useCatalogue } from '@/components/providers/CatalogueProvider';
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -68,7 +69,8 @@ function EditCard({ product }: { product: Product }) {
 
 export default function FeaturedProducts() {
   const sectionRef = useRef<HTMLElement>(null);
-  const featured = getFeaturedProducts();
+  const catalogue = useCatalogue();
+  const featured = getFeaturedProducts(catalogue);
 
   useEffect(() => {
     if (!sectionRef.current) return;

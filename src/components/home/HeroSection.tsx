@@ -9,6 +9,7 @@ import HeroLoopingLogo from './HeroLoopingLogo';
 import HeroRoulette from './HeroRoulette';
 import { getFeaturedProducts, isUnpriced, formatPrice } from '@/data/products';
 import { getProductImage } from '@/data/images';
+import { useCatalogue } from '@/components/providers/CatalogueProvider';
 
 const CONVEX_READY = Boolean(process.env.NEXT_PUBLIC_CONVEX_URL);
 
@@ -25,7 +26,8 @@ const FLOAT_SPOTS = [
 
 export default function HeroSection() {
   const heroRef = useRef<HTMLElement>(null);
-  const floats = getFeaturedProducts().slice(0, 4);
+  const catalogue = useCatalogue();
+  const floats = getFeaturedProducts(catalogue).slice(0, 4);
 
   useEffect(() => {
     if (!heroRef.current) return;

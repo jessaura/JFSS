@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { getFeaturedProducts } from '@/data/products';
 import { getProductImage } from '@/data/images';
+import { useCatalogue } from '@/components/providers/CatalogueProvider';
 
 /**
  * Hero carousel — one shot at a time, sliding sideways (translateX track)
@@ -15,11 +16,13 @@ import { getProductImage } from '@/data/images';
  * it lands with its product data.
  */
 export default function HeroRoulette() {
-  const shots = getFeaturedProducts().map((p) => ({
+  const catalogue = useCatalogue();
+  const featured = getFeaturedProducts(catalogue);
+  const shots = (featured.length > 0 ? featured : catalogue.slice(0, 6)).map((p) => ({
     id: p.id,
-    src: getProductImage(p.id),
+    src: p.images[0] || getProductImage(p.id),
   }));
-  const total = shots.length;
+  const total = Math.max(shots.length, 1);
 
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);

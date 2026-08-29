@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { getClearanceProducts, discountPercent, formatPrice } from '@/data/products';
 import { getProductImage } from '@/data/images';
+import { useCatalogue } from '@/components/providers/CatalogueProvider';
 
 /**
  * Clearance Sale band for the Shop page — a dark, loud strip highlighting
@@ -14,7 +15,8 @@ import { getProductImage } from '@/data/images';
  * prefers-reduced-motion it falls back to a static scroll row.
  */
 export default function ClearanceRail() {
-  const items = getClearanceProducts();
+  const catalogue = useCatalogue();
+  const items = getClearanceProducts(catalogue);
   if (items.length === 0) return null;
 
   const card = (product: (typeof items)[number], clone: boolean) => (

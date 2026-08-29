@@ -57,7 +57,7 @@ export const products: Product[] = [
     sizes: ["One Size"],
     images: ["/jewellery/j_1.png"],
     tags: ["jewellery", "pendant", "necklace", "gold", "women"],
-    featured: true,
+    featured: false,
     new: true,
     bestSeller: true,
     clearance: false,
@@ -80,7 +80,7 @@ export const products: Product[] = [
     sizes: ["One Size"],
     images: ["/jewellery/j_2.png"],
     tags: ["jewellery", "pendant", "necklace", "gold", "women"],
-    featured: true,
+    featured: false,
     new: true,
     bestSeller: false,
     clearance: false,
@@ -103,7 +103,7 @@ export const products: Product[] = [
     sizes: ["One Size"],
     images: ["/jewellery/j_3.jpeg"],
     tags: ["jewellery", "pendant", "necklace", "gold", "ruby", "women"],
-    featured: true,
+    featured: false,
     new: true,
     bestSeller: true,
     clearance: false,
@@ -126,7 +126,7 @@ export const products: Product[] = [
     sizes: ["2.4", "2.6", "2.8"],
     images: ["/jewellery/j_4.png"],
     tags: ["jewellery", "bangles", "gold", "women"],
-    featured: true,
+    featured: false,
     new: true,
     bestSeller: false,
     clearance: false,
@@ -149,7 +149,7 @@ export const products: Product[] = [
     sizes: ["2.4", "2.6", "2.8"],
     images: ["/jewellery/j_5.png"],
     tags: ["jewellery", "bangles", "two-tone", "gold", "women"],
-    featured: true,
+    featured: false,
     new: true,
     bestSeller: true,
     clearance: false,
@@ -4331,20 +4331,20 @@ export function getProductBySlug(slug: string): Product | undefined {
   return products.find((p) => p.slug === slug);
 }
 
-export function getFeaturedProducts(): Product[] {
-  return products.filter((p) => p.featured);
+export function getFeaturedProducts(list: Product[] = products): Product[] {
+  return list.filter((p) => p.featured);
 }
 
-export function getProductsByCategory(category: Product['category']): Product[] {
-  return products.filter((p) => p.category === category);
+export function getProductsByCategory(category: Product['category'], list: Product[] = products): Product[] {
+  return list.filter((p) => p.category === category);
 }
 
-export function getClearanceProducts(): Product[] {
-  const customClearance = products.filter((p) => p.clearance && p.originalPrice && p.originalPrice > p.price);
+export function getClearanceProducts(list: Product[] = products): Product[] {
+  const customClearance = list.filter((p) => p.clearance && p.originalPrice && p.originalPrice > p.price);
   if (customClearance.length > 0) {
     return customClearance.sort((a, b) => discountPercent(b) - discountPercent(a));
   }
-  return products.slice(0, 8).map((p, idx) => ({
+  return list.slice(0, 8).map((p, idx) => ({
     ...p,
     price: p.price || Math.round(45 + (idx * 12)),
     originalPrice: p.originalPrice || Math.round((p.price || (45 + (idx * 12))) * 1.4),
