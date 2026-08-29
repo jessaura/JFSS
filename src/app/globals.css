@@ -9252,6 +9252,115 @@ input, textarea, select {
   }
 }
 
+/* ==========================================================================
+   DEDICATED CLEARANCE ARCHIVE STYLING (web-design-engineer & emil-design-eng)
+   ========================================================================== */
+
+.accent-crimson {
+  font-style: italic;
+  color: var(--crimson, #6E1212);
+  background: linear-gradient(135deg, #8A0000 0%, #D32F2F 50%, #6E1212 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Clearance Department Nav Card Highlight */
+.jf-dept-nav-card.is-clearance-nav {
+  border-color: rgba(180, 35, 24, 0.4);
+  background: #1A0A0A;
+}
+
+.jf-dept-nav-card.is-clearance-nav .clearance-tag {
+  color: #FF7B72;
+}
+
+.jf-dept-nav-card.is-clearance-nav.active {
+  border-color: var(--crimson, #6E1212);
+  box-shadow: 0 8px 24px rgba(180, 35, 24, 0.25), 0 0 0 1px var(--crimson, #6E1212);
+}
+
+/* Dedicated Clearance Salon in All View */
+.jf-salon-clearance-highlight {
+  background: linear-gradient(135deg, rgba(110, 18, 18, 0.05) 0%, rgba(197, 168, 128, 0.05) 100%);
+  padding: clamp(32px, 4vw, 48px);
+  border-radius: 20px;
+  border: 1px solid rgba(110, 18, 18, 0.2) !important;
+}
+
+.jf-salon-clearance-highlight .jf-salon-eyebrow {
+  color: var(--crimson, #6E1212);
+}
+
+.jf-clear-highlight-btn {
+  background: var(--crimson, #6E1212);
+  color: #fff;
+  border-color: var(--crimson, #6E1212);
+}
+
+.jf-clear-highlight-btn:hover {
+  background: #8A0000;
+  box-shadow: 0 6px 18px rgba(110, 18, 18, 0.3);
+}
+
+.jf-clear-highlight-btn .jf-salon-count-badge {
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+
+/* Clearance Stats Band in Focused Clearance View */
+.jf-clearance-stats-band {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background: linear-gradient(135deg, #1C0A0A 0%, #2A0E0E 50%, #150606 100%);
+  border: 1px solid rgba(197, 168, 128, 0.25);
+  border-radius: 14px;
+  padding: 18px 24px;
+  color: #FAF7F2;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+}
+
+.jf-clear-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-align: center;
+}
+
+.jf-clear-stat-num {
+  font-family: var(--font-display, 'Playfair Display', serif);
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--champagne-gold, #C5A880);
+}
+
+.jf-clear-stat-lbl {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(250, 247, 242, 0.65);
+}
+
+.jf-clear-stat-divider {
+  width: 1px;
+  height: 36px;
+  background: rgba(197, 168, 128, 0.2);
+}
+
+@media (max-width: 640px) {
+  .jf-clearance-stats-band {
+    flex-direction: column;
+    gap: 14px;
+    padding: 16px;
+  }
+  .jf-clear-stat-divider {
+    display: none;
+  }
+}
+
+
 
 
 

@@ -68,11 +68,20 @@ const DEPARTMENTS: DepartmentTab[] = [
   {
     id: 'clearance',
     label: 'Clearance Archive',
-    subtitle: 'Last Chance Pieces',
-    tag: 'Up to 60% Off',
+    subtitle: 'Final Reductions Up to 60%',
+    tag: '🔥 Up to 60% Off',
     image: '/clearance-sale.jpg',
   },
 ];
+
+/* ---------- Clearance Discount Tiers ---------- */
+const DISCOUNT_TIERS = [
+  { id: 'all', label: 'All Markdowns' },
+  { id: '50plus', label: '50%+ Off' },
+  { id: '30plus', label: '30%+ Off' },
+  { id: 'under25', label: 'Under £25' },
+  { id: 'under35', label: 'Under £35' },
+] as const;
 
 /* ---------- Luxury Product Card Component ---------- */
 
@@ -125,14 +134,15 @@ function LuxuryShopCard({ product }: { product: Product }) {
 
         {/* Top Badges */}
         <div className="jf-staples-badges">
-          {product.fabric ? (
+          {disc > 0 ? (
+            <span className="jf-staples-disc-pill">−{disc}% OFF</span>
+          ) : product.fabric ? (
             <span className="jf-staples-fabric-pill">{product.fabric.replace('100% ', '')}</span>
           ) : (
             <span className="jf-staples-fabric-pill">Artisan Weave</span>
           )}
           {product.new && <span className="jf-staples-new-pill">New In</span>}
           {product.bestSeller && <span className="jf-staples-best-pill">★ Bestseller</span>}
-          {disc > 0 && <span className="jf-staples-disc-pill">−{disc}%</span>}
           {!product.images.length && !hasPhoto(product.id) && (
             <span className="jf-staples-fabric-pill">Photo Soon</span>
           )}
@@ -241,6 +251,7 @@ function DepartmentSalon({
   count,
   products,
   onViewDepartment,
+  isClearance,
 }: {
   eyebrow: string;
   title: string;
@@ -248,18 +259,23 @@ function DepartmentSalon({
   count: number;
   products: Product[];
   onViewDepartment: () => void;
+  isClearance?: boolean;
 }) {
   if (products.length === 0) return null;
 
   return (
-    <section className="jf-salon-section">
+    <section className={`jf-salon-section ${isClearance ? 'jf-salon-clearance-highlight' : ''}`}>
       <div className="jf-salon-head">
         <div className="jf-salon-copy">
           <span className="jf-salon-eyebrow">{eyebrow}</span>
           <h2 className="jf-salon-title">{title}</h2>
           <p className="jf-salon-desc">{description}</p>
         </div>
-        <button type="button" className="jf-salon-view-btn" onClick={onViewDepartment}>
+        <button
+          type="button"
+          className={`jf-salon-view-btn ${isClearance ? 'jf-clear-highlight-btn' : ''}`}
+          onClick={onViewDepartment}
+        >
           <span>View all in {title}</span>
           <span className="jf-salon-count-badge">{count}</span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -283,11 +299,11 @@ export default function ShopPage() {
   const catalogue = useCatalogue();
   const [activeDept, setActiveDept] = useState<string>('all');
   const [activeSubcat, setActiveSubcat] = useState<string>('all');
+  const [clearanceTier, setClearanceTier] = useState<string>('all');
   const [search, setSearch] = useState('');
   const [onlySale, setOnlySale] = useState(false);
   const [sortBy, setSortBy] = useState('featured');
   const [gridCols, setGridCols] = useState<number>(4);
-  const [filtersOpen, setFiltersOpen] = useState(false);
   const [fabricFilter, setFabricFilter] = useState<string>('all');
 
   const headerRef = useRef<HTMLDivElement>(null);
@@ -365,7 +381,18 @@ export default function ShopPage() {
     else if (activeDept === 'men') list = menList;
     else if (activeDept === 'festive') list = festiveList;
     else if (activeDept === 'kids') list = kidsList;
-    else if (activeDept === 'clearance') list = clearanceList;
+    else if (activeDept === 'clearance') {
+      list = clearanceList;
+      if (clearanceTier === '50plus') {
+        list = list.filter((p) => discountPercent(p) >= 50);
+      } else if (clearanceTier === '30plus') {
+        list = list.filter((p) => discountPercent(p) >= 30);
+      } else if (clearanceTier === 'under25') {
+        list = list.filter((p) => p.price <= 25 && !isUnpriced(p));
+      } else if (clearanceTier === 'under35') {
+        list = list.filter((p) => p.price <= 35 && !isUnpriced(p));
+      }
+    }
 
     // 2. Subcategory Filter
     if (activeSubcat !== 'all') {
@@ -378,7 +405,7 @@ export default function ShopPage() {
     }
 
     // 4. Sale Only
-    if (onlySale) {
+    if (onlySale && activeDept !== 'clearance') {
       list = list.filter((p) => p.clearance || discountPercent(p) > 0);
     }
 
@@ -400,7 +427,14 @@ export default function ShopPage() {
       return (a.price - b.price) * dir;
     };
 
+    const byDiscount = (a: Product, b: Product) => {
+      return discountPercent(b) - discountPercent(a);
+    };
+
     switch (sortBy) {
+      case 'discount':
+        list = [...list].sort(byDiscount);
+        break;
       case 'price-low':
         list = [...list].sort(byPrice(1));
         break;
@@ -415,7 +449,7 @@ export default function ShopPage() {
     }
 
     return list;
-  }, [catalogue, activeDept, activeSubcat, fabricFilter, onlySale, search, sortBy, dressesList, menList, festiveList, kidsList, clearanceList]);
+  }, [catalogue, activeDept, activeSubcat, clearanceTier, fabricFilter, onlySale, search, sortBy, dressesList, menList, festiveList, kidsList, clearanceList]);
 
   const activeDepartmentMeta = useMemo(() => {
     return DEPARTMENTS.find((d) => d.id === activeDept) ?? DEPARTMENTS[0];
@@ -426,6 +460,7 @@ export default function ShopPage() {
   const resetFilters = () => {
     setActiveDept('all');
     setActiveSubcat('all');
+    setClearanceTier('all');
     setFabricFilter('all');
     setOnlySale(false);
     setSearch('');
@@ -448,6 +483,10 @@ export default function ShopPage() {
                   <>
                     The Curated <span className="accent-gold">Wardrobe</span>
                   </>
+                ) : activeDept === 'clearance' ? (
+                  <>
+                    The Clearance <span className="accent-crimson">Archive</span>
+                  </>
                 ) : (
                   <>
                     {activeDepartmentMeta.label.split(' ')[0]}{' '}
@@ -458,6 +497,8 @@ export default function ShopPage() {
               <p className="jf-shop-hero-desc">
                 {activeDept === 'all'
                   ? 'Pure slub linens, breathable cottons, and timeless South Asian everyday elegance, organized into curated department salons.'
+                  : activeDept === 'clearance'
+                  ? 'Final reductions on limited-run handcrafted pieces and seasonal markdown favourites. Once sold, they will not be re-stocked.'
                   : activeDepartmentMeta.subtitle}
               </p>
             </div>
@@ -467,16 +508,18 @@ export default function ShopPage() {
               <div className="jf-dept-cards-track">
                 {DEPARTMENTS.map((dept) => {
                   const isActive = activeDept === dept.id;
+                  const isClear = dept.id === 'clearance';
                   return (
                     <button
                       key={dept.id}
                       type="button"
                       role="tab"
                       aria-selected={isActive}
-                      className={`jf-dept-nav-card ${isActive ? 'active' : ''}`}
+                      className={`jf-dept-nav-card ${isActive ? 'active' : ''} ${isClear ? 'is-clearance-nav' : ''}`}
                       onClick={() => {
                         setActiveDept(dept.id);
                         setActiveSubcat('all');
+                        setClearanceTier('all');
                       }}
                     >
                       <div
@@ -485,7 +528,7 @@ export default function ShopPage() {
                       />
                       <div className="jf-dept-nav-overlay" />
                       <div className="jf-dept-nav-content">
-                        <span className="jf-dept-nav-tag">{dept.tag}</span>
+                        <span className={`jf-dept-nav-tag ${isClear ? 'clearance-tag' : ''}`}>{dept.tag}</span>
                         <h4 className="jf-dept-nav-title">{dept.label}</h4>
                       </div>
                       {isActive && <div className="jf-dept-nav-active-bar" />}
@@ -521,20 +564,36 @@ export default function ShopPage() {
                 )}
               </div>
 
-              {/* Subcategories (Visible when inside a specific department) */}
-              {activeDept !== 'all' && subcategoriesForDept.length > 2 && (
-                <div className="jf-subcat-pills" role="tablist" aria-label="Filter by subcategory">
-                  {subcategoriesForDept.map((sub) => (
+              {/* Clearance Tier Pills (Visible when inside Clearance Archive) */}
+              {activeDept === 'clearance' ? (
+                <div className="jf-subcat-pills" role="tablist" aria-label="Filter clearance by discount tier">
+                  {DISCOUNT_TIERS.map((tier) => (
                     <button
-                      key={sub}
+                      key={tier.id}
                       type="button"
-                      className={`jf-subcat-pill ${activeSubcat === sub ? 'active' : ''}`}
-                      onClick={() => setActiveSubcat(sub)}
+                      className={`jf-subcat-pill ${clearanceTier === tier.id ? 'active' : ''}`}
+                      onClick={() => setClearanceTier(tier.id)}
                     >
-                      {sub === 'all' ? `All ${activeDepartmentMeta.label}` : sub}
+                      {tier.label}
                     </button>
                   ))}
                 </div>
+              ) : (
+                /* Subcategories (Visible when inside a specific department) */
+                activeDept !== 'all' && subcategoriesForDept.length > 2 && (
+                  <div className="jf-subcat-pills" role="tablist" aria-label="Filter by subcategory">
+                    {subcategoriesForDept.map((sub) => (
+                      <button
+                        key={sub}
+                        type="button"
+                        className={`jf-subcat-pill ${activeSubcat === sub ? 'active' : ''}`}
+                        onClick={() => setActiveSubcat(sub)}
+                      >
+                        {sub === 'all' ? `All ${activeDepartmentMeta.label}` : sub}
+                      </button>
+                    ))}
+                  </div>
+                )
               )}
 
               {/* Actions & Filters Toggle */}
@@ -554,6 +613,7 @@ export default function ShopPage() {
                 <div className="jf-toolbar-select">
                   <span>Sort:</span>
                   <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                    {activeDept === 'clearance' && <option value="discount">Biggest Discount</option>}
                     <option value="featured">Featured Picks</option>
                     <option value="newest">New Arrivals</option>
                     <option value="price-low">Price: Low to High</option>
@@ -561,15 +621,17 @@ export default function ShopPage() {
                   </select>
                 </div>
 
-                {/* Sale Toggle */}
-                <button
-                  type="button"
-                  className={`jf-sale-toggle-pill ${onlySale ? 'active' : ''}`}
-                  onClick={() => setOnlySale(!onlySale)}
-                >
-                  <span className="jf-sale-dot" />
-                  <span>Sale Items</span>
-                </button>
+                {/* Sale Toggle (if not already on clearance tab) */}
+                {activeDept !== 'clearance' && (
+                  <button
+                    type="button"
+                    className={`jf-sale-toggle-pill ${onlySale ? 'active' : ''}`}
+                    onClick={() => setOnlySale(!onlySale)}
+                  >
+                    <span className="jf-sale-dot" />
+                    <span>Sale Items</span>
+                  </button>
+                )}
 
                 {/* Grid Column Selector */}
                 <div className="jf-grid-view-ctrls">
@@ -648,15 +710,16 @@ export default function ShopPage() {
                 />
               )}
 
-              {/* Department 6: Clearance Rail */}
+              {/* Department 6: DEDICATED CLEARANCE ARCHIVE SALON */}
               {clearanceList.length > 0 && (
                 <DepartmentSalon
-                  eyebrow="LAST CHANCE ARCHIVE · SPECIAL OFFERS"
-                  title="Clearance Archive"
-                  description="End-of-season markdown favorites and last chance stock."
+                  eyebrow="🔥 FINAL REDUCTIONS · UP TO 60% OFF"
+                  title="Clearance Archive & Special Offers"
+                  description="Limited stock markdowns on authentic South Asian dailywear and summer favorites. Final chance before archive retirement."
                   count={clearanceList.length}
                   products={clearanceList}
                   onViewDepartment={() => setActiveDept('clearance')}
+                  isClearance={true}
                 />
               )}
             </div>
@@ -666,11 +729,15 @@ export default function ShopPage() {
               <div className="jf-focused-header">
                 <div className="jf-focused-title-wrap">
                   <h2 className="jf-focused-title">
-                    {activeDept === 'all' ? 'Filtered Search Results' : activeDepartmentMeta.label}
+                    {activeDept === 'all'
+                      ? 'Filtered Search Results'
+                      : activeDept === 'clearance'
+                      ? 'Clearance Archive & Markdowns'
+                      : activeDepartmentMeta.label}
                   </h2>
                   <span className="jf-focused-count-pill">{filteredProducts.length} pieces</span>
                 </div>
-                {(search || fabricFilter !== 'all' || onlySale || activeSubcat !== 'all') && (
+                {(search || fabricFilter !== 'all' || onlySale || activeSubcat !== 'all' || clearanceTier !== 'all') && (
                   <button type="button" className="jf-reset-all-btn" onClick={resetFilters}>
                     <span>Clear all filters</span>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -679,6 +746,26 @@ export default function ShopPage() {
                   </button>
                 )}
               </div>
+
+              {/* Dedicated Clearance Stats Row (when viewing clearance) */}
+              {activeDept === 'clearance' && (
+                <div className="jf-clearance-stats-band">
+                  <div className="jf-clear-stat">
+                    <span className="jf-clear-stat-num">Up to 60%</span>
+                    <span className="jf-clear-stat-lbl">Real Computed Discount</span>
+                  </div>
+                  <div className="jf-clear-stat-divider" />
+                  <div className="jf-clear-stat">
+                    <span className="jf-clear-stat-num">{clearanceList.length}</span>
+                    <span className="jf-clear-stat-lbl">Discounted Pieces</span>
+                  </div>
+                  <div className="jf-clear-stat-divider" />
+                  <div className="jf-clear-stat">
+                    <span className="jf-clear-stat-num">Fast UK</span>
+                    <span className="jf-clear-stat-lbl">Tracked Dispatch</span>
+                  </div>
+                </div>
+              )}
 
               {filteredProducts.length === 0 ? (
                 <div className="jf-shop-empty-state">
@@ -689,7 +776,7 @@ export default function ShopPage() {
                     </svg>
                   </div>
                   <h3>No pieces match your selected filters</h3>
-                  <p>Try resetting your search query or selecting a different department.</p>
+                  <p>Try resetting your search query or choosing a different discount tier.</p>
                   <button type="button" className="jf-staples-viewall-btn" onClick={resetFilters}>
                     Reset all filters
                   </button>
