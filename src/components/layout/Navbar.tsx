@@ -65,6 +65,13 @@ export default function Navbar() {
     { href: '/shop?category=clearance', label: 'Clearance Archive', isSpecial: true },
   ];
 
+  const slideCategories: NavLinkItem[] = [
+    { href: '/shop?category=women', label: 'Women' },
+    { href: '/shop?category=men', label: 'Men' },
+    { href: '/shop?category=kids', label: 'Kids' },
+    { href: '/shop?category=clearance', label: 'Clearance', isSpecial: true },
+  ];
+
   return (
     <>
       <div className="jf-utility-bar" aria-hidden="true">
@@ -89,18 +96,56 @@ export default function Navbar() {
               onMouseEnter={link.hasMega ? handleMouseEnter : undefined}
               onMouseLeave={link.hasMega ? handleMouseLeave : undefined}
             >
-              <Link
-                href={link.href}
-                className={`navbar-link ${link.isSpecial ? 'navbar-link-clearance' : ''}`}
-                onClick={closeMobileMenu}
-              >
-                {link.label}
+              <div className="navbar-link-pill-row">
+                <Link
+                  href={link.href}
+                  className={`navbar-link ${link.isSpecial ? 'navbar-link-clearance' : ''}`}
+                  onClick={closeMobileMenu}
+                >
+                  {link.label}
+                  {link.hasMega && (
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className={`jf-nav-chevron ${megaOpen ? 'open' : ''}`}>
+                      <path d="M6 9l6 6 6-6" />
+                    </svg>
+                  )}
+                </Link>
+
+                {/* Smooth Slide-to-Right Animated Categories on Hover */}
                 {link.hasMega && (
-                  <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="jf-nav-chevron">
-                    <path d="M6 9l6 6 6-6" />
-                  </svg>
+                  <AnimatePresence>
+                    {megaOpen && (
+                      <motion.div
+                        className="jf-nav-slide-wrap"
+                        initial={{ opacity: 0, width: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, width: 'auto', scale: 1 }}
+                        exit={{ opacity: 0, width: 0, scale: 0.95 }}
+                        transition={{ type: 'spring', stiffness: 450, damping: 28 }}
+                      >
+                        <div className="jf-nav-slide-track">
+                          {slideCategories.map((cat, idx) => (
+                            <motion.div
+                              key={cat.href}
+                              initial={{ opacity: 0, x: -14 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              exit={{ opacity: 0, x: -8 }}
+                              transition={{ delay: idx * 0.035, duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                            >
+                              <Link
+                                href={cat.href}
+                                className={`jf-nav-slide-pill ${cat.isSpecial ? 'is-clearance' : ''}`}
+                                onClick={() => setMegaOpen(false)}
+                              >
+                                <span>{cat.label}</span>
+                                {cat.isSpecial && <span className="jf-slide-flame">−60%</span>}
+                              </Link>
+                            </motion.div>
+                          ))}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 )}
-              </Link>
+              </div>
 
               {/* Luxury Mega-Dropdown Menu */}
               {link.hasMega && (

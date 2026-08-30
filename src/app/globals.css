@@ -9482,11 +9482,78 @@ input, textarea, select {
   align-items: center;
 }
 
-.jf-nav-chevron {
-  margin-left: 4px;
-  transition: transform 0.2s ease;
+.navbar-link-pill-row {
+  display: flex;
+  align-items: center;
 }
 
+/* Sliding Category Pills on Hover */
+.jf-nav-slide-wrap {
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.jf-nav-slide-track {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 0 2px 10px;
+  margin-left: 6px;
+  border-left: 1px solid rgba(197, 168, 128, 0.3);
+}
+
+.jf-nav-slide-pill {
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(197, 168, 128, 0.12);
+  border: 1px solid rgba(197, 168, 128, 0.25);
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--text-primary, #1C1917);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.jf-nav-slide-pill:hover {
+  background: var(--charcoal, #1C1917);
+  color: #FAF7F2;
+  border-color: var(--charcoal, #1C1917);
+  transform: translateY(-1px);
+}
+
+.jf-nav-slide-pill.is-clearance {
+  background: rgba(180, 35, 24, 0.08);
+  border-color: rgba(180, 35, 24, 0.3);
+  color: var(--crimson, #6E1212);
+}
+
+.jf-nav-slide-pill.is-clearance:hover {
+  background: var(--crimson, #6E1212);
+  color: #fff;
+  border-color: var(--crimson, #6E1212);
+}
+
+.jf-slide-flame {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--crimson, #6E1212);
+}
+
+.jf-nav-slide-pill.is-clearance:hover .jf-slide-flame {
+  color: #fff;
+}
+
+.jf-nav-chevron {
+  margin-left: 4px;
+  transition: transform 0.25s ease;
+}
+
+.jf-nav-chevron.open,
 .navbar-link-wrap:hover .jf-nav-chevron {
   transform: rotate(180deg);
 }
