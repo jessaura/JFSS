@@ -15,69 +15,61 @@ interface DepartmentStory {
 
 const DEPARTMENT_STORIES: DepartmentStory[] = [
   {
-    id: 'sarees',
-    name: 'Sarees & Drapes',
-    badge: '🥻 HANDLOOM',
-    tagline: 'Kerala Kasavu & Pure Silks',
+    id: 'onam-traditional',
+    name: 'Onam Traditional',
+    badge: '🥻 KASAVU GOLD',
+    tagline: 'Kerala Sarees & Festive Weaves',
     image: '/images/festive-collection.png',
-    href: '/shop?q=saree',
-  },
-  {
-    id: 'blouses',
-    name: 'Artisan Blouses',
-    badge: '✨ TAILORED',
-    tagline: 'Embroidered Cuts & Rich Silks',
-    image: '/images/hero-casual.png',
-    href: '/shop?q=blouse',
+    href: '/shop?q=onam',
+    isSpecial: true,
   },
   {
     id: 'jewellery',
-    name: 'Heritage Jewellery',
-    badge: '💎 KUNDAN',
-    tagline: 'Statement Necklaces & Accents',
-    image: '/images/festive-collection.png',
+    name: 'Jewellery',
+    badge: '💎 KUNDAN & GOLD',
+    tagline: 'Statement Necklaces & Sets',
+    image: '/jewellery/j_1.png',
     href: '/shop?q=jewellery',
   },
   {
-    id: 'dresses',
-    name: 'Linen Dresses',
-    badge: '🌿 100% LINEN',
-    tagline: 'Hand-Painted Floral Midis',
-    image: '/images/womens-collection.png',
-    href: '/shop?category=women',
+    id: 'blouses',
+    name: 'Blouses',
+    badge: '✨ EMBROIDERED',
+    tagline: 'Silk, Kasavu & Tailored Blouses',
+    image: '/new prod/photo_2026-08-18_21-55-44.jpg',
+    href: '/shop?q=blouse',
   },
   {
-    id: 'men',
-    name: "Men's Kurtas & Shirts",
-    badge: '👔 ORGANIC',
-    tagline: 'Breathable Casual Handlooms',
-    image: '/images/mens-collection.png',
-    href: '/shop?category=men',
+    id: 'kurti',
+    name: 'Kurti',
+    badge: '🌿 PURE LINEN',
+    tagline: 'Artisan Tunics & Hand-Painted Midis',
+    image: '/dresses/dress_1.jpg',
+    href: '/shop?q=kurti',
   },
   {
-    id: 'kids',
-    name: 'Kids & Juniors',
-    badge: '🧒 COTTONS',
-    tagline: 'Gentle Playwear & Occasion Sets',
+    id: 'shirts',
+    name: 'Shirts',
+    badge: '👔 HANDLOOM',
+    tagline: 'Breathable Linen & Tailored Shirts',
+    image: '/products/rl-polo-blue-white-stripe.jpg',
+    href: '/shop?q=shirt',
+  },
+  {
+    id: 'sweatshirt',
+    name: 'Sweatshirt',
+    badge: '🧥 PREMIUM KNIT',
+    tagline: 'Winter Knits & Casual Layers',
+    image: '/products/fable-grey.jpg',
+    href: '/shop?q=sweatshirt',
+  },
+  {
+    id: 'kids-clothes',
+    name: 'Kids Clothes',
+    badge: '🧒 100% COTTON',
+    tagline: 'Gentle Playwear & Festive Sets',
     image: '/images/kids-collection.jpg',
     href: '/shop?category=kids',
-  },
-  {
-    id: 'dupattas',
-    name: 'Dupattas & Shawls',
-    badge: '🧣 ZARI WEAVES',
-    tagline: 'Artisan Borders & Lightweight Drapes',
-    image: '/images/hero-casual.png',
-    href: '/shop?q=dupatta',
-  },
-  {
-    id: 'clearance',
-    name: 'Clearance Vault',
-    badge: '🔥 UP TO 60% OFF',
-    tagline: 'Final Seasonal Reductions',
-    image: '/clearance-sale.jpg',
-    href: '/shop?category=clearance',
-    isSpecial: true,
   },
 ];
 
@@ -86,13 +78,13 @@ export default function CategoryStoryBar() {
     <section className="jf-story-bar-section" aria-label="Explore All Atelier Departments">
       <div className="jf-story-bar-header">
         <div className="jf-sb-copy">
-          <span className="jf-sb-eyebrow">Discover The Full Collection</span>
+          <span className="jf-sb-eyebrow">Atelier Wardrobe</span>
           <h2 className="jf-sb-title">
             Explore All Atelier <span className="accent">Departments</span>
           </h2>
         </div>
         <Link href="/shop" className="jf-sb-viewall">
-          <span>View Complete Catalogue</span>
+          <span>View All Pieces</span>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
             <path d="M5 12h14M12 5l7 7-7 7" />
           </svg>
@@ -108,7 +100,7 @@ export default function CategoryStoryBar() {
               initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: idx * 0.05 }}
+              transition={{ duration: 0.35, delay: idx * 0.04 }}
             >
               <Link
                 href={dept.href}
