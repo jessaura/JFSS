@@ -20,7 +20,7 @@ const DEPARTMENT_STORIES: DepartmentStory[] = [
     badge: '🥻 KASAVU GOLD',
     tagline: 'Kerala Sarees & Festive Weaves',
     image: '/images/festive-collection.png',
-    href: '/shop?q=onam',
+    href: '/shop?category=onam',
     isSpecial: true,
   },
   {
@@ -29,7 +29,7 @@ const DEPARTMENT_STORIES: DepartmentStory[] = [
     badge: '💎 FINE ACCENTS',
     tagline: 'Statement Necklaces & Sets',
     image: '/jewellery/j_1.png',
-    href: '/shop?q=jewellery',
+    href: '/shop?category=jewellery',
   },
   {
     id: 'blouses',
@@ -37,7 +37,7 @@ const DEPARTMENT_STORIES: DepartmentStory[] = [
     badge: '✨ EMBROIDERED',
     tagline: 'Silk, Kasavu & Tailored Blouses',
     image: '/new prod/photo_2026-08-18_21-55-44.jpg',
-    href: '/shop?q=blouse',
+    href: '/shop?category=blouses',
   },
   {
     id: 'kurti',
@@ -45,7 +45,7 @@ const DEPARTMENT_STORIES: DepartmentStory[] = [
     badge: '🌿 PURE LINEN',
     tagline: 'Artisan Tunics & Hand-Painted Midis',
     image: '/dresses/dress_1.jpg',
-    href: '/shop?q=kurti',
+    href: '/shop?category=kurti',
   },
   {
     id: 'shirts',
@@ -53,7 +53,7 @@ const DEPARTMENT_STORIES: DepartmentStory[] = [
     badge: '👔 HANDLOOM',
     tagline: 'Breathable Linen & Tailored Shirts',
     image: '/products/rl-polo-blue-white-stripe.jpg',
-    href: '/shop?q=shirt',
+    href: '/shop?category=shirts',
   },
   {
     id: 'sweatshirt',
@@ -61,7 +61,7 @@ const DEPARTMENT_STORIES: DepartmentStory[] = [
     badge: '🧥 PREMIUM KNIT',
     tagline: 'Winter Knits & Casual Layers',
     image: '/products/fable-grey.jpg',
-    href: '/shop?q=sweatshirt',
+    href: '/shop?category=sweatshirt',
   },
   {
     id: 'kids-clothes',

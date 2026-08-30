@@ -24,6 +24,62 @@ interface PrimaryCategory {
 
 const PRIMARY_CATEGORIES: PrimaryCategory[] = [
   {
+    id: 'all',
+    label: 'All Pieces',
+    eyebrow: 'THE JESSAURA CATALOGUE · LONDON',
+    subtitle: 'Explore the complete South Asian everyday elegance collection in pure linens, cottons, and handlooms.',
+    image: '/images/hero-casual.png',
+  },
+  {
+    id: 'onam',
+    label: 'Onam Traditional',
+    eyebrow: 'KASAVU GOLD · CELEBRATION WEAVES',
+    subtitle: 'Authentic Kerala Kasavu sarees, festive borders, and traditional handloom celebration drapes.',
+    image: '/images/festive-collection.png',
+  },
+  {
+    id: 'jewellery',
+    label: 'Jewellery',
+    eyebrow: 'GOLD & ARTISAN CRAFTSMANSHIP',
+    subtitle: 'Handcrafted statement necklaces, heirloom pendants, bangles, and bridal accents.',
+    image: '/jewellery/j_1.png',
+  },
+  {
+    id: 'blouses',
+    label: 'Blouses',
+    eyebrow: 'EMBROIDERED CUTS & RICH SILKS',
+    subtitle: 'Artisanal tailored blouses, intricate thread embroidery, and versatile festive pairing tops.',
+    image: '/new prod/photo_2026-08-18_21-55-44.jpg',
+  },
+  {
+    id: 'kurti',
+    label: 'Kurti & Dresses',
+    eyebrow: 'PURE SLUB LINEN · BOTANICAL PRINTS',
+    subtitle: 'Hand-painted botanical blooms, flowing linen kurtis, and everyday breathable midi silhouettes.',
+    image: '/dresses/dress_1.jpg',
+  },
+  {
+    id: 'shirts',
+    label: 'Shirts & Polos',
+    eyebrow: 'BREATHABLE LINEN & CLASSIC FITS',
+    subtitle: 'Relaxed linen shirts, formal tailored cuts, and all-day everyday cotton polos.',
+    image: '/products/rl-polo-blue-white-stripe.jpg',
+  },
+  {
+    id: 'sweatshirt',
+    label: 'Sweatshirts & Knits',
+    eyebrow: 'PREMIUM FLEECE & CASUAL LAYERS',
+    subtitle: 'Comfortable casual sweatshirts, heavyweight fleece, and stylish layering essentials.',
+    image: '/products/fable-grey.jpg',
+  },
+  {
+    id: 'kids',
+    label: 'Kids Clothes',
+    eyebrow: 'GENTLE ON SKIN · 100% ORGANIC COTTON',
+    subtitle: 'Soft, playful dailywear, easy cotton kurtas, and comfortable sets crafted for boys and girls.',
+    image: '/images/kids-collection.jpg',
+  },
+  {
     id: 'women',
     label: "Women's Atelier",
     eyebrow: 'PURE SLUB LINEN · HAND-PAINTED FLORALS',
@@ -38,25 +94,11 @@ const PRIMARY_CATEGORIES: PrimaryCategory[] = [
     image: '/images/mens-collection.png',
   },
   {
-    id: 'kids',
-    label: 'Kids & Juniors',
-    eyebrow: 'GENTLE ON SKIN · 100% ORGANIC COTTON',
-    subtitle: 'Soft, playful dailywear, easy cotton kurtas, and comfortable sets crafted for boys and girls.',
-    image: '/images/kids-collection.jpg',
-  },
-  {
     id: 'clearance',
     label: 'Clearance Archive',
     eyebrow: '🔥 FINAL REDUCTIONS · UP TO 60% OFF',
     subtitle: 'Limited-stock archive pieces and end-of-season markdowns. Final chance before archive retirement.',
     image: '/clearance-sale.jpg',
-  },
-  {
-    id: 'all',
-    label: 'All Curated Pieces',
-    eyebrow: 'THE JESSAURA CATALOGUE · LONDON',
-    subtitle: 'Explore the complete South Asian everyday elegance collection in pure linens and handlooms.',
-    image: '/images/hero-casual.png',
   },
 ];
 
@@ -229,12 +271,13 @@ function ShopContent() {
   const searchParams = useSearchParams();
 
   // Read URL params
-  const paramCategory = searchParams.get('category') || 'women';
+  const paramCategory = searchParams.get('category') || 'all';
   const paramSubcat = searchParams.get('subcat') || 'all';
+  const paramSearch = searchParams.get('q') || '';
 
   const [activeCategory, setActiveCategory] = useState<string>(paramCategory);
   const [activeSubcat, setActiveSubcat] = useState<string>(paramSubcat);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState(paramSearch);
   const [onlySale, setOnlySale] = useState(false);
   const [sortBy, setSortBy] = useState('featured');
   const [gridCols, setGridCols] = useState<number>(4);
@@ -249,6 +292,9 @@ function ShopContent() {
     }
     if (searchParams.get('subcat')) {
       setActiveSubcat(searchParams.get('subcat')!);
+    }
+    if (searchParams.get('q')) {
+      setSearch(searchParams.get('q')!);
     }
   }, [searchParams]);
 
@@ -265,51 +311,81 @@ function ShopContent() {
     return PRIMARY_CATEGORIES.find((c) => c.id === activeCategory) ?? PRIMARY_CATEGORIES[0];
   }, [activeCategory]);
 
+  // Helper matcher function for categories
+  const matchCategory = (p: Product, cat: string) => {
+    if (cat === 'all') return true;
+    if (cat === 'onam') {
+      return (
+        p.subcategory?.toLowerCase().includes('saree') ||
+        p.subcategory?.toLowerCase().includes('festive') ||
+        p.tags?.some((t) => /onam|festive|saree|kasavu|traditional|anarkali|lehenga|sherwani/i.test(t)) ||
+        /onam|festive|saree|kasavu|traditional|anarkali|lehenga|sherwani/i.test(p.name + ' ' + (p.description || ''))
+      );
+    }
+    if (cat === 'jewellery') {
+      return (
+        p.id.startsWith('j') ||
+        p.subcategory?.toLowerCase().includes('jewel') ||
+        p.tags?.some((t) => /jewel|necklace|pendant|bangle|earring|gold|stone/i.test(t)) ||
+        /jewellery|necklace|pendant|bangle|earring/i.test(p.name + ' ' + (p.description || ''))
+      );
+    }
+    if (cat === 'blouses') {
+      return (
+        p.subcategory?.toLowerCase().includes('blouse') ||
+        p.tags?.some((t) => /blouse|top/i.test(t)) ||
+        /blouse|design top|skin-top|dark-pink-top|green-top|gold-yellow/i.test(p.name)
+      );
+    }
+    if (cat === 'kurti') {
+      return (
+        p.id.startsWith('d') ||
+        p.subcategory?.toLowerCase().includes('dress') ||
+        p.subcategory?.toLowerCase().includes('kurt') ||
+        p.tags?.some((t) => /dress|kurt|tunic|midi/i.test(t)) ||
+        /kurti|kurta|dress|midi|tunic|floral/i.test(p.name)
+      );
+    }
+    if (cat === 'shirts') {
+      return (
+        p.subcategory?.toLowerCase().includes('shirt') ||
+        p.subcategory?.toLowerCase().includes('polo') ||
+        p.tags?.some((t) => /shirt|polo/i.test(t)) ||
+        /shirt|polo|royalman|rl-polo|raid-taylor|veliger/i.test(p.name)
+      );
+    }
+    if (cat === 'sweatshirt') {
+      return (
+        p.subcategory?.toLowerCase().includes('sweat') ||
+        p.tags?.some((t) => /sweat|hoodie|fleece|knit|sweater/i.test(t)) ||
+        /sweatshirt|hoodie|sweater|fable|catboy|thunder|tiger|sowatt|bespirit|brooklyn/i.test(p.name)
+      );
+    }
+    if (cat === 'kids') {
+      return p.category === 'kids' || p.tags?.includes('kids') || /kids|child|boy|girl/i.test(p.name);
+    }
+    if (cat === 'women') {
+      return p.category === 'women' || p.tags?.includes('women');
+    }
+    if (cat === 'men') {
+      return p.category === 'men' || p.tags?.includes('men');
+    }
+    if (cat === 'clearance') {
+      return Boolean(p.clearance || discountPercent(p) > 0);
+    }
+    return true;
+  };
+
   // Subcategories available for active primary category
   const availableSubcategories = useMemo(() => {
-    let source = catalogue;
-    if (activeCategory === 'women') {
-      source = catalogue.filter((p) => p.category === 'women' || p.tags?.includes('women'));
-    } else if (activeCategory === 'men') {
-      source = catalogue.filter((p) => p.category === 'men' || p.tags?.includes('men'));
-    } else if (activeCategory === 'kids') {
-      source = catalogue.filter((p) => p.category === 'kids' || p.tags?.includes('kids'));
-    } else if (activeCategory === 'dresses') {
-      source = catalogue.filter(
-        (p) =>
-          p.id.startsWith('d') ||
-          p.subcategory?.toLowerCase().includes('dress') ||
-          p.tags?.some((t) => t.toLowerCase().includes('dress'))
-      );
-    } else if (activeCategory === 'clearance') {
-      source = catalogue.filter((p) => p.clearance || discountPercent(p) > 0);
-    }
-
+    const source = catalogue.filter((p) => matchCategory(p, activeCategory));
     const subs = Array.from(new Set(source.map((p) => p.subcategory).filter(Boolean))).sort();
     return ['all', ...subs];
   }, [activeCategory, catalogue]);
 
   // Filtered Products
   const filteredProducts = useMemo(() => {
-    let list = catalogue;
-
-    // 1. Primary Category Filter
-    if (activeCategory === 'women') {
-      list = catalogue.filter((p) => p.category === 'women' || p.tags?.includes('women'));
-    } else if (activeCategory === 'men') {
-      list = catalogue.filter((p) => p.category === 'men' || p.tags?.includes('men'));
-    } else if (activeCategory === 'kids') {
-      list = catalogue.filter((p) => p.category === 'kids' || p.tags?.includes('kids'));
-    } else if (activeCategory === 'dresses') {
-      list = catalogue.filter(
-        (p) =>
-          p.id.startsWith('d') ||
-          p.subcategory?.toLowerCase().includes('dress') ||
-          p.tags?.some((t) => t.toLowerCase().includes('dress'))
-      );
-    } else if (activeCategory === 'clearance') {
-      list = catalogue.filter((p) => p.clearance || discountPercent(p) > 0);
-    }
+    let list = catalogue.filter((p) => matchCategory(p, activeCategory));
 
     // 2. Subcategory Filter
     if (activeSubcat !== 'all') {
