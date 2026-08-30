@@ -132,7 +132,7 @@ export default function Navbar() {
                             >
                               <Link
                                 href={cat.href}
-                                className={`jf-nav-slide-pill ${cat.isSpecial ? 'is-clearance' : ''}`}
+                                className={`navbar-link jf-nav-slide-link ${cat.isSpecial ? 'navbar-link-clearance' : ''}`}
                                 onClick={() => setMegaOpen(false)}
                               >
                                 <span>{cat.label}</span>

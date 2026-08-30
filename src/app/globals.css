@@ -9484,16 +9484,16 @@ input, textarea, select {
 
 .navbar-link-pill-row {
   position: relative;
-  display: flex;
+  display: inline-flex;
   align-items: center;
 }
 
-/* Sliding Category Pills on Hover - Absolute Positioning so Home & Shop stay 100% fixed */
+/* Sliding Category Links on Hover - Perfectly aligned along the exact same baseline & font */
 .jf-nav-slide-wrap {
   position: absolute;
   left: 100%;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 0;
+  bottom: 0;
   display: flex;
   align-items: center;
   pointer-events: auto;
@@ -9503,55 +9503,33 @@ input, textarea, select {
 .jf-nav-slide-track {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 2px 0 2px 8px;
-  margin-left: 6px;
+  gap: var(--space-2xl, 28px);
+  padding: 0 0 0 16px;
+  margin-left: 16px;
   border-left: 1px solid rgba(197, 168, 128, 0.35);
   white-space: nowrap;
+  height: 100%;
 }
 
-.jf-nav-slide-pill {
-  padding: 5px 12px;
-  border-radius: 999px;
-  background: rgba(197, 168, 128, 0.12);
-  border: 1px solid rgba(197, 168, 128, 0.25);
-  font-size: 0.76rem;
-  font-weight: 600;
-  color: var(--text-primary, #1C1917);
-  text-decoration: none;
+.jf-nav-slide-link {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
   white-space: nowrap;
-  transition: all 0.2s ease;
-}
-
-.jf-nav-slide-pill:hover {
-  background: var(--charcoal, #1C1917);
-  color: #FAF7F2;
-  border-color: var(--charcoal, #1C1917);
-  transform: translateY(-1px);
-}
-
-.jf-nav-slide-pill.is-clearance {
-  background: rgba(180, 35, 24, 0.08);
-  border-color: rgba(180, 35, 24, 0.3);
-  color: var(--crimson, #6E1212);
-}
-
-.jf-nav-slide-pill.is-clearance:hover {
-  background: var(--crimson, #6E1212);
-  color: #fff;
-  border-color: var(--crimson, #6E1212);
 }
 
 .jf-slide-flame {
   font-size: 0.62rem;
   font-weight: 700;
   color: var(--crimson, #6E1212);
+  margin-left: 4px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgba(180, 35, 24, 0.1);
+  letter-spacing: 0;
 }
 
-.jf-nav-slide-pill.is-clearance:hover .jf-slide-flame {
+.navbar-scrolled .jf-slide-flame {
+  background: rgba(255, 255, 255, 0.2);
   color: #fff;
 }
 
@@ -9572,7 +9550,7 @@ input, textarea, select {
 
 .jf-mega-menu {
   position: absolute;
-  top: calc(100% + 14px);
+  top: calc(100% + 18px);
   left: 50%;
   transform: translateX(-35%);
   width: min(880px, 92vw);
