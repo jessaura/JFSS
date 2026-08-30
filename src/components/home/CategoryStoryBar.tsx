@@ -26,7 +26,7 @@ const DEPARTMENT_STORIES: DepartmentStory[] = [
   {
     id: 'jewellery',
     name: 'Jewellery',
-    badge: '💎 KUNDAN & GOLD',
+    badge: '💎 FINE ACCENTS',
     tagline: 'Statement Necklaces & Sets',
     image: '/jewellery/j_1.png',
     href: '/shop?q=jewellery',
