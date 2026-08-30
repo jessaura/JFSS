@@ -25,6 +25,11 @@ export const metadata: Metadata = {
     "ready-to-wear",
     "contemporary ethnic fashion",
   ],
+  icons: {
+    icon: '/images/JA logo.png',
+    shortcut: '/images/JA logo.png',
+    apple: '/images/JA logo.png',
+  },
   openGraph: {
     title: "JessAura — Modern South Asian Dailywear",
     description:
