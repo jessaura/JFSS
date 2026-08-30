@@ -4,134 +4,176 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCatalogue } from '@/components/providers/CatalogueProvider';
-import { formatPrice } from '@/data/products';
+import { Product, formatPrice } from '@/data/products';
 import { getProductImage } from '@/data/images';
+
+const HERO_TABS = [
+  {
+    id: 'women',
+    label: 'WOMEN',
+    fallbackTitle: "Women's Atelier",
+    fallbackFabric: '100% PURE SLUB LINEN & COTTONS',
+    fallbackDesc: 'Hand-dyed midis, artisan kurtis, breathable blouses & flowing silhouettes.',
+    fallbackImage: '/images/womens-collection.png',
+    href: '/shop?category=women',
+  },
+  {
+    id: 'men',
+    label: 'MEN',
+    fallbackTitle: "Men's Everyday Line",
+    fallbackFabric: 'ORGANIC HANDLOOM WEAVES',
+    fallbackDesc: 'Relaxed linen shirts, breathable kurtas & lightweight layering.',
+    fallbackImage: '/images/mens-collection.png',
+    href: '/shop?category=men',
+  },
+  {
+    id: 'kids',
+    label: 'KIDS',
+    fallbackTitle: 'Kids & Juniors Edit',
+    fallbackFabric: 'BREATHABLE GENTLE COTTONS',
+    fallbackDesc: 'Featherweight organic cottons, playful sets & comfortable dailywear for little ones.',
+    fallbackImage: '/images/kids-collection.jpg',
+    href: '/shop?category=kids',
+  },
+] as const;
+
+type TabId = (typeof HERO_TABS)[number]['id'];
 
 export default function MobileHero() {
   const catalogue = useCatalogue();
-  const [activeIdx, setActiveIdx] = useState(0);
+  const [activeTab, setActiveTab] = useState<TabId>('women');
+  const [activeProductIdx, setActiveProductIdx] = useState(0);
   const touchStartX = useRef<number | null>(null);
 
-  // STRICTLY and ONLY products explicitly checked by Admin (heroFeatured === true)
-  // ZERO fallback to unchosen products
-  const chosenProducts = useMemo(() => {
-    return catalogue.filter((p) => Boolean(p.heroFeatured));
+  // Group ONLY explicitly admin-selected hero products (heroFeatured === true) by category
+  const adminChosenByCategory = useMemo(() => {
+    const map: Record<TabId, Product[]> = {
+      women: [],
+      men: [],
+      kids: [],
+    };
+
+    HERO_TABS.forEach(({ id }) => {
+      // Find ONLY products checked by admin for this category
+      const chosen = catalogue.filter(
+        (p) => Boolean(p.heroFeatured) && (p.heroCategory === id || p.category === id)
+      );
+      map[id] = chosen;
+    });
+
+    return map;
   }, [catalogue]);
 
-  // Keep index within bounds
-  useEffect(() => {
-    if (activeIdx >= chosenProducts.length) {
-      setActiveIdx(0);
-    }
-  }, [chosenProducts.length, activeIdx]);
+  const activeTabConfig = HERO_TABS.find((t) => t.id === activeTab) || HERO_TABS[0];
+  const chosenProductsInTab = adminChosenByCategory[activeTab] || [];
+  const hasChosenProducts = chosenProductsInTab.length > 0;
+  const currentProduct: Product | undefined = hasChosenProducts
+    ? chosenProductsInTab[activeProductIdx] || chosenProductsInTab[0]
+    : undefined;
 
-  // Auto-advance through chosen products every 6 seconds
+  // Reset product index when tab changes
   useEffect(() => {
-    if (chosenProducts.length <= 1) return;
+    if (activeProductIdx >= chosenProductsInTab.length) {
+      setActiveProductIdx(0);
+    }
+  }, [activeTab, chosenProductsInTab.length, activeProductIdx]);
+
+  // Auto-advance through products in active category, or cycle tabs if 1 or 0 products
+  useEffect(() => {
     const timer = setInterval(() => {
-      setActiveIdx((prev) => (prev + 1) % chosenProducts.length);
+      if (chosenProductsInTab.length > 1) {
+        setActiveProductIdx((prev) => (prev + 1) % chosenProductsInTab.length);
+      } else {
+        // Cycle to next tab
+        setActiveTab((prevTab) => {
+          const idx = HERO_TABS.findIndex((t) => t.id === prevTab);
+          const nextIdx = (idx + 1) % HERO_TABS.length;
+          return HERO_TABS[nextIdx].id;
+        });
+      }
     }, 6000);
     return () => clearInterval(timer);
-  }, [chosenProducts.length]);
+  }, [chosenProductsInTab.length]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX.current === null || chosenProducts.length <= 1) return;
+    if (touchStartX.current === null) return;
     const diff = touchStartX.current - e.changedTouches[0].clientX;
     if (diff > 45) {
-      // Swiped left -> next
-      setActiveIdx((prev) => (prev + 1) % chosenProducts.length);
+      // Swiped left -> next product or next tab
+      if (chosenProductsInTab.length > 1 && activeProductIdx < chosenProductsInTab.length - 1) {
+        setActiveProductIdx((prev) => prev + 1);
+      } else {
+        const idx = HERO_TABS.findIndex((t) => t.id === activeTab);
+        const nextIdx = (idx + 1) % HERO_TABS.length;
+        setActiveTab(HERO_TABS[nextIdx].id);
+        setActiveProductIdx(0);
+      }
     } else if (diff < -45) {
-      // Swiped right -> prev
-      setActiveIdx((prev) => (prev - 1 + chosenProducts.length) % chosenProducts.length);
+      // Swiped right -> prev product or prev tab
+      if (chosenProductsInTab.length > 1 && activeProductIdx > 0) {
+        setActiveProductIdx((prev) => prev - 1);
+      } else {
+        const idx = HERO_TABS.findIndex((t) => t.id === activeTab);
+        const prevIdx = (idx - 1 + HERO_TABS.length) % HERO_TABS.length;
+        setActiveTab(HERO_TABS[prevIdx].id);
+        setActiveProductIdx(0);
+      }
     }
     touchStartX.current = null;
   };
 
-  // If admin has not selected any products yet, show clean editorial brand banner (0 unchosen products)
-  if (chosenProducts.length === 0) {
-    return (
-      <div className="jf-darveys-mobile-hero">
-        <nav className="jf-dmh-subnav" aria-label="Department Links">
-          <Link href="/shop?category=women" className="jf-dmh-subnav-btn"><span>WOMEN</span></Link>
-          <Link href="/shop?category=men" className="jf-dmh-subnav-btn"><span>MEN</span></Link>
-          <Link href="/shop?category=kids" className="jf-dmh-subnav-btn"><span>KIDS</span></Link>
-        </nav>
-        <div className="jf-dmh-stage">
-          <div className="jf-dmh-viewport">
-            <div className="jf-dmh-slide">
-              <img src="/images/hero-casual.png" alt="Jessaura London Atelier" className="jf-dmh-photo" />
-            </div>
-            <div className="jf-dmh-gradient-scrim" />
-          </div>
-          <div className="jf-dmh-editorial-dock">
-            <div className="jf-dmh-text-wrap">
-              <h1 className="jf-dmh-headline">Dailywear, Thoughtfully Made</h1>
-              <p className="jf-dmh-subhead">100% PURE SLUB LINEN &amp; COTTONS</p>
-              <p className="jf-dmh-narrative">Where South Asian heritage meets London everyday elegance.</p>
-            </div>
-            <div className="jf-dmh-cta-wrap">
-              <Link href="/shop" className="jf-dmh-cta-btn">
-                <span>Shop The Collection</span>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M5 12h14M12 5l7 7-7 7" />
-                </svg>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  const activeProduct = chosenProducts[activeIdx] || chosenProducts[0];
-  const photoUrl = activeProduct.images?.[0] || getProductImage(activeProduct.id);
-
-  // Extract unique categories of the chosen products for the subnav
-  const chosenCategories = Array.from(
-    new Set(chosenProducts.map((p) => (p.heroCategory || p.category || 'all').toLowerCase()))
-  );
+  // Resolve display data: either chosen product or the clean collection overview card (0 unchosen random products)
+  const displayTitle = currentProduct ? currentProduct.name : activeTabConfig.fallbackTitle;
+  const displayFabric = currentProduct
+    ? (currentProduct.fabric || '').toUpperCase()
+    : activeTabConfig.fallbackFabric;
+  const displayDesc = currentProduct
+    ? currentProduct.shortDescription || currentProduct.description
+    : activeTabConfig.fallbackDesc;
+  const displayImage = currentProduct
+    ? currentProduct.images?.[0] || getProductImage(currentProduct.id)
+    : activeTabConfig.fallbackImage;
+  const displayHref = currentProduct
+    ? `/product/${currentProduct.id}`
+    : activeTabConfig.href;
+  const displayBtnLabel = currentProduct
+    ? `View ${currentProduct.name}`
+    : `Explore ${activeTabConfig.label} Collection`;
 
   return (
     <div className="jf-darveys-mobile-hero">
-      {/* 1. Subnav reflecting the categories of your chosen showcase products */}
-      <nav className="jf-dmh-subnav" aria-label="Hero Showcase Categories">
-        {chosenCategories.map((catKey) => {
-          const firstIdxForCat = chosenProducts.findIndex(
-            (p) => (p.heroCategory || p.category || '').toLowerCase() === catKey
-          );
-          const isCurrentCat =
-            (activeProduct.heroCategory || activeProduct.category || '').toLowerCase() === catKey;
-
-          return (
-            <button
-              key={catKey}
-              type="button"
-              className={`jf-dmh-subnav-btn ${isCurrentCat ? 'active' : ''}`}
-              onClick={() => {
-                if (firstIdxForCat !== -1) setActiveIdx(firstIdxForCat);
-              }}
-            >
-              <span>{catKey.toUpperCase()}</span>
-            </button>
-          );
-        })}
+      {/* 1. Permanent Main Category Subnav: WOMEN | MEN | KIDS (Always Present) */}
+      <nav className="jf-dmh-subnav" aria-label="Hero Category Navigation">
+        {HERO_TABS.map(({ id, label }) => (
+          <button
+            key={id}
+            type="button"
+            className={`jf-dmh-subnav-btn ${activeTab === id ? 'active' : ''}`}
+            onClick={() => {
+              setActiveTab(id);
+              setActiveProductIdx(0);
+            }}
+          >
+            <span>{label}</span>
+          </button>
+        ))}
       </nav>
 
-      {/* 2. 100% Unobstructed Full-Bleed Real Product Stage */}
+      {/* 2. 100% Unobstructed Full-Bleed Real Showcase Stage */}
       <div
         className="jf-dmh-stage"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        {/* Full-Bleed Real Product Image */}
+        {/* Full-Bleed Photo */}
         <div className="jf-dmh-viewport">
           <AnimatePresence mode="wait">
             <motion.div
-              key={activeProduct.id + photoUrl}
+              key={activeTab + (currentProduct?.id || 'collection')}
               className="jf-dmh-slide"
               initial={{ opacity: 0, scale: 1.02 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -139,8 +181,8 @@ export default function MobileHero() {
               transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
             >
               <img
-                src={photoUrl}
-                alt={activeProduct.name}
+                src={displayImage}
+                alt={displayTitle}
                 className="jf-dmh-photo"
               />
             </motion.div>
@@ -150,62 +192,62 @@ export default function MobileHero() {
           <div className="jf-dmh-gradient-scrim" />
         </div>
 
-        {/* 3. Real Product Metadata & Interactive Controls */}
+        {/* 3. Real Metadata & Interactive Controls */}
         <div className="jf-dmh-editorial-dock">
           <AnimatePresence mode="wait">
             <motion.div
-              key={activeProduct.id}
+              key={activeTab + (currentProduct?.id || 'collection')}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
               className="jf-dmh-text-wrap"
             >
-              <h1 className="jf-dmh-headline">{activeProduct.name}</h1>
+              <h1 className="jf-dmh-headline">{displayTitle}</h1>
 
-              {activeProduct.fabric && (
-                <p className="jf-dmh-subhead">{activeProduct.fabric.toUpperCase()}</p>
+              {displayFabric && (
+                <p className="jf-dmh-subhead">{displayFabric}</p>
               )}
 
-              {activeProduct.price !== undefined && activeProduct.price > 0 && (
+              {currentProduct && currentProduct.price > 0 && (
                 <div className="jf-dmh-price-row">
-                  <span className="jf-dmh-now">£{formatPrice(activeProduct.price)}</span>
-                  {activeProduct.originalPrice && activeProduct.originalPrice > activeProduct.price && (
-                    <span className="jf-dmh-was">£{formatPrice(activeProduct.originalPrice)}</span>
+                  <span className="jf-dmh-now">£{formatPrice(currentProduct.price)}</span>
+                  {currentProduct.originalPrice && currentProduct.originalPrice > currentProduct.price && (
+                    <span className="jf-dmh-was">£{formatPrice(currentProduct.originalPrice)}</span>
                   )}
                 </div>
               )}
 
-              {activeProduct.shortDescription && (
-                <p className="jf-dmh-narrative">{activeProduct.shortDescription}</p>
+              {displayDesc && (
+                <p className="jf-dmh-narrative">{displayDesc}</p>
               )}
             </motion.div>
           </AnimatePresence>
 
-          {/* Pagination Dots across all Admin-Selected Products */}
-          {chosenProducts.length > 1 && (
-            <div className="jf-dmh-dots" role="tablist" aria-label="Hero Product Pagination">
-              {chosenProducts.map((p, idx) => (
+          {/* Pagination Dots for multi-product showcases in active category */}
+          {chosenProductsInTab.length > 1 && (
+            <div className="jf-dmh-dots" role="tablist" aria-label="Category Products Pagination">
+              {chosenProductsInTab.map((p, idx) => (
                 <button
                   key={p.id + idx}
                   type="button"
-                  className={`jf-dmh-dot ${activeIdx === idx ? 'active' : ''}`}
-                  onClick={() => setActiveIdx(idx)}
+                  className={`jf-dmh-dot ${activeProductIdx === idx ? 'active' : ''}`}
+                  onClick={() => setActiveProductIdx(idx)}
                   aria-label={`Product ${idx + 1}: ${p.name}`}
                   role="tab"
-                  aria-selected={activeIdx === idx}
+                  aria-selected={activeProductIdx === idx}
                 />
               ))}
             </div>
           )}
 
-          {/* Direct Product CTA */}
+          {/* Direct Product or Collection CTA */}
           <div className="jf-dmh-cta-wrap">
             <Link
-              href={`/product/${activeProduct.id}`}
+              href={displayHref}
               className="jf-dmh-cta-btn"
             >
-              <span>View {activeProduct.name}</span>
+              <span>{displayBtnLabel}</span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>

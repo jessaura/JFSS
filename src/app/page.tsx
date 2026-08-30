@@ -4,6 +4,7 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import CartDrawer from '@/components/layout/CartDrawer';
 import HeroSection from '@/components/home/HeroSection';
+import CategoryStoryBar from '@/components/home/CategoryStoryBar';
 import CraftMarquee from '@/components/home/CraftMarquee';
 import CollectionsGrid from '@/components/home/CollectionsGrid';
 import OnamCelebration from '@/components/home/OnamCelebration';
@@ -20,6 +21,7 @@ export default function Home() {
       <CartDrawer />
       <main>
         <HeroSection />
+        <CategoryStoryBar />
         <CraftMarquee />
         <CollectionsGrid />
         <OnamCelebration />
