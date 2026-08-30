@@ -255,36 +255,153 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile Menu Overlay */}
+      {/* Luxury Mobile Navigation Drawer */}
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            className="mobile-overlay"
+            className="jf-mobile-drawer-backdrop"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.25 }}
+            onClick={closeMobileMenu}
           >
-            <div className="jf-mobile-nav-links">
-              {mobileNavLinks.map((link, i) => (
-                <motion.div
-                  key={link.href}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ delay: i * 0.05, duration: 0.28 }}
+            <motion.div
+              className="jf-mobile-drawer"
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', stiffness: 350, damping: 32 }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Top Bar */}
+              <div className="jf-mobile-drawer-head">
+                <div className="jf-mobile-drawer-brand">
+                  <span className="jf-mobile-brand-name">JESS<span className="accent">AURA</span></span>
+                  <span className="jf-mobile-brand-tag">ATELIER · LONDON</span>
+                </div>
+                <button
+                  type="button"
+                  className="jf-mobile-drawer-close"
+                  onClick={closeMobileMenu}
+                  aria-label="Close menu"
                 >
+                  ✕
+                </button>
+              </div>
+
+              {/* Drawer Content */}
+              <div className="jf-mobile-drawer-scroll">
+                {/* Main Navigation Links */}
+                <div className="jf-mobile-nav-group">
+                  <span className="jf-mobile-group-title">EXPLORE THE MAISON</span>
+
+                  <Link href="/" className="jf-mobile-item" onClick={closeMobileMenu}>
+                    <span className="jf-mobile-item-title">Home</span>
+                    <span className="jf-mobile-item-arrow">→</span>
+                  </Link>
+
+                  <Link href="/shop" className="jf-mobile-item" onClick={closeMobileMenu}>
+                    <span className="jf-mobile-item-title">All Curated Pieces</span>
+                    <span className="jf-mobile-item-arrow">→</span>
+                  </Link>
+                </div>
+
+                {/* Department Sections */}
+                <div className="jf-mobile-nav-group">
+                  <span className="jf-mobile-group-title">DEPARTMENTS &amp; EDITS</span>
+
+                  {/* Women's Card */}
+                  <div className="jf-mobile-dept-card">
+                    <Link
+                      href="/shop?category=women"
+                      className="jf-mobile-dept-header"
+                      onClick={closeMobileMenu}
+                    >
+                      <span className="jf-mobile-dept-icon">👗</span>
+                      <div className="jf-mobile-dept-info">
+                        <strong>Women&apos;s Atelier</strong>
+                        <span>Linen Dresses, Kurtis &amp; Saris</span>
+                      </div>
+                      <span className="jf-mobile-dept-link-arrow">→</span>
+                    </Link>
+                    <div className="jf-mobile-sublinks">
+                      <Link href="/shop?category=dresses" onClick={closeMobileMenu}>Linen Dresses</Link>
+                      <Link href="/shop?category=women&subcat=Tops" onClick={closeMobileMenu}>Tops &amp; Blouses</Link>
+                      <Link href="/shop?category=women&subcat=Kurtis" onClick={closeMobileMenu}>Artisanal Kurtis</Link>
+                      <Link href="/shop?category=festive" onClick={closeMobileMenu}>Kerala Saris &amp; Sets</Link>
+                    </div>
+                  </div>
+
+                  {/* Men's Card */}
+                  <div className="jf-mobile-dept-card">
+                    <Link
+                      href="/shop?category=men"
+                      className="jf-mobile-dept-header"
+                      onClick={closeMobileMenu}
+                    >
+                      <span className="jf-mobile-dept-icon">👔</span>
+                      <div className="jf-mobile-dept-info">
+                        <strong>Men&apos;s Everyday</strong>
+                        <span>Linen Shirts, Kurtas &amp; Polos</span>
+                      </div>
+                      <span className="jf-mobile-dept-link-arrow">→</span>
+                    </Link>
+                    <div className="jf-mobile-sublinks">
+                      <Link href="/shop?category=men&subcat=Kurtas" onClick={closeMobileMenu}>Artisanal Kurtas</Link>
+                      <Link href="/shop?category=men&subcat=Shirts" onClick={closeMobileMenu}>Linen Shirts &amp; Polos</Link>
+                      <Link href="/shop?category=men&subcat=Sweaters" onClick={closeMobileMenu}>Knitwear &amp; Layers</Link>
+                    </div>
+                  </div>
+
+                  {/* Kids Card */}
+                  <div className="jf-mobile-dept-card">
+                    <Link
+                      href="/shop?category=kids"
+                      className="jf-mobile-dept-header"
+                      onClick={closeMobileMenu}
+                    >
+                      <span className="jf-mobile-dept-icon">🧒</span>
+                      <div className="jf-mobile-dept-info">
+                        <strong>Kids &amp; Juniors</strong>
+                        <span>Organic Cotton Boys &amp; Girls</span>
+                      </div>
+                      <span className="jf-mobile-dept-link-arrow">→</span>
+                    </Link>
+                  </div>
+
+                  {/* Clearance Banner Card */}
                   <Link
-                    href={link.href}
-                    className={`jf-mobile-link ${link.isSpecial ? 'mobile-clearance' : ''}`}
+                    href="/shop?category=clearance"
+                    className="jf-mobile-clearance-card"
                     onClick={closeMobileMenu}
                   >
-                    {link.label}
-                    {link.isSpecial && <span className="mobile-pill-sale">−60%</span>}
+                    <div className="jf-mobile-clearance-text">
+                      <span className="jf-mobile-clearance-badge">🔥 FINAL REDUCTIONS</span>
+                      <h4>The Clearance Archive</h4>
+                      <p>Up to 60% off limited sizes &amp; archive styles</p>
+                    </div>
+                    <span className="jf-mobile-clearance-pill">Shop Sale →</span>
                   </Link>
-                </motion.div>
-              ))}
-            </div>
+                </div>
+
+                {/* Assurance & Help */}
+                <div className="jf-mobile-drawer-footer">
+                  <div className="jf-mobile-footer-pill">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M5 12h14M12 5l7 7-7 7" />
+                    </svg>
+                    <span>Free UK Delivery over £50</span>
+                  </div>
+                  <div className="jf-mobile-footer-pill">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M20 6L9 17l-5-5" />
+                    </svg>
+                    <span>14-Day Effortless UK Returns</span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

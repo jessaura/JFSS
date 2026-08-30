@@ -12,6 +12,8 @@ import { useCatalogue } from '@/components/providers/CatalogueProvider';
 
 gsap.registerPlugin(ScrollTrigger);
 
+import { useRouter } from 'next/navigation';
+
 const TABS = [
   { id: 'all', label: 'All Curated Pieces' },
   { id: 'dresses', label: 'Linen Dresses' },
@@ -20,6 +22,7 @@ const TABS = [
 ] as const;
 
 function LuxuryProductCard({ product }: { product: Product }) {
+  const router = useRouter();
   const { toggleWishlist, isWishlisted, openQuickView, addToCart } = useStore();
   const wishlisted = isWishlisted(product.id);
   const disc = discountPercent(product);
@@ -28,7 +31,11 @@ function LuxuryProductCard({ product }: { product: Product }) {
 
   const handleOpen = (e: React.MouseEvent) => {
     e.preventDefault();
-    openQuickView(product);
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      router.push(`/product/${product.id}`);
+    } else {
+      openQuickView(product);
+    }
   };
 
   const handleQuickAdd = (e: React.MouseEvent) => {

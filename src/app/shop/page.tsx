@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo, useEffect, useRef, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import gsap from 'gsap';
 import Navbar from '@/components/layout/Navbar';
@@ -60,9 +60,8 @@ const PRIMARY_CATEGORIES: PrimaryCategory[] = [
   },
 ];
 
-/* ---------- Luxury Product Card Component ---------- */
-
 function LuxuryShopCard({ product }: { product: Product }) {
+  const router = useRouter();
   const { toggleWishlist, isWishlisted, addToCart, openQuickView } = useStore();
   const [added, setAdded] = useState(false);
   const wishlisted = isWishlisted(product.id);
@@ -72,7 +71,11 @@ function LuxuryShopCard({ product }: { product: Product }) {
 
   const handleOpen = (e: React.MouseEvent) => {
     e.preventDefault();
-    openQuickView(product);
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      router.push(`/product/${product.id}`);
+    } else {
+      openQuickView(product);
+    }
   };
 
   const handleQuickAdd = (e: React.MouseEvent) => {
