@@ -52,15 +52,6 @@ const HERO_SLIDES: HeroSlide[] = [
     image: '/images/festive-collection.png',
     href: '/shop?category=festive',
   },
-  {
-    id: 'clearance',
-    category: 'Clearance Archive',
-    headline: 'The Clearance Vault',
-    subhead: 'UP TO 60% OFF ARCHIVE STYLES',
-    narrative: 'Final end-of-season markdowns on limited archive sizes',
-    image: '/clearance-sale.jpg',
-    href: '/shop?category=clearance',
-  },
 ];
 
 export default function MobileHero() {
@@ -95,28 +86,26 @@ export default function MobileHero() {
 
   return (
     <div className="jf-darveys-mobile-hero">
-      {/* 1. Sub-Navigation Category Bar (MEN | WOMEN | KIDS | CLEARANCE) */}
+      {/* Maison Animated Peacock Monogram Crown (Placed above photo for 0% obstruction) */}
+      <div className="jf-dmh-top-crown">
+        <HeroLoopingLogo />
+      </div>
+
+      {/* 1. Sub-Navigation Category Bar (WOMEN | MEN | KIDS) */}
       <nav className="jf-dmh-subnav" aria-label="Quick Category Navigation">
         <Link href="/shop?category=women" className="jf-dmh-subnav-link">WOMEN</Link>
         <span className="jf-dmh-subnav-sep">|</span>
         <Link href="/shop?category=men" className="jf-dmh-subnav-link">MEN</Link>
         <span className="jf-dmh-subnav-sep">|</span>
         <Link href="/shop?category=kids" className="jf-dmh-subnav-link">KIDS</Link>
-        <span className="jf-dmh-subnav-sep">|</span>
-        <Link href="/shop?category=clearance" className="jf-dmh-subnav-link is-sale">CLEARANCE</Link>
       </nav>
 
-      {/* 2. Full-Bleed Editorial Stage with Touch-Swipe */}
+      {/* 2. 100% Unobstructed Full-Bleed Editorial Stage with Touch-Swipe */}
       <div
         className="jf-dmh-stage"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        {/* Animated Looping Peacock Monogram Medallion */}
-        <div className="jf-dmh-logo-overlay">
-          <HeroLoopingLogo />
-        </div>
-
         {/* Full-Bleed Photo Carousel */}
         <div className="jf-dmh-viewport">
           <AnimatePresence mode="wait">
