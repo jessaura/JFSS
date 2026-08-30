@@ -4677,32 +4677,68 @@ input, textarea, select {
   border: 0;
 }
 
-/* Utility hairline bar above the nav */
+/* Smooth Infinite Moving Marquee Utility Bar */
 .jf-utility-bar {
-  height: 34px;
+  height: 36px;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  background: #1C1917; /* Deep Luxury Noir */
+  border-bottom: 1px solid rgba(197, 168, 128, 0.22);
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 14px;
-  background: var(--navy-dark);
-  color: rgba(250, 247, 242, 0.85);
-  font-size: 0.68rem;
+  z-index: 1001;
+  white-space: nowrap;
+}
+
+.jf-utility-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: jfUtilityMarquee 32s linear infinite;
+}
+
+.jf-utility-bar:hover .jf-utility-track {
+  animation-play-state: paused;
+}
+
+.jf-utility-group {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding-right: 24px;
+  flex-shrink: 0;
+}
+
+.jf-utility-item {
+  color: rgba(250, 247, 242, 0.92);
+  font-size: 0.7rem;
   font-weight: 600;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
+
 .jf-utility-dot {
-  width: 3px;
-  height: 3px;
-  border-radius: 50%;
-  background: var(--gold-light);
+  color: var(--gold, #C5A880);
+  font-size: 0.65rem;
+  opacity: 0.85;
 }
+
+@keyframes jfUtilityMarquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-25%);
+  }
+}
+
 /* Nav starts below the utility bar, keeps its floating-pill morph on scroll */
-.navbar { top: 34px; }
+.navbar { top: 36px; }
 .navbar-scrolled { top: var(--space-md); }
-@media (max-width: 640px) {
-  .jf-utility-bar span:nth-child(n + 4) { display: none; }
-}
 
 /* Asymmetric editorial mosaic (replaces the 4-equal-card grid) */
 .jf-mosaic {

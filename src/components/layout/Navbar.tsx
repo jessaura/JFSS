@@ -74,12 +74,23 @@ export default function Navbar() {
 
   return (
     <>
-      <div className="jf-utility-bar" aria-hidden="true">
-        <span>Free shipping over £50</span>
-        <span className="jf-utility-dot" />
-        <span>100% Pure Slub Linen &amp; Handlooms</span>
-        <span className="jf-utility-dot" />
-        <span>14-Day Effortless Returns</span>
+      <div className="jf-utility-bar" role="region" aria-label="Store Announcements">
+        <div className="jf-utility-track">
+          {[0, 1, 2, 3].map((groupIdx) => (
+            <div className="jf-utility-group" key={groupIdx} aria-hidden={groupIdx > 0}>
+              <span className="jf-utility-item">✨ FREE UK DELIVERY OVER £50</span>
+              <span className="jf-utility-dot">✦</span>
+              <span className="jf-utility-item">100% PURE ARTISAN SLUB LINEN &amp; COTTONS</span>
+              <span className="jf-utility-dot">✦</span>
+              <span className="jf-utility-item">14-DAY EFFORTLESS RETURNS</span>
+              <span className="jf-utility-dot">✦</span>
+              <span className="jf-utility-item">LONDON ATELIER · SOUTH ASIAN HERITAGE</span>
+              <span className="jf-utility-dot">✦</span>
+              <span className="jf-utility-item">COMPLIMENTARY LUXURY PACKAGING</span>
+              <span className="jf-utility-dot">✦</span>
+            </div>
+          ))}
+        </div>
       </div>
 
       <nav
