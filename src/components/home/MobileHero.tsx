@@ -7,95 +7,91 @@ import { useCatalogue } from '@/components/providers/CatalogueProvider';
 import { Product, formatPrice } from '@/data/products';
 import { getProductImage } from '@/data/images';
 
-const CATEGORIES = [
-  { id: 'women', label: 'WOMEN' },
-  { id: 'men', label: 'MEN' },
-  { id: 'kids', label: 'KIDS' },
-] as const;
-
 export default function MobileHero() {
   const catalogue = useCatalogue();
-  const [activeTab, setActiveTab] = useState<'women' | 'men' | 'kids'>('women');
+  const [activeIdx, setActiveIdx] = useState(0);
   const touchStartX = useRef<number | null>(null);
 
-  // 100% dynamic resolution of real products from the live catalogue
-  const categoryProducts = useMemo(() => {
-    const map: Record<'women' | 'men' | 'kids', Product | undefined> = {
-      women: undefined,
-      men: undefined,
-      kids: undefined,
-    };
-
-    CATEGORIES.forEach(({ id }) => {
-      // Find explicitly admin-flagged hero product for this category
-      const heroChosen = catalogue.find(
-        (p) => p.heroFeatured && (p.heroCategory === id || p.category === id)
-      );
-
-      // Or fallback to top featured / best seller product in this category
-      const featuredFallback =
-        catalogue.find((p) => p.category === id && (p.featured || p.bestSeller)) ||
-        catalogue.find((p) => p.category === id);
-
-      map[id] = heroChosen || featuredFallback;
-    });
-
-    return map;
+  // 1. Get ONLY the products explicitly chosen by the admin for hero showcase
+  const heroProducts = useMemo(() => {
+    const chosen = catalogue.filter((p) => p.heroFeatured);
+    if (chosen.length > 0) return chosen;
+    // Only if admin has chosen 0 products across the entire store, fallback to general featured pieces
+    return catalogue.filter((p) => p.featured).slice(0, 4);
   }, [catalogue]);
 
-  const activeProduct = categoryProducts[activeTab];
-
-  // Auto-advance through categories every 6 seconds
+  // Keep activeIdx in valid bounds if products list changes
   useEffect(() => {
+    if (activeIdx >= heroProducts.length) {
+      setActiveIdx(0);
+    }
+  }, [heroProducts.length, activeIdx]);
+
+  const activeProduct: Product | undefined = heroProducts[activeIdx] || heroProducts[0];
+
+  // Auto-advance through admin-chosen products every 6 seconds
+  useEffect(() => {
+    if (heroProducts.length <= 1) return;
     const timer = setInterval(() => {
-      setActiveTab((prev) => {
-        const idx = CATEGORIES.findIndex((c) => c.id === prev);
-        const nextIdx = (idx + 1) % CATEGORIES.length;
-        return CATEGORIES[nextIdx].id;
-      });
+      setActiveIdx((prev) => (prev + 1) % heroProducts.length);
     }, 6000);
     return () => clearInterval(timer);
-  }, []);
+  }, [heroProducts.length]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX.current === null) return;
+    if (touchStartX.current === null || heroProducts.length <= 1) return;
     const diff = touchStartX.current - e.changedTouches[0].clientX;
-    const currentIdx = CATEGORIES.findIndex((c) => c.id === activeTab);
     if (diff > 45) {
-      // Swiped left -> next
-      const nextIdx = (currentIdx + 1) % CATEGORIES.length;
-      setActiveTab(CATEGORIES[nextIdx].id);
+      // Swiped left -> next product
+      setActiveIdx((prev) => (prev + 1) % heroProducts.length);
     } else if (diff < -45) {
-      // Swiped right -> prev
-      const prevIdx = (currentIdx - 1 + CATEGORIES.length) % CATEGORIES.length;
-      setActiveTab(CATEGORIES[prevIdx].id);
+      // Swiped right -> prev product
+      setActiveIdx((prev) => (prev - 1 + heroProducts.length) % heroProducts.length);
     }
     touchStartX.current = null;
   };
 
-  // If no product exists yet in this category, provide clean link to category
+  if (!activeProduct) {
+    return null;
+  }
+
   const photoUrl =
-    activeProduct?.images?.[0] ||
-    (activeProduct?.id ? getProductImage(activeProduct.id) : '/images/hero-casual.png');
+    activeProduct.images?.[0] || getProductImage(activeProduct.id);
+
+  // Derive unique categories present among admin-selected hero products for the subnav
+  const uniqueCategories = Array.from(
+    new Set(heroProducts.map((p) => (p.heroCategory || p.category || 'all').toLowerCase()))
+  );
 
   return (
     <div className="jf-darveys-mobile-hero">
-      {/* 1. Category Subnav (WOMEN | MEN | KIDS) */}
-      <nav className="jf-dmh-subnav" aria-label="Quick Category Switcher">
-        {CATEGORIES.map(({ id, label }) => (
-          <button
-            key={id}
-            type="button"
-            className={`jf-dmh-subnav-btn ${activeTab === id ? 'active' : ''}`}
-            onClick={() => setActiveTab(id)}
-          >
-            <span>{label}</span>
-          </button>
-        ))}
+      {/* 1. Dynamic Category / Product Switcher Subnav */}
+      <nav className="jf-dmh-subnav" aria-label="Hero Showcase Navigation">
+        {uniqueCategories.map((catKey) => {
+          // Find the first product matching this category
+          const targetIdx = heroProducts.findIndex(
+            (p) => (p.heroCategory || p.category || '').toLowerCase() === catKey
+          );
+          const isCurrentCat =
+            (activeProduct.heroCategory || activeProduct.category || '').toLowerCase() === catKey;
+
+          return (
+            <button
+              key={catKey}
+              type="button"
+              className={`jf-dmh-subnav-btn ${isCurrentCat ? 'active' : ''}`}
+              onClick={() => {
+                if (targetIdx !== -1) setActiveIdx(targetIdx);
+              }}
+            >
+              <span>{catKey.toUpperCase()}</span>
+            </button>
+          );
+        })}
       </nav>
 
       {/* 2. 100% Unobstructed Full-Bleed Real Product Stage */}
@@ -108,7 +104,7 @@ export default function MobileHero() {
         <div className="jf-dmh-viewport">
           <AnimatePresence mode="wait">
             <motion.div
-              key={activeTab + (activeProduct?.id || '')}
+              key={activeProduct.id + photoUrl}
               className="jf-dmh-slide"
               initial={{ opacity: 0, scale: 1.02 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -117,7 +113,7 @@ export default function MobileHero() {
             >
               <img
                 src={photoUrl}
-                alt={activeProduct?.name || `${activeTab} collection`}
+                alt={activeProduct.name}
                 className="jf-dmh-photo"
               />
             </motion.div>
@@ -131,22 +127,20 @@ export default function MobileHero() {
         <div className="jf-dmh-editorial-dock">
           <AnimatePresence mode="wait">
             <motion.div
-              key={activeTab + (activeProduct?.id || '')}
+              key={activeProduct.id}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
               className="jf-dmh-text-wrap"
             >
-              <h1 className="jf-dmh-headline">
-                {activeProduct?.name || `${activeTab.toUpperCase()} COLLECTION`}
-              </h1>
+              <h1 className="jf-dmh-headline">{activeProduct.name}</h1>
 
-              {activeProduct?.fabric && (
+              {activeProduct.fabric && (
                 <p className="jf-dmh-subhead">{activeProduct.fabric.toUpperCase()}</p>
               )}
 
-              {activeProduct?.price !== undefined && activeProduct.price > 0 && (
+              {activeProduct.price !== undefined && activeProduct.price > 0 && (
                 <div className="jf-dmh-price-row">
                   <span className="jf-dmh-now">£{formatPrice(activeProduct.price)}</span>
                   {activeProduct.originalPrice && activeProduct.originalPrice > activeProduct.price && (
@@ -155,34 +149,36 @@ export default function MobileHero() {
                 </div>
               )}
 
-              {activeProduct?.shortDescription && (
+              {activeProduct.shortDescription && (
                 <p className="jf-dmh-narrative">{activeProduct.shortDescription}</p>
               )}
             </motion.div>
           </AnimatePresence>
 
-          {/* Minimalist Pagination Dots */}
-          <div className="jf-dmh-dots" role="tablist" aria-label="Hero Category Tabs">
-            {CATEGORIES.map(({ id }, idx) => (
-              <button
-                key={id}
-                type="button"
-                className={`jf-dmh-dot ${activeTab === id ? 'active' : ''}`}
-                onClick={() => setActiveTab(id)}
-                aria-label={`Category ${idx + 1}: ${id}`}
-                role="tab"
-                aria-selected={activeTab === id}
-              />
-            ))}
-          </div>
+          {/* Minimalist Pagination Dots for all Admin-Selected Products */}
+          {heroProducts.length > 1 && (
+            <div className="jf-dmh-dots" role="tablist" aria-label="Hero Product Pagination">
+              {heroProducts.map((p, idx) => (
+                <button
+                  key={p.id + idx}
+                  type="button"
+                  className={`jf-dmh-dot ${activeIdx === idx ? 'active' : ''}`}
+                  onClick={() => setActiveIdx(idx)}
+                  aria-label={`Product ${idx + 1}: ${p.name}`}
+                  role="tab"
+                  aria-selected={activeIdx === idx}
+                />
+              ))}
+            </div>
+          )}
 
           {/* Direct Product CTA */}
           <div className="jf-dmh-cta-wrap">
             <Link
-              href={activeProduct ? `/product/${activeProduct.id}` : `/shop?category=${activeTab}`}
+              href={`/product/${activeProduct.id}`}
               className="jf-dmh-cta-btn"
             >
-              <span>{activeProduct ? `View ${activeProduct.name}` : `Explore ${activeTab}`}</span>
+              <span>View Specification</span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
