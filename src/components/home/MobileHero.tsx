@@ -7,50 +7,103 @@ import { useCatalogue } from '@/components/providers/CatalogueProvider';
 import { Product, formatPrice } from '@/data/products';
 import { getProductImage } from '@/data/images';
 
+const MAIN_CATEGORIES = [
+  { id: 'women', label: 'WOMEN' },
+  { id: 'men', label: 'MEN' },
+  { id: 'kids', label: 'KIDS' },
+] as const;
+
+type CategoryId = (typeof MAIN_CATEGORIES)[number]['id'];
+
 export default function MobileHero() {
   const catalogue = useCatalogue();
-  const [activeIdx, setActiveIdx] = useState(0);
+  const [activeCategory, setActiveCategory] = useState<CategoryId>('women');
+  const [activeProductIdx, setActiveProductIdx] = useState(0);
   const touchStartX = useRef<number | null>(null);
 
-  // 1. Get ONLY the products explicitly chosen by the admin for hero showcase
-  const heroProducts = useMemo(() => {
-    const chosen = catalogue.filter((p) => p.heroFeatured);
-    if (chosen.length > 0) return chosen;
-    // Only if admin has chosen 0 products across the entire store, fallback to general featured pieces
-    return catalogue.filter((p) => p.featured).slice(0, 4);
+  // Group products by category: prefer explicitly admin-selected hero products (heroFeatured: true)
+  const categoryProductsMap = useMemo(() => {
+    const map: Record<CategoryId, Product[]> = {
+      women: [],
+      men: [],
+      kids: [],
+    };
+
+    MAIN_CATEGORIES.forEach(({ id }) => {
+      // 1. All products explicitly flagged by admin for this hero category
+      const adminChosen = catalogue.filter(
+        (p) => p.heroFeatured && (p.heroCategory === id || p.category === id)
+      );
+
+      if (adminChosen.length > 0) {
+        map[id] = adminChosen;
+      } else {
+        // 2. Fallback to featured / best sellers in this category
+        const featuredFallback = catalogue.filter(
+          (p) => p.category === id && (p.featured || p.bestSeller)
+        );
+        map[id] = featuredFallback.length > 0 ? featuredFallback.slice(0, 3) : catalogue.filter((p) => p.category === id).slice(0, 3);
+      }
+    });
+
+    return map;
   }, [catalogue]);
 
-  // Keep activeIdx in valid bounds if products list changes
+  const currentProducts = categoryProductsMap[activeCategory] || [];
+
+  // Reset product index when category changes or if out of range
   useEffect(() => {
-    if (activeIdx >= heroProducts.length) {
-      setActiveIdx(0);
+    if (activeProductIdx >= currentProducts.length) {
+      setActiveProductIdx(0);
     }
-  }, [heroProducts.length, activeIdx]);
+  }, [activeCategory, currentProducts.length, activeProductIdx]);
 
-  const activeProduct: Product | undefined = heroProducts[activeIdx] || heroProducts[0];
+  const activeProduct: Product | undefined = currentProducts[activeProductIdx] || currentProducts[0];
 
-  // Auto-advance through admin-chosen products every 6 seconds
+  // Auto-advance through products in current category, or advance category if only 1 product
   useEffect(() => {
-    if (heroProducts.length <= 1) return;
     const timer = setInterval(() => {
-      setActiveIdx((prev) => (prev + 1) % heroProducts.length);
+      if (currentProducts.length > 1) {
+        setActiveProductIdx((prev) => (prev + 1) % currentProducts.length);
+      } else {
+        // Cycle to next category
+        setActiveCategory((prevCat) => {
+          const idx = MAIN_CATEGORIES.findIndex((c) => c.id === prevCat);
+          const nextIdx = (idx + 1) % MAIN_CATEGORIES.length;
+          return MAIN_CATEGORIES[nextIdx].id;
+        });
+      }
     }, 6000);
     return () => clearInterval(timer);
-  }, [heroProducts.length]);
+  }, [currentProducts.length]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX.current === null || heroProducts.length <= 1) return;
+    if (touchStartX.current === null) return;
     const diff = touchStartX.current - e.changedTouches[0].clientX;
     if (diff > 45) {
-      // Swiped left -> next product
-      setActiveIdx((prev) => (prev + 1) % heroProducts.length);
+      // Swiped left -> next product or next category
+      if (currentProducts.length > 1 && activeProductIdx < currentProducts.length - 1) {
+        setActiveProductIdx((prev) => prev + 1);
+      } else {
+        const idx = MAIN_CATEGORIES.findIndex((c) => c.id === activeCategory);
+        const nextIdx = (idx + 1) % MAIN_CATEGORIES.length;
+        setActiveCategory(MAIN_CATEGORIES[nextIdx].id);
+        setActiveProductIdx(0);
+      }
     } else if (diff < -45) {
-      // Swiped right -> prev product
-      setActiveIdx((prev) => (prev - 1 + heroProducts.length) % heroProducts.length);
+      // Swiped right -> prev product or prev category
+      if (currentProducts.length > 1 && activeProductIdx > 0) {
+        setActiveProductIdx((prev) => prev - 1);
+      } else {
+        const idx = MAIN_CATEGORIES.findIndex((c) => c.id === activeCategory);
+        const prevIdx = (idx - 1 + MAIN_CATEGORIES.length) % MAIN_CATEGORIES.length;
+        setActiveCategory(MAIN_CATEGORIES[prevIdx].id);
+        setActiveProductIdx(0);
+      }
     }
     touchStartX.current = null;
   };
@@ -62,36 +115,23 @@ export default function MobileHero() {
   const photoUrl =
     activeProduct.images?.[0] || getProductImage(activeProduct.id);
 
-  // Derive unique categories present among admin-selected hero products for the subnav
-  const uniqueCategories = Array.from(
-    new Set(heroProducts.map((p) => (p.heroCategory || p.category || 'all').toLowerCase()))
-  );
-
   return (
     <div className="jf-darveys-mobile-hero">
-      {/* 1. Dynamic Category / Product Switcher Subnav */}
-      <nav className="jf-dmh-subnav" aria-label="Hero Showcase Navigation">
-        {uniqueCategories.map((catKey) => {
-          // Find the first product matching this category
-          const targetIdx = heroProducts.findIndex(
-            (p) => (p.heroCategory || p.category || '').toLowerCase() === catKey
-          );
-          const isCurrentCat =
-            (activeProduct.heroCategory || activeProduct.category || '').toLowerCase() === catKey;
-
-          return (
-            <button
-              key={catKey}
-              type="button"
-              className={`jf-dmh-subnav-btn ${isCurrentCat ? 'active' : ''}`}
-              onClick={() => {
-                if (targetIdx !== -1) setActiveIdx(targetIdx);
-              }}
-            >
-              <span>{catKey.toUpperCase()}</span>
-            </button>
-          );
-        })}
+      {/* 1. Permanent Main Category Subnav (WOMEN | MEN | KIDS) */}
+      <nav className="jf-dmh-subnav" aria-label="Hero Category Navigation">
+        {MAIN_CATEGORIES.map(({ id, label }) => (
+          <button
+            key={id}
+            type="button"
+            className={`jf-dmh-subnav-btn ${activeCategory === id ? 'active' : ''}`}
+            onClick={() => {
+              setActiveCategory(id);
+              setActiveProductIdx(0);
+            }}
+          >
+            <span>{label}</span>
+          </button>
+        ))}
       </nav>
 
       {/* 2. 100% Unobstructed Full-Bleed Real Product Stage */}
@@ -155,18 +195,18 @@ export default function MobileHero() {
             </motion.div>
           </AnimatePresence>
 
-          {/* Minimalist Pagination Dots for all Admin-Selected Products */}
-          {heroProducts.length > 1 && (
-            <div className="jf-dmh-dots" role="tablist" aria-label="Hero Product Pagination">
-              {heroProducts.map((p, idx) => (
+          {/* Pagination Dots for multi-product showcases in active category */}
+          {currentProducts.length > 1 && (
+            <div className="jf-dmh-dots" role="tablist" aria-label="Category Products Pagination">
+              {currentProducts.map((p, idx) => (
                 <button
                   key={p.id + idx}
                   type="button"
-                  className={`jf-dmh-dot ${activeIdx === idx ? 'active' : ''}`}
-                  onClick={() => setActiveIdx(idx)}
+                  className={`jf-dmh-dot ${activeProductIdx === idx ? 'active' : ''}`}
+                  onClick={() => setActiveProductIdx(idx)}
                   aria-label={`Product ${idx + 1}: ${p.name}`}
                   role="tab"
-                  aria-selected={activeIdx === idx}
+                  aria-selected={activeProductIdx === idx}
                 />
               ))}
             </div>
@@ -178,7 +218,7 @@ export default function MobileHero() {
               href={`/product/${activeProduct.id}`}
               className="jf-dmh-cta-btn"
             >
-              <span>View Specification</span>
+              <span>View {activeProduct.name}</span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
