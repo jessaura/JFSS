@@ -10719,78 +10719,51 @@ input, textarea, select {
   background: var(--bg-primary, #FAF7F2);
 }
 
-/* Top Monogram Crown (Centered above photo - 0% photo obstruction) */
-.jf-dmh-top-crown {
-  padding: 14px 20px 8px;
-  display: flex;
-  justify-content: center;
-  background: var(--bg-primary, #FAF7F2);
-  border-bottom: 1px solid rgba(197, 168, 128, 0.18);
-  position: relative;
-  z-index: 10;
-}
-
-.jf-dmh-top-crown .jf-logo-stage {
-  align-items: center !important;
-  text-align: center !important;
-  gap: 6px !important;
-}
-
-.jf-dmh-top-crown .jf-logo-mark {
-  width: 68px !important;
-  height: 68px !important;
-  border-radius: 16px !important;
-}
-
-.jf-dmh-top-crown .jf-logo-wordmark-wrap {
-  align-items: center !important;
-  text-align: center !important;
-}
-
-.jf-dmh-top-crown .jf-logo-wordmark {
-  font-size: 1.15rem !important;
-}
-
-.jf-dmh-top-crown .jf-logo-submark {
-  font-size: 0.54rem !important;
-}
-
-/* Subnav Category Bar (WOMEN | MEN | KIDS | CLEARANCE) */
+/* Subnav Category Bar (WOMEN | MEN | KIDS) */
 .jf-dmh-subnav {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 20px;
-  padding: 11px 16px;
-  border-bottom: 1px solid rgba(197, 168, 128, 0.28);
+  gap: 32px;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(197, 168, 128, 0.25);
   background: var(--bg-primary, #FAF7F2);
   position: relative;
   z-index: 10;
 }
 
-.jf-dmh-subnav-link {
-  font-size: 0.82rem;
+.jf-dmh-subnav-btn {
+  background: none;
+  border: none;
+  font-size: 0.84rem;
   font-weight: 600;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
+  color: var(--text-secondary, #78716C);
+  cursor: pointer;
+  padding: 4px 6px;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.jf-dmh-subnav-btn:hover {
   color: var(--charcoal, #1C1917);
-  text-decoration: none;
-  transition: color 0.2s ease;
 }
 
-.jf-dmh-subnav-link:hover {
-  color: var(--crimson, #6E1212);
-}
-
-.jf-dmh-subnav-link.is-sale {
-  color: var(--crimson, #6E1212);
+.jf-dmh-subnav-btn.active {
+  color: var(--charcoal, #1C1917);
   font-weight: 700;
 }
 
-.jf-dmh-subnav-sep {
-  color: rgba(197, 168, 128, 0.45);
-  font-size: 0.75rem;
-  font-weight: 300;
+.jf-dmh-subnav-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -12px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--crimson, #6E1212);
+  border-radius: 2px;
 }
 
 /* Full-Bleed Stage */
@@ -10832,10 +10805,10 @@ input, textarea, select {
   inset: 0;
   background: linear-gradient(
     180deg,
-    rgba(250, 247, 242, 0.45) 0%,
-    rgba(250, 247, 242, 0.05) 25%,
+    rgba(250, 247, 242, 0.2) 0%,
+    rgba(250, 247, 242, 0.02) 25%,
     rgba(250, 247, 242, 0.35) 60%,
-    rgba(250, 247, 242, 0.9) 82%,
+    rgba(250, 247, 242, 0.92) 82%,
     #FAF7F2 100%
   );
   pointer-events: none;
@@ -10864,16 +10837,16 @@ input, textarea, select {
 
 .jf-dmh-headline {
   font-family: var(--font-display, 'Playfair Display', serif);
-  font-size: clamp(2.35rem, 8.5vw, 3rem);
-  font-weight: 500;
+  font-size: clamp(2rem, 7.5vw, 2.6rem);
+  font-weight: 600;
   letter-spacing: -0.01em;
   color: var(--charcoal, #1C1917);
-  line-height: 1.12;
+  line-height: 1.15;
   margin: 0;
 }
 
 .jf-dmh-subhead {
-  font-size: 0.78rem;
+  font-size: 0.76rem;
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
@@ -10881,13 +10854,36 @@ input, textarea, select {
   margin: 2px 0 0;
 }
 
+.jf-dmh-price-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-top: 4px;
+  justify-content: center;
+}
+
+.jf-dmh-now {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-primary, #1C1917);
+}
+
+.jf-dmh-was {
+  font-size: 0.92rem;
+  color: var(--text-secondary, #78716C);
+  text-decoration: line-through;
+}
+
 .jf-dmh-narrative {
-  font-size: 0.86rem;
+  font-size: 0.84rem;
   color: var(--text-secondary, #57534E);
   margin: 4px 0 0;
-  max-width: 32ch;
+  max-width: 34ch;
   line-height: 1.45;
-  font-style: italic;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 /* Minimalist Pagination Dots */

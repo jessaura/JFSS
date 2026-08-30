@@ -1,71 +1,91 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import HeroLoopingLogo from './HeroLoopingLogo';
+import { useCatalogue } from '@/components/providers/CatalogueProvider';
+import { Product, formatPrice, discountPercent } from '@/data/products';
+import { getProductImage } from '@/data/images';
 
-interface HeroSlide {
-  id: string;
-  category: string;
-  headline: string;
-  subhead: string;
-  narrative: string;
-  image: string;
-  href: string;
+interface CategoryTab {
+  id: 'women' | 'men' | 'kids' | 'bestseller';
+  label: string;
+  defaultHeadline: string;
+  defaultSubhead: string;
+  defaultImage: string;
 }
 
-const HERO_SLIDES: HeroSlide[] = [
-  {
-    id: 'bestseller',
-    category: 'Best Seller Edit',
-    headline: 'Best Seller Edit',
-    subhead: 'DAILYWEAR · THOUGHTFULLY MADE',
-    narrative: 'Where South Asian heritage meets London everyday elegance',
-    image: '/images/hero-casual.png',
-    href: '/shop',
-  },
+const CATEGORY_TABS: CategoryTab[] = [
   {
     id: 'women',
-    category: "Women's Atelier",
-    headline: "Women's Atelier",
-    subhead: '100% PURE SLUB LINEN & COTTONS',
-    narrative: 'Hand-dyed midis, artisanal kurtis & featherweight drape',
-    image: '/images/womens-collection.png',
-    href: '/shop?category=women',
+    label: 'WOMEN',
+    defaultHeadline: "Women's Atelier",
+    defaultSubhead: '100% PURE SLUB LINEN & COTTONS',
+    defaultImage: '/images/womens-collection.png',
   },
   {
     id: 'men',
-    category: "Men's Everyday",
-    headline: "Men's Everyday Line",
-    subhead: 'ORGANIC HANDLOOM WEAVES',
-    narrative: 'Relaxed linen shirts, breathable kurtas & lightweight layers',
-    image: '/images/mens-collection.png',
-    href: '/shop?category=men',
+    label: 'MEN',
+    defaultHeadline: "Men's Everyday Line",
+    defaultSubhead: 'ORGANIC HANDLOOM WEAVES',
+    defaultImage: '/images/mens-collection.png',
   },
   {
-    id: 'festive',
-    category: 'Festive & Occasion',
-    headline: 'The Heritage Edit',
-    subhead: 'KERALA KASAVU & HANDLOOMS',
-    narrative: 'Artisan gold borders, pure cotton sarees & statement sets',
-    image: '/images/festive-collection.png',
-    href: '/shop?category=festive',
+    id: 'kids',
+    label: 'KIDS',
+    defaultHeadline: 'Kids & Juniors Edit',
+    defaultSubhead: 'BREATHABLE GENTLE COTTONS',
+    defaultImage: '/images/kids-collection.jpg',
   },
 ];
 
 export default function MobileHero() {
-  const [activeIdx, setActiveIdx] = useState(0);
+  const catalogue = useCatalogue();
+  const [activeTabIdx, setActiveTabIdx] = useState(0);
   const touchStartX = useRef<number | null>(null);
-  const activeSlide = HERO_SLIDES[activeIdx];
 
-  // Auto-advance every 5.5 seconds
+  // Dynamically resolve real admin-selected or featured products for each category
+  const slides = useMemo(() => {
+    return CATEGORY_TABS.map((tab) => {
+      // 1. Look for admin-selected hero product
+      const heroProduct = catalogue.find(
+        (p) => p.heroFeatured && (p.heroCategory === tab.id || p.category === tab.id)
+      );
+
+      // 2. Or fallback to top featured product in that category
+      const fallbackProduct = catalogue.find(
+        (p) => p.category === tab.id && (p.featured || p.bestSeller)
+      ) || catalogue.find((p) => p.category === tab.id);
+
+      const product: Product | undefined = heroProduct || fallbackProduct;
+
+      return {
+        tabId: tab.id,
+        label: tab.label,
+        productId: product?.id,
+        name: product?.name || tab.defaultHeadline,
+        fabric: product?.fabric ? product.fabric.toUpperCase() : tab.defaultSubhead,
+        description:
+          product?.shortDescription ||
+          product?.description ||
+          'Where South Asian heritage meets London everyday elegance.',
+        image: product?.images?.[0] || (product ? getProductImage(product.id) : tab.defaultImage),
+        price: product?.price,
+        originalPrice: product?.originalPrice,
+        href: product ? `/product/${product.id}` : `/shop?category=${tab.id}`,
+      };
+    });
+  }, [catalogue]);
+
+  const activeSlide = slides[activeTabIdx] || slides[0];
+
+  // Auto-advance every 6 seconds
   useEffect(() => {
     const timer = setInterval(() => {
-      setActiveIdx((prev) => (prev + 1) % HERO_SLIDES.length);
-    }, 5500);
+      setActiveTabIdx((prev) => (prev + 1) % slides.length);
+    }, 6000);
     return () => clearInterval(timer);
-  }, []);
+  }, [slides.length]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
@@ -76,41 +96,41 @@ export default function MobileHero() {
     const diff = touchStartX.current - e.changedTouches[0].clientX;
     if (diff > 45) {
       // Swiped left -> next
-      setActiveIdx((prev) => (prev + 1) % HERO_SLIDES.length);
+      setActiveTabIdx((prev) => (prev + 1) % slides.length);
     } else if (diff < -45) {
       // Swiped right -> prev
-      setActiveIdx((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
+      setActiveTabIdx((prev) => (prev - 1 + slides.length) % slides.length);
     }
     touchStartX.current = null;
   };
 
   return (
     <div className="jf-darveys-mobile-hero">
-      {/* Maison Animated Peacock Monogram Crown (Placed above photo for 0% obstruction) */}
-      <div className="jf-dmh-top-crown">
-        <HeroLoopingLogo />
-      </div>
-
-      {/* 1. Sub-Navigation Category Bar (WOMEN | MEN | KIDS) */}
-      <nav className="jf-dmh-subnav" aria-label="Quick Category Navigation">
-        <Link href="/shop?category=women" className="jf-dmh-subnav-link">WOMEN</Link>
-        <span className="jf-dmh-subnav-sep">|</span>
-        <Link href="/shop?category=men" className="jf-dmh-subnav-link">MEN</Link>
-        <span className="jf-dmh-subnav-sep">|</span>
-        <Link href="/shop?category=kids" className="jf-dmh-subnav-link">KIDS</Link>
+      {/* 1. Category Quick Subnav (WOMEN | MEN | KIDS) - Tapping switches active hero look */}
+      <nav className="jf-dmh-subnav" aria-label="Mobile Hero Category Navigation">
+        {slides.map((slide, idx) => (
+          <button
+            key={slide.tabId}
+            type="button"
+            className={`jf-dmh-subnav-btn ${activeTabIdx === idx ? 'active' : ''}`}
+            onClick={() => setActiveTabIdx(idx)}
+          >
+            <span>{slide.label}</span>
+          </button>
+        ))}
       </nav>
 
-      {/* 2. 100% Unobstructed Full-Bleed Editorial Stage with Touch-Swipe */}
+      {/* 2. 100% Unobstructed Full-Bleed Product Stage */}
       <div
         className="jf-dmh-stage"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
       >
-        {/* Full-Bleed Photo Carousel */}
+        {/* Full-Bleed Real Product Photo Carousel */}
         <div className="jf-dmh-viewport">
           <AnimatePresence mode="wait">
             <motion.div
-              key={activeSlide.id}
+              key={activeSlide.tabId + activeSlide.image}
               className="jf-dmh-slide"
               initial={{ opacity: 0, scale: 1.02 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -119,7 +139,7 @@ export default function MobileHero() {
             >
               <img
                 src={activeSlide.image}
-                alt={activeSlide.headline}
+                alt={activeSlide.name}
                 className="jf-dmh-photo"
               />
             </motion.div>
@@ -129,42 +149,52 @@ export default function MobileHero() {
           <div className="jf-dmh-gradient-scrim" />
         </div>
 
-        {/* 3. Editorial Lower Typography & Interactive Controls */}
+        {/* 3. Editorial Lower Typography & Interactive Product Controls */}
         <div className="jf-dmh-editorial-dock">
           <AnimatePresence mode="wait">
             <motion.div
-              key={activeSlide.id}
+              key={activeSlide.tabId + activeSlide.name}
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
               className="jf-dmh-text-wrap"
             >
-              <h1 className="jf-dmh-headline">{activeSlide.headline}</h1>
-              <p className="jf-dmh-subhead">{activeSlide.subhead}</p>
-              <p className="jf-dmh-narrative">{activeSlide.narrative}</p>
+              <h1 className="jf-dmh-headline">{activeSlide.name}</h1>
+              <p className="jf-dmh-subhead">{activeSlide.fabric}</p>
+
+              {activeSlide.price !== undefined && activeSlide.price > 0 && (
+                <div className="jf-dmh-price-row">
+                  <span className="jf-dmh-now">£{formatPrice(activeSlide.price)}</span>
+                  {activeSlide.originalPrice && activeSlide.originalPrice > activeSlide.price && (
+                    <span className="jf-dmh-was">£{formatPrice(activeSlide.originalPrice)}</span>
+                  )}
+                </div>
+              )}
+
+              <p className="jf-dmh-narrative">{activeSlide.description}</p>
             </motion.div>
           </AnimatePresence>
 
           {/* Minimalist Pagination Dots */}
           <div className="jf-dmh-dots" role="tablist" aria-label="Hero Slide Navigation">
-            {HERO_SLIDES.map((slide, idx) => (
+            {slides.map((slide, idx) => (
               <button
-                key={slide.id}
+                key={slide.tabId}
                 type="button"
-                className={`jf-dmh-dot ${activeIdx === idx ? 'active' : ''}`}
-                onClick={() => setActiveIdx(idx)}
-                aria-label={`Slide ${idx + 1}: ${slide.headline}`}
+                className={`jf-dmh-dot ${activeTabIdx === idx ? 'active' : ''}`}
+                onClick={() => setActiveTabIdx(idx)}
+                aria-label={`Slide ${idx + 1}: ${slide.name}`}
                 role="tab"
-                aria-selected={activeIdx === idx}
+                aria-selected={activeTabIdx === idx}
               />
             ))}
           </div>
 
-          {/* Explore Button */}
+          {/* Explore Product CTA */}
           <div className="jf-dmh-cta-wrap">
             <Link href={activeSlide.href} className="jf-dmh-cta-btn">
-              <span>Explore {activeSlide.category}</span>
+              <span>View {activeSlide.name}</span>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>

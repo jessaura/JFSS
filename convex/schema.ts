@@ -26,6 +26,8 @@ export default defineSchema({
     new: v.boolean(),
     bestSeller: v.boolean(),
     clearance: v.optional(v.boolean()),
+    heroFeatured: v.optional(v.boolean()),
+    heroCategory: v.optional(v.string()),
     rating: v.number(),
     reviews: v.number(),
     // Inventory. Optional so pre-existing seeded docs stay valid.

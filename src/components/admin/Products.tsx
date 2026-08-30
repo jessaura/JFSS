@@ -368,6 +368,8 @@ function ProductForm({
     isNew: product?.new ?? true,
     bestSeller: product?.bestSeller ?? false,
     clearance: product?.clearance ?? false,
+    heroFeatured: product?.heroFeatured ?? false,
+    heroCategory: product?.heroCategory ?? product?.category ?? 'women',
   });
 
   const [colors, setColors] = useState<ProductColor[]>(product?.colors ?? []);
@@ -428,6 +430,8 @@ function ProductForm({
       new: form.isNew,
       bestSeller: form.bestSeller,
       clearance: form.clearance,
+      heroFeatured: form.heroFeatured,
+      heroCategory: form.heroCategory,
       // Colour rows (each with its own uploaded image), the gallery, and the
       // stock matrix — the pieces this form now owns.
       colors: colors.map((c) => ({ name: c.name.trim(), hex: c.hex, image: c.image })),
@@ -651,13 +655,14 @@ function ProductForm({
         </fieldset>
 
         <fieldset className="adm-fieldset">
-          <legend>Merchandising</legend>
+          <legend>Merchandising &amp; Mobile Hero Placement</legend>
           <div className="adm-checks">
             {([
               ['featured', 'Featured'],
               ['isNew', 'New'],
               ['bestSeller', 'Best seller'],
               ['clearance', 'Clearance'],
+              ['heroFeatured', '✨ Showcase in Mobile Hero Carousel'],
             ] as const).map(([key, label]) => (
               <label key={key} className="adm-check">
                 <input type="checkbox" checked={form[key]} onChange={(e) => set(key, e.target.checked)} />
@@ -665,6 +670,24 @@ function ProductForm({
               </label>
             ))}
           </div>
+
+          {form.heroFeatured && (
+            <div style={{ marginTop: 12 }}>
+              <Field label="Hero Showcase Category" hint="Which category this product headlines in the mobile hero carousel">
+                <select
+                  className="adm-input"
+                  value={form.heroCategory}
+                  onChange={(e) => set('heroCategory', e.target.value)}
+                >
+                  <option value="women">Women's Atelier</option>
+                  <option value="men">Men's Everyday</option>
+                  <option value="kids">Kids &amp; Juniors</option>
+                  <option value="bestseller">Best Seller Edit</option>
+                  <option value="festive">The Heritage / Festive Edit</option>
+                </select>
+              </Field>
+            </div>
+          )}
         </fieldset>
 
         {error && <p className="adm-error" role="alert">{error}</p>}

@@ -34,6 +34,8 @@ export interface Product {
   new: boolean;
   bestSeller: boolean;
   clearance?: boolean;
+  heroFeatured?: boolean;
+  heroCategory?: string;
   rating: number;
   reviews: number;
   stock?: number;
