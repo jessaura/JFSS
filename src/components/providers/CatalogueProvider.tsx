@@ -39,6 +39,8 @@ function toProduct(d: Doc): Product {
     new: Boolean(d.new),
     bestSeller: Boolean(d.bestSeller),
     clearance: d.clearance,
+    heroFeatured: Boolean(d.heroFeatured),
+    heroCategory: d.heroCategory,
     rating: d.rating ?? 0,
     reviews: d.reviews ?? 0,
     stock: d.stock,
