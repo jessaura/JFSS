@@ -4,134 +4,121 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCatalogue } from '@/components/providers/CatalogueProvider';
-import { Product, formatPrice } from '@/data/products';
+import { formatPrice } from '@/data/products';
 import { getProductImage } from '@/data/images';
-
-const MAIN_CATEGORIES = [
-  { id: 'women', label: 'WOMEN' },
-  { id: 'men', label: 'MEN' },
-  { id: 'kids', label: 'KIDS' },
-] as const;
-
-type CategoryId = (typeof MAIN_CATEGORIES)[number]['id'];
 
 export default function MobileHero() {
   const catalogue = useCatalogue();
-  const [activeCategory, setActiveCategory] = useState<CategoryId>('women');
-  const [activeProductIdx, setActiveProductIdx] = useState(0);
+  const [activeIdx, setActiveIdx] = useState(0);
   const touchStartX = useRef<number | null>(null);
 
-  // Group products by category: prefer explicitly admin-selected hero products (heroFeatured: true)
-  const categoryProductsMap = useMemo(() => {
-    const map: Record<CategoryId, Product[]> = {
-      women: [],
-      men: [],
-      kids: [],
-    };
-
-    MAIN_CATEGORIES.forEach(({ id }) => {
-      // 1. All products explicitly flagged by admin for this hero category
-      const adminChosen = catalogue.filter(
-        (p) => p.heroFeatured && (p.heroCategory === id || p.category === id)
-      );
-
-      if (adminChosen.length > 0) {
-        map[id] = adminChosen;
-      } else {
-        // 2. Fallback to featured / best sellers in this category
-        const featuredFallback = catalogue.filter(
-          (p) => p.category === id && (p.featured || p.bestSeller)
-        );
-        map[id] = featuredFallback.length > 0 ? featuredFallback.slice(0, 3) : catalogue.filter((p) => p.category === id).slice(0, 3);
-      }
-    });
-
-    return map;
+  // STRICTLY and ONLY products explicitly checked by Admin (heroFeatured === true)
+  // ZERO fallback to unchosen products
+  const chosenProducts = useMemo(() => {
+    return catalogue.filter((p) => Boolean(p.heroFeatured));
   }, [catalogue]);
 
-  const currentProducts = categoryProductsMap[activeCategory] || [];
-
-  // Reset product index when category changes or if out of range
+  // Keep index within bounds
   useEffect(() => {
-    if (activeProductIdx >= currentProducts.length) {
-      setActiveProductIdx(0);
+    if (activeIdx >= chosenProducts.length) {
+      setActiveIdx(0);
     }
-  }, [activeCategory, currentProducts.length, activeProductIdx]);
+  }, [chosenProducts.length, activeIdx]);
 
-  const activeProduct: Product | undefined = currentProducts[activeProductIdx] || currentProducts[0];
-
-  // Auto-advance through products in current category, or advance category if only 1 product
+  // Auto-advance through chosen products every 6 seconds
   useEffect(() => {
+    if (chosenProducts.length <= 1) return;
     const timer = setInterval(() => {
-      if (currentProducts.length > 1) {
-        setActiveProductIdx((prev) => (prev + 1) % currentProducts.length);
-      } else {
-        // Cycle to next category
-        setActiveCategory((prevCat) => {
-          const idx = MAIN_CATEGORIES.findIndex((c) => c.id === prevCat);
-          const nextIdx = (idx + 1) % MAIN_CATEGORIES.length;
-          return MAIN_CATEGORIES[nextIdx].id;
-        });
-      }
+      setActiveIdx((prev) => (prev + 1) % chosenProducts.length);
     }, 6000);
     return () => clearInterval(timer);
-  }, [currentProducts.length]);
+  }, [chosenProducts.length]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
   };
 
   const handleTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX.current === null) return;
+    if (touchStartX.current === null || chosenProducts.length <= 1) return;
     const diff = touchStartX.current - e.changedTouches[0].clientX;
     if (diff > 45) {
-      // Swiped left -> next product or next category
-      if (currentProducts.length > 1 && activeProductIdx < currentProducts.length - 1) {
-        setActiveProductIdx((prev) => prev + 1);
-      } else {
-        const idx = MAIN_CATEGORIES.findIndex((c) => c.id === activeCategory);
-        const nextIdx = (idx + 1) % MAIN_CATEGORIES.length;
-        setActiveCategory(MAIN_CATEGORIES[nextIdx].id);
-        setActiveProductIdx(0);
-      }
+      // Swiped left -> next
+      setActiveIdx((prev) => (prev + 1) % chosenProducts.length);
     } else if (diff < -45) {
-      // Swiped right -> prev product or prev category
-      if (currentProducts.length > 1 && activeProductIdx > 0) {
-        setActiveProductIdx((prev) => prev - 1);
-      } else {
-        const idx = MAIN_CATEGORIES.findIndex((c) => c.id === activeCategory);
-        const prevIdx = (idx - 1 + MAIN_CATEGORIES.length) % MAIN_CATEGORIES.length;
-        setActiveCategory(MAIN_CATEGORIES[prevIdx].id);
-        setActiveProductIdx(0);
-      }
+      // Swiped right -> prev
+      setActiveIdx((prev) => (prev - 1 + chosenProducts.length) % chosenProducts.length);
     }
     touchStartX.current = null;
   };
 
-  if (!activeProduct) {
-    return null;
+  // If admin has not selected any products yet, show clean editorial brand banner (0 unchosen products)
+  if (chosenProducts.length === 0) {
+    return (
+      <div className="jf-darveys-mobile-hero">
+        <nav className="jf-dmh-subnav" aria-label="Department Links">
+          <Link href="/shop?category=women" className="jf-dmh-subnav-btn"><span>WOMEN</span></Link>
+          <Link href="/shop?category=men" className="jf-dmh-subnav-btn"><span>MEN</span></Link>
+          <Link href="/shop?category=kids" className="jf-dmh-subnav-btn"><span>KIDS</span></Link>
+        </nav>
+        <div className="jf-dmh-stage">
+          <div className="jf-dmh-viewport">
+            <div className="jf-dmh-slide">
+              <img src="/images/hero-casual.png" alt="Jessaura London Atelier" className="jf-dmh-photo" />
+            </div>
+            <div className="jf-dmh-gradient-scrim" />
+          </div>
+          <div className="jf-dmh-editorial-dock">
+            <div className="jf-dmh-text-wrap">
+              <h1 className="jf-dmh-headline">Dailywear, Thoughtfully Made</h1>
+              <p className="jf-dmh-subhead">100% PURE SLUB LINEN &amp; COTTONS</p>
+              <p className="jf-dmh-narrative">Where South Asian heritage meets London everyday elegance.</p>
+            </div>
+            <div className="jf-dmh-cta-wrap">
+              <Link href="/shop" className="jf-dmh-cta-btn">
+                <span>Shop The Collection</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
-  const photoUrl =
-    activeProduct.images?.[0] || getProductImage(activeProduct.id);
+  const activeProduct = chosenProducts[activeIdx] || chosenProducts[0];
+  const photoUrl = activeProduct.images?.[0] || getProductImage(activeProduct.id);
+
+  // Extract unique categories of the chosen products for the subnav
+  const chosenCategories = Array.from(
+    new Set(chosenProducts.map((p) => (p.heroCategory || p.category || 'all').toLowerCase()))
+  );
 
   return (
     <div className="jf-darveys-mobile-hero">
-      {/* 1. Permanent Main Category Subnav (WOMEN | MEN | KIDS) */}
-      <nav className="jf-dmh-subnav" aria-label="Hero Category Navigation">
-        {MAIN_CATEGORIES.map(({ id, label }) => (
-          <button
-            key={id}
-            type="button"
-            className={`jf-dmh-subnav-btn ${activeCategory === id ? 'active' : ''}`}
-            onClick={() => {
-              setActiveCategory(id);
-              setActiveProductIdx(0);
-            }}
-          >
-            <span>{label}</span>
-          </button>
-        ))}
+      {/* 1. Subnav reflecting the categories of your chosen showcase products */}
+      <nav className="jf-dmh-subnav" aria-label="Hero Showcase Categories">
+        {chosenCategories.map((catKey) => {
+          const firstIdxForCat = chosenProducts.findIndex(
+            (p) => (p.heroCategory || p.category || '').toLowerCase() === catKey
+          );
+          const isCurrentCat =
+            (activeProduct.heroCategory || activeProduct.category || '').toLowerCase() === catKey;
+
+          return (
+            <button
+              key={catKey}
+              type="button"
+              className={`jf-dmh-subnav-btn ${isCurrentCat ? 'active' : ''}`}
+              onClick={() => {
+                if (firstIdxForCat !== -1) setActiveIdx(firstIdxForCat);
+              }}
+            >
+              <span>{catKey.toUpperCase()}</span>
+            </button>
+          );
+        })}
       </nav>
 
       {/* 2. 100% Unobstructed Full-Bleed Real Product Stage */}
@@ -195,18 +182,18 @@ export default function MobileHero() {
             </motion.div>
           </AnimatePresence>
 
-          {/* Pagination Dots for multi-product showcases in active category */}
-          {currentProducts.length > 1 && (
-            <div className="jf-dmh-dots" role="tablist" aria-label="Category Products Pagination">
-              {currentProducts.map((p, idx) => (
+          {/* Pagination Dots across all Admin-Selected Products */}
+          {chosenProducts.length > 1 && (
+            <div className="jf-dmh-dots" role="tablist" aria-label="Hero Product Pagination">
+              {chosenProducts.map((p, idx) => (
                 <button
                   key={p.id + idx}
                   type="button"
-                  className={`jf-dmh-dot ${activeProductIdx === idx ? 'active' : ''}`}
-                  onClick={() => setActiveProductIdx(idx)}
+                  className={`jf-dmh-dot ${activeIdx === idx ? 'active' : ''}`}
+                  onClick={() => setActiveIdx(idx)}
                   aria-label={`Product ${idx + 1}: ${p.name}`}
                   role="tab"
-                  aria-selected={activeProductIdx === idx}
+                  aria-selected={activeIdx === idx}
                 />
               ))}
             </div>
