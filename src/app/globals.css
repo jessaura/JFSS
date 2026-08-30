@@ -9360,6 +9360,349 @@ input, textarea, select {
   }
 }
 
+/* ==========================================================================
+   LUXURY NAVBAR MEGA-MENU (web-design-engineer & emil-design-eng)
+   ========================================================================== */
+
+.navbar-link-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.jf-nav-chevron {
+  margin-left: 4px;
+  transition: transform 0.2s ease;
+}
+
+.navbar-link-wrap:hover .jf-nav-chevron {
+  transform: rotate(180deg);
+}
+
+.navbar-link-clearance {
+  color: var(--crimson, #6E1212) !important;
+  font-weight: 700 !important;
+}
+
+.jf-mega-menu {
+  position: absolute;
+  top: calc(100% + 14px);
+  left: 50%;
+  transform: translateX(-35%);
+  width: min(880px, 92vw);
+  background: rgba(250, 247, 242, 0.96);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(197, 168, 128, 0.35);
+  border-radius: 16px;
+  padding: 28px 32px;
+  box-shadow: 0 24px 64px rgba(28, 25, 23, 0.18), 0 4px 16px rgba(0, 0, 0, 0.06);
+  z-index: 100;
+}
+
+.jf-mega-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1.1fr 1fr 1.4fr;
+  gap: 28px;
+}
+
+.jf-mega-col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.jf-mega-col-title {
+  font-family: var(--font-display, 'Playfair Display', serif);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-primary, #1C1917);
+  text-decoration: none;
+  padding-bottom: 6px;
+  border-bottom: 1px solid rgba(197, 168, 128, 0.25);
+  transition: color 0.2s ease;
+}
+
+.jf-mega-col-title:hover {
+  color: var(--crimson, #6E1212);
+}
+
+.jf-mega-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.jf-mega-list a {
+  font-size: 0.82rem;
+  color: var(--text-secondary, #57534E);
+  text-decoration: none;
+  transition: all 0.18s ease;
+  display: inline-block;
+}
+
+.jf-mega-list a:hover {
+  color: var(--crimson, #6E1212);
+  transform: translateX(3px);
+}
+
+.jf-mega-viewall {
+  font-size: 0.78rem !important;
+  font-weight: 700 !important;
+  color: var(--crimson, #6E1212) !important;
+  margin-top: 4px;
+}
+
+.jf-mega-promo-card {
+  position: relative;
+  height: 100%;
+  min-height: 180px;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+  padding: 16px;
+  text-decoration: none;
+  border: 1px solid rgba(180, 35, 24, 0.3);
+}
+
+.jf-mega-promo-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transition: transform 0.6s ease;
+}
+
+.jf-mega-promo-card:hover .jf-mega-promo-bg {
+  transform: scale(1.06);
+}
+
+.jf-mega-promo-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(14, 11, 9, 0.1) 0%, rgba(26, 10, 10, 0.92) 100%);
+}
+
+.jf-mega-promo-text {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  color: #FAF7F2;
+}
+
+.jf-mega-promo-badge {
+  font-size: 0.62rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #FF8F87;
+}
+
+.jf-mega-promo-text h4 {
+  font-family: var(--font-display, 'Playfair Display', serif);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.jf-mega-promo-text p {
+  font-size: 0.74rem;
+  color: rgba(250, 247, 242, 0.8);
+  margin: 0;
+  line-height: 1.3;
+}
+
+/* Mobile Nav Link Clearance */
+.jf-mobile-link.mobile-clearance {
+  color: var(--crimson, #6E1212) !important;
+  font-weight: 700 !important;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mobile-pill-sale {
+  font-size: 0.68rem;
+  background: var(--crimson, #6E1212);
+  color: #fff;
+  padding: 2px 7px;
+  border-radius: 999px;
+}
+
+/* ==========================================================================
+   CATEGORY-FIRST SHOP PAGE (web-design-engineer & emil-design-eng)
+   ========================================================================== */
+
+/* 1. Primary Category Switcher Bar */
+.jf-shop-primary-tabs-bar {
+  background: #FFFFFF;
+  border-bottom: 1px solid rgba(197, 168, 128, 0.25);
+  padding: 8px 0;
+  position: relative;
+  z-index: 10;
+}
+
+.jf-shop-category-switcher {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(8px, 2vw, 24px);
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 4px 0;
+}
+
+.jf-shop-category-switcher::-webkit-scrollbar {
+  display: none;
+}
+
+.jf-primary-cat-btn {
+  position: relative;
+  padding: 10px clamp(14px, 2vw, 22px);
+  border-radius: 999px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+  z-index: 1;
+}
+
+.jf-primary-cat-name {
+  font-family: var(--font-display, 'Playfair Display', serif);
+  font-size: clamp(0.95rem, 1.3vw, 1.15rem);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--text-secondary, #78716C);
+  transition: color 0.2s ease;
+}
+
+.jf-primary-cat-btn:hover .jf-primary-cat-name {
+  color: var(--text-primary, #1C1917);
+}
+
+.jf-primary-cat-btn.active .jf-primary-cat-name {
+  color: #FAF7F2;
+}
+
+.jf-primary-cat-indicator {
+  position: absolute;
+  inset: 0;
+  background: var(--charcoal, #1C1917);
+  border-radius: 999px;
+  z-index: -1;
+  box-shadow: 0 4px 16px rgba(28, 25, 23, 0.18);
+}
+
+.jf-primary-cat-btn.is-clearance-btn .jf-primary-cat-name {
+  color: var(--crimson, #6E1212);
+}
+
+.jf-primary-cat-btn.is-clearance-btn.active .jf-primary-cat-name {
+  color: #fff;
+}
+
+.jf-primary-cat-btn.is-clearance-btn.active .jf-primary-cat-indicator {
+  background: var(--crimson, #6E1212);
+  box-shadow: 0 4px 16px rgba(110, 18, 18, 0.25);
+}
+
+.jf-cat-badge-flame {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(180, 35, 24, 0.12);
+  color: var(--crimson, #6E1212);
+}
+
+.jf-primary-cat-btn.active .jf-cat-badge-flame {
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+}
+
+/* 2. Department Masthead */
+.jf-shop-dept-masthead {
+  padding: clamp(32px, 4.5vw, 52px) 0 clamp(20px, 2.5vw, 32px);
+  background: linear-gradient(180deg, rgba(197, 168, 128, 0.08) 0%, transparent 100%);
+  border-bottom: 1px solid rgba(197, 168, 128, 0.15);
+}
+
+.jf-shop-masthead-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 680px;
+}
+
+.jf-shop-masthead-eyebrow {
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--crimson, #6E1212);
+}
+
+.jf-shop-masthead-title {
+  font-family: var(--font-display, 'Playfair Display', serif);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 600;
+  color: var(--text-primary, #1C1917);
+  line-height: 1.1;
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.jf-shop-masthead-count {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary, #78716C);
+  background: rgba(197, 168, 128, 0.2);
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.jf-shop-masthead-desc {
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: var(--text-secondary, #57534E);
+  margin: 2px 0 0;
+}
+
+/* Active Filters Reset Row */
+.jf-active-filters-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background: rgba(197, 168, 128, 0.1);
+  border: 1px solid rgba(197, 168, 128, 0.25);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-primary, #1C1917);
+  margin-bottom: 24px;
+}
+
+.jf-shop-grid-section {
+  padding-top: 28px;
+}
+
+
 
 
 

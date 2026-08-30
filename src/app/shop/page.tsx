@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useMemo, useEffect, useRef } from 'react';
-import Link from 'next/link';
+import { useState, useMemo, useEffect, useRef, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import gsap from 'gsap';
 import Navbar from '@/components/layout/Navbar';
@@ -12,76 +12,53 @@ import { getProductImage, hasPhoto } from '@/data/images';
 import { useCatalogue } from '@/components/providers/CatalogueProvider';
 import { useStore } from '@/store/store';
 
-/* ---------- Department Navigation Tabs ---------- */
+/* ---------- Primary Category Definitions ---------- */
 
-interface DepartmentTab {
+interface PrimaryCategory {
   id: string;
   label: string;
+  eyebrow: string;
   subtitle: string;
-  tag: string;
   image: string;
 }
 
-const DEPARTMENTS: DepartmentTab[] = [
-  {
-    id: 'all',
-    label: 'All Curated Salons',
-    subtitle: 'Full Store Catalog',
-    tag: 'All Departments',
-    image: '/images/hero-casual.png',
-  },
-  {
-    id: 'dresses',
-    label: 'Linen Dresses',
-    subtitle: 'Hand-Painted Botanicals',
-    tag: '100% Slub Linen',
-    image: '/dresses/dress_1.jpg',
-  },
+const PRIMARY_CATEGORIES: PrimaryCategory[] = [
   {
     id: 'women',
-    label: "Women's Collection",
-    subtitle: 'Kurtis, Tops & Sets',
-    tag: 'Dailywear & Occasion',
+    label: "Women's Atelier",
+    eyebrow: 'PURE SLUB LINEN · HAND-PAINTED FLORALS',
+    subtitle: 'Flowing linen midi dresses, artisanal kurtis, breathable blouses, and festive Kerala set mundu.',
     image: '/images/womens-collection.png',
   },
   {
     id: 'men',
     label: "Men's Everyday",
-    subtitle: 'Linen Shirts & Kurtas',
-    tag: 'Artisanal Kurtas',
+    eyebrow: 'TAILORED CUTS · ARTISANAL WEAVES',
+    subtitle: 'Breathable linen kurtas, tailored casual shirts, and classic polos designed for all-day comfort.',
     image: '/images/mens-collection.png',
-  },
-  {
-    id: 'festive',
-    label: 'Festive Kerala Edit',
-    subtitle: 'Kasavu Gold & Sarees',
-    tag: 'Celebration Weaves',
-    image: '/images/festive-collection.png',
   },
   {
     id: 'kids',
     label: 'Kids & Juniors',
-    subtitle: 'Soft Cotton Dailywear',
-    tag: 'Boys & Girls',
+    eyebrow: 'GENTLE ON SKIN · 100% ORGANIC COTTON',
+    subtitle: 'Soft, playful dailywear, easy cotton kurtas, and comfortable sets crafted for boys and girls.',
     image: '/images/kids-collection.jpg',
   },
   {
     id: 'clearance',
     label: 'Clearance Archive',
-    subtitle: 'Final Reductions Up to 60%',
-    tag: '🔥 Up to 60% Off',
+    eyebrow: '🔥 FINAL REDUCTIONS · UP TO 60% OFF',
+    subtitle: 'Limited-stock archive pieces and end-of-season markdowns. Final chance before archive retirement.',
     image: '/clearance-sale.jpg',
   },
+  {
+    id: 'all',
+    label: 'All Curated Pieces',
+    eyebrow: 'THE JESSAURA CATALOGUE · LONDON',
+    subtitle: 'Explore the complete South Asian everyday elegance collection in pure linens and handlooms.',
+    image: '/images/hero-casual.png',
+  },
 ];
-
-/* ---------- Clearance Discount Tiers ---------- */
-const DISCOUNT_TIERS = [
-  { id: 'all', label: 'All Markdowns' },
-  { id: '50plus', label: '50%+ Off' },
-  { id: '30plus', label: '30%+ Off' },
-  { id: 'under25', label: 'Under £25' },
-  { id: 'under35', label: 'Under £35' },
-] as const;
 
 /* ---------- Luxury Product Card Component ---------- */
 
@@ -116,7 +93,7 @@ function LuxuryShopCard({ product }: { product: Product }) {
       initial={{ opacity: 0, scale: 0.96 }}
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.96 }}
-      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
       className="jf-staples-card"
       onClick={handleOpen}
       role="button"
@@ -242,64 +219,18 @@ function LuxuryShopCard({ product }: { product: Product }) {
   );
 }
 
-/* ---------- Department Salon Section Component ---------- */
+/* ---------- Inner Shop Component with Search Params ---------- */
 
-function DepartmentSalon({
-  eyebrow,
-  title,
-  description,
-  count,
-  products,
-  onViewDepartment,
-  isClearance,
-}: {
-  eyebrow: string;
-  title: string;
-  description: string;
-  count: number;
-  products: Product[];
-  onViewDepartment: () => void;
-  isClearance?: boolean;
-}) {
-  if (products.length === 0) return null;
-
-  return (
-    <section className={`jf-salon-section ${isClearance ? 'jf-salon-clearance-highlight' : ''}`}>
-      <div className="jf-salon-head">
-        <div className="jf-salon-copy">
-          <span className="jf-salon-eyebrow">{eyebrow}</span>
-          <h2 className="jf-salon-title">{title}</h2>
-          <p className="jf-salon-desc">{description}</p>
-        </div>
-        <button
-          type="button"
-          className={`jf-salon-view-btn ${isClearance ? 'jf-clear-highlight-btn' : ''}`}
-          onClick={onViewDepartment}
-        >
-          <span>View all in {title}</span>
-          <span className="jf-salon-count-badge">{count}</span>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M5 12h14M12 5l7 7-7 7" />
-          </svg>
-        </button>
-      </div>
-
-      <div className="jf-salon-grid">
-        {products.slice(0, 4).map((product) => (
-          <LuxuryShopCard key={product.id} product={product} />
-        ))}
-      </div>
-    </section>
-  );
-}
-
-/* ---------- Main Shop Page Component ---------- */
-
-export default function ShopPage() {
+function ShopContent() {
   const catalogue = useCatalogue();
-  const [activeDept, setActiveDept] = useState<string>('all');
-  const [activeSubcat, setActiveSubcat] = useState<string>('all');
-  const [clearanceTier, setClearanceTier] = useState<string>('all');
+  const searchParams = useSearchParams();
+
+  // Read URL params
+  const paramCategory = searchParams.get('category') || 'women';
+  const paramSubcat = searchParams.get('subcat') || 'all';
+
+  const [activeCategory, setActiveCategory] = useState<string>(paramCategory);
+  const [activeSubcat, setActiveSubcat] = useState<string>(paramSubcat);
   const [search, setSearch] = useState('');
   const [onlySale, setOnlySale] = useState(false);
   const [sortBy, setSortBy] = useState('featured');
@@ -308,90 +239,73 @@ export default function ShopPage() {
 
   const headerRef = useRef<HTMLDivElement>(null);
 
+  // Sync state if URL changes
+  useEffect(() => {
+    if (searchParams.get('category')) {
+      setActiveCategory(searchParams.get('category')!);
+    }
+    if (searchParams.get('subcat')) {
+      setActiveSubcat(searchParams.get('subcat')!);
+    }
+  }, [searchParams]);
+
   useEffect(() => {
     if (!headerRef.current) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const ctx = gsap.context(() => {
-      gsap.from('.jf-shop-hero-copy > *', { y: 20, opacity: 0, duration: 0.7, stagger: 0.08, ease: 'power3.out' });
+      gsap.from('.jf-shop-masthead-copy > *', { y: 16, opacity: 0, duration: 0.6, stagger: 0.06, ease: 'power3.out' });
     }, headerRef);
     return () => ctx.revert();
-  }, []);
+  }, [activeCategory]);
 
-  // Department Collections Splitting
-  const dressesList = useMemo(() => {
-    return catalogue.filter(
-      (p) =>
-        p.id.startsWith('d') ||
-        p.subcategory?.toLowerCase().includes('dress') ||
-        p.tags?.some((t) => t.toLowerCase().includes('dress'))
-    );
-  }, [catalogue]);
+  const activeMeta = useMemo(() => {
+    return PRIMARY_CATEGORIES.find((c) => c.id === activeCategory) ?? PRIMARY_CATEGORIES[0];
+  }, [activeCategory]);
 
-  const womenList = useMemo(() => {
-    return catalogue.filter(
-      (p) =>
-        (p.category === 'women' || p.tags?.includes('women')) &&
-        !p.id.startsWith('d') &&
-        !p.subcategory?.toLowerCase().includes('dress')
-    );
-  }, [catalogue]);
-
-  const menList = useMemo(() => {
-    return catalogue.filter((p) => p.category === 'men' || p.tags?.includes('men'));
-  }, [catalogue]);
-
-  const festiveList = useMemo(() => {
-    return catalogue.filter(
-      (p) =>
-        p.subcategory?.toLowerCase().includes('sari') ||
-        p.subcategory?.toLowerCase().includes('set mundu') ||
-        p.tags?.some((t) => t.toLowerCase().includes('festive') || t.toLowerCase().includes('onam'))
-    );
-  }, [catalogue]);
-
-  const kidsList = useMemo(() => {
-    return catalogue.filter((p) => p.category === 'kids' || p.tags?.includes('kids'));
-  }, [catalogue]);
-
-  const clearanceList = useMemo(() => {
-    return catalogue.filter((p) => p.clearance || discountPercent(p) > 0);
-  }, [catalogue]);
-
-  // Subcategories available for active department
-  const subcategoriesForDept = useMemo(() => {
+  // Subcategories available for active primary category
+  const availableSubcategories = useMemo(() => {
     let source = catalogue;
-    if (activeDept === 'dresses') source = dressesList;
-    else if (activeDept === 'women') source = catalogue.filter((p) => p.category === 'women');
-    else if (activeDept === 'men') source = menList;
-    else if (activeDept === 'festive') source = festiveList;
-    else if (activeDept === 'kids') source = kidsList;
-    else if (activeDept === 'clearance') source = clearanceList;
+    if (activeCategory === 'women') {
+      source = catalogue.filter((p) => p.category === 'women' || p.tags?.includes('women'));
+    } else if (activeCategory === 'men') {
+      source = catalogue.filter((p) => p.category === 'men' || p.tags?.includes('men'));
+    } else if (activeCategory === 'kids') {
+      source = catalogue.filter((p) => p.category === 'kids' || p.tags?.includes('kids'));
+    } else if (activeCategory === 'dresses') {
+      source = catalogue.filter(
+        (p) =>
+          p.id.startsWith('d') ||
+          p.subcategory?.toLowerCase().includes('dress') ||
+          p.tags?.some((t) => t.toLowerCase().includes('dress'))
+      );
+    } else if (activeCategory === 'clearance') {
+      source = catalogue.filter((p) => p.clearance || discountPercent(p) > 0);
+    }
 
     const subs = Array.from(new Set(source.map((p) => p.subcategory).filter(Boolean))).sort();
     return ['all', ...subs];
-  }, [activeDept, catalogue, dressesList, menList, festiveList, kidsList, clearanceList]);
+  }, [activeCategory, catalogue]);
 
-  // Filtered Products for Focused View
+  // Filtered Products
   const filteredProducts = useMemo(() => {
     let list = catalogue;
 
-    // 1. Department Filter
-    if (activeDept === 'dresses') list = dressesList;
-    else if (activeDept === 'women') list = catalogue.filter((p) => p.category === 'women');
-    else if (activeDept === 'men') list = menList;
-    else if (activeDept === 'festive') list = festiveList;
-    else if (activeDept === 'kids') list = kidsList;
-    else if (activeDept === 'clearance') {
-      list = clearanceList;
-      if (clearanceTier === '50plus') {
-        list = list.filter((p) => discountPercent(p) >= 50);
-      } else if (clearanceTier === '30plus') {
-        list = list.filter((p) => discountPercent(p) >= 30);
-      } else if (clearanceTier === 'under25') {
-        list = list.filter((p) => p.price <= 25 && !isUnpriced(p));
-      } else if (clearanceTier === 'under35') {
-        list = list.filter((p) => p.price <= 35 && !isUnpriced(p));
-      }
+    // 1. Primary Category Filter
+    if (activeCategory === 'women') {
+      list = catalogue.filter((p) => p.category === 'women' || p.tags?.includes('women'));
+    } else if (activeCategory === 'men') {
+      list = catalogue.filter((p) => p.category === 'men' || p.tags?.includes('men'));
+    } else if (activeCategory === 'kids') {
+      list = catalogue.filter((p) => p.category === 'kids' || p.tags?.includes('kids'));
+    } else if (activeCategory === 'dresses') {
+      list = catalogue.filter(
+        (p) =>
+          p.id.startsWith('d') ||
+          p.subcategory?.toLowerCase().includes('dress') ||
+          p.tags?.some((t) => t.toLowerCase().includes('dress'))
+      );
+    } else if (activeCategory === 'clearance') {
+      list = catalogue.filter((p) => p.clearance || discountPercent(p) > 0);
     }
 
     // 2. Subcategory Filter
@@ -405,11 +319,11 @@ export default function ShopPage() {
     }
 
     // 4. Sale Only
-    if (onlySale && activeDept !== 'clearance') {
+    if (onlySale && activeCategory !== 'clearance') {
       list = list.filter((p) => p.clearance || discountPercent(p) > 0);
     }
 
-    // 5. Search
+    // 5. Search Filter
     if (search.trim()) {
       const q = search.trim().toLowerCase();
       list = list.filter(
@@ -421,7 +335,7 @@ export default function ShopPage() {
       );
     }
 
-    // 6. Sort
+    // 6. Sorting
     const byPrice = (dir: 1 | -1) => (a: Product, b: Product) => {
       if (isUnpriced(a) !== isUnpriced(b)) return isUnpriced(a) ? 1 : -1;
       return (a.price - b.price) * dir;
@@ -449,18 +363,10 @@ export default function ShopPage() {
     }
 
     return list;
-  }, [catalogue, activeDept, activeSubcat, clearanceTier, fabricFilter, onlySale, search, sortBy, dressesList, menList, festiveList, kidsList, clearanceList]);
-
-  const activeDepartmentMeta = useMemo(() => {
-    return DEPARTMENTS.find((d) => d.id === activeDept) ?? DEPARTMENTS[0];
-  }, [activeDept]);
-
-  const isSalonsMode = activeDept === 'all' && !search.trim() && fabricFilter === 'all' && !onlySale;
+  }, [catalogue, activeCategory, activeSubcat, fabricFilter, onlySale, search, sortBy]);
 
   const resetFilters = () => {
-    setActiveDept('all');
     setActiveSubcat('all');
-    setClearanceTier('all');
     setFabricFilter('all');
     setOnlySale(false);
     setSearch('');
@@ -468,333 +374,206 @@ export default function ShopPage() {
   };
 
   return (
+    <main className="jf-luxury-shop">
+      {/* 1. Primary Category Nav Bar */}
+      <section className="jf-shop-primary-tabs-bar">
+        <div className="container">
+          <div className="jf-shop-category-switcher" role="tablist" aria-label="Shop categories">
+            {PRIMARY_CATEGORIES.map((cat) => {
+              const isActive = activeCategory === cat.id;
+              const isClearance = cat.id === 'clearance';
+              return (
+                <button
+                  key={cat.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={isActive}
+                  className={`jf-primary-cat-btn ${isActive ? 'active' : ''} ${isClearance ? 'is-clearance-btn' : ''}`}
+                  onClick={() => {
+                    setActiveCategory(cat.id);
+                    setActiveSubcat('all');
+                  }}
+                >
+                  <span className="jf-primary-cat-name">{cat.label}</span>
+                  {isClearance && <span className="jf-cat-badge-flame">−60%</span>}
+                  {isActive && (
+                    <motion.div
+                      layoutId="activePrimaryCategory"
+                      className="jf-primary-cat-indicator"
+                      transition={{ type: 'spring', stiffness: 450, damping: 30 }}
+                    />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* 2. Department Masthead */}
+      <section className="jf-shop-dept-masthead" ref={headerRef}>
+        <div className="container">
+          <div className="jf-shop-masthead-inner">
+            <div className="jf-shop-masthead-copy">
+              <span className="jf-shop-masthead-eyebrow">{activeMeta.eyebrow}</span>
+              <h1 className="jf-shop-masthead-title">
+                {activeMeta.label}
+                <span className="jf-shop-masthead-count">{filteredProducts.length} pieces</span>
+              </h1>
+              <p className="jf-shop-masthead-desc">{activeMeta.subtitle}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. Floating Sticky Toolbar & Subcategory Pills */}
+      <div className="jf-shop-toolbar-sticky">
+        <div className="container">
+          <div className="jf-shop-toolbar-inner">
+            {/* Search input */}
+            <div className="jf-shop-search-pill">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="11" cy="11" r="7" />
+                <path d="M21 21l-4.35-4.35" />
+              </svg>
+              <input
+                type="text"
+                placeholder={`Search in ${activeMeta.label}…`}
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                aria-label="Search products"
+              />
+              {search && (
+                <button type="button" onClick={() => setSearch('')} className="jf-search-clear">
+                  ×
+                </button>
+              )}
+            </div>
+
+            {/* Subcategory Filter Pills */}
+            {availableSubcategories.length > 2 && (
+              <div className="jf-subcat-pills" role="tablist" aria-label="Filter by subcategory">
+                {availableSubcategories.map((sub) => (
+                  <button
+                    key={sub}
+                    type="button"
+                    className={`jf-subcat-pill ${activeSubcat === sub ? 'active' : ''}`}
+                    onClick={() => setActiveSubcat(sub)}
+                  >
+                    {sub === 'all' ? 'All Pieces' : sub}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Toolbar Right Filters & Controls */}
+            <div className="jf-toolbar-right-group">
+              {/* Fabric Filter */}
+              <div className="jf-toolbar-select">
+                <span>Fabric:</span>
+                <select value={fabricFilter} onChange={(e) => setFabricFilter(e.target.value)}>
+                  <option value="all">All Fabrics</option>
+                  <option value="linen">Slub Linen</option>
+                  <option value="cotton">Organic Cotton</option>
+                  <option value="silk">Chanderi Silk</option>
+                </select>
+              </div>
+
+              {/* Sort dropdown */}
+              <div className="jf-toolbar-select">
+                <span>Sort:</span>
+                <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+                  {activeCategory === 'clearance' && <option value="discount">Biggest Discount</option>}
+                  <option value="featured">Featured Picks</option>
+                  <option value="newest">New Arrivals</option>
+                  <option value="price-low">Price: Low to High</option>
+                  <option value="price-high">Price: High to Low</option>
+                </select>
+              </div>
+
+              {/* Sale Toggle */}
+              {activeCategory !== 'clearance' && (
+                <button
+                  type="button"
+                  className={`jf-sale-toggle-pill ${onlySale ? 'active' : ''}`}
+                  onClick={() => setOnlySale(!onlySale)}
+                >
+                  <span className="jf-sale-dot" />
+                  <span>Sale Items</span>
+                </button>
+              )}
+
+              {/* Grid Column Selector */}
+              <div className="jf-grid-view-ctrls">
+                {[2, 3, 4].map((cols) => (
+                  <button
+                    key={cols}
+                    type="button"
+                    className={`jf-grid-view-btn ${gridCols === cols ? 'active' : ''}`}
+                    onClick={() => setGridCols(cols)}
+                    title={`${cols} Columns View`}
+                    aria-label={`${cols} columns`}
+                  >
+                    {cols === 2 ? 'II' : cols === 3 ? 'III' : 'IIII'}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 4. Luxury Product Grid Area */}
+      <div className="container jf-shop-grid-section">
+        {/* Reset Filter Banner (if active) */}
+        {(search || fabricFilter !== 'all' || onlySale || activeSubcat !== 'all') && (
+          <div className="jf-active-filters-banner">
+            <span>Showing filtered results in {activeMeta.label}</span>
+            <button type="button" className="jf-reset-all-btn" onClick={resetFilters}>
+              <span>Clear active filters</span>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <path d="M18 6L6 18M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+        )}
+
+        {filteredProducts.length === 0 ? (
+          <div className="jf-shop-empty-state">
+            <div className="jf-empty-icon">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <circle cx="11" cy="11" r="7" />
+                <path d="M21 21l-4.35-4.35" />
+              </svg>
+            </div>
+            <h3>No pieces match your selected filters</h3>
+            <p>Try resetting your search query or selecting a different subcategory.</p>
+            <button type="button" className="jf-staples-viewall-btn" onClick={resetFilters}>
+              Reset all filters
+            </button>
+          </div>
+        ) : (
+          <motion.div className={`jf-luxury-grid cols-${gridCols}`} layout>
+            <AnimatePresence mode="popLayout">
+              {filteredProducts.map((product) => (
+                <LuxuryShopCard key={product.id} product={product} />
+              ))}
+            </AnimatePresence>
+          </motion.div>
+        )}
+      </div>
+    </main>
+  );
+}
+
+export default function ShopPage() {
+  return (
     <>
       <Navbar />
       <CartDrawer />
-
-      <main className="jf-luxury-shop">
-        {/* Editorial Shop Header */}
-        <section className="jf-shop-hero" ref={headerRef}>
-          <div className="container">
-            <div className="jf-shop-hero-copy">
-              <span className="jf-shop-hero-eyebrow">THE ATELIER COLLECTION · LONDON</span>
-              <h1 className="jf-shop-hero-title">
-                {activeDept === 'all' ? (
-                  <>
-                    The Curated <span className="accent-gold">Wardrobe</span>
-                  </>
-                ) : activeDept === 'clearance' ? (
-                  <>
-                    The Clearance <span className="accent-crimson">Archive</span>
-                  </>
-                ) : (
-                  <>
-                    {activeDepartmentMeta.label.split(' ')[0]}{' '}
-                    <span className="accent-gold">{activeDepartmentMeta.label.split(' ').slice(1).join(' ') || 'Edit'}</span>
-                  </>
-                )}
-              </h1>
-              <p className="jf-shop-hero-desc">
-                {activeDept === 'all'
-                  ? 'Pure slub linens, breathable cottons, and timeless South Asian everyday elegance, organized into curated department salons.'
-                  : activeDept === 'clearance'
-                  ? 'Final reductions on limited-run handcrafted pieces and seasonal markdown favourites. Once sold, they will not be re-stocked.'
-                  : activeDepartmentMeta.subtitle}
-              </p>
-            </div>
-
-            {/* Department Navigation Cards Bar */}
-            <div className="jf-dept-cards-wrap" role="tablist" aria-label="Browse by department">
-              <div className="jf-dept-cards-track">
-                {DEPARTMENTS.map((dept) => {
-                  const isActive = activeDept === dept.id;
-                  const isClear = dept.id === 'clearance';
-                  return (
-                    <button
-                      key={dept.id}
-                      type="button"
-                      role="tab"
-                      aria-selected={isActive}
-                      className={`jf-dept-nav-card ${isActive ? 'active' : ''} ${isClear ? 'is-clearance-nav' : ''}`}
-                      onClick={() => {
-                        setActiveDept(dept.id);
-                        setActiveSubcat('all');
-                        setClearanceTier('all');
-                      }}
-                    >
-                      <div
-                        className="jf-dept-nav-bg"
-                        style={{ backgroundImage: `url("${dept.image}")` }}
-                      />
-                      <div className="jf-dept-nav-overlay" />
-                      <div className="jf-dept-nav-content">
-                        <span className={`jf-dept-nav-tag ${isClear ? 'clearance-tag' : ''}`}>{dept.tag}</span>
-                        <h4 className="jf-dept-nav-title">{dept.label}</h4>
-                      </div>
-                      {isActive && <div className="jf-dept-nav-active-bar" />}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Global Toolbar & Quick Filter Bar */}
-        <div className="jf-shop-toolbar-sticky">
-          <div className="container">
-            <div className="jf-shop-toolbar-inner">
-              {/* Search input */}
-              <div className="jf-shop-search-pill">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="11" cy="11" r="7" />
-                  <path d="M21 21l-4.35-4.35" />
-                </svg>
-                <input
-                  type="text"
-                  placeholder="Search fabric, cut, or piece…"
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  aria-label="Search products"
-                />
-                {search && (
-                  <button type="button" onClick={() => setSearch('')} className="jf-search-clear">
-                    ×
-                  </button>
-                )}
-              </div>
-
-              {/* Clearance Tier Pills (Visible when inside Clearance Archive) */}
-              {activeDept === 'clearance' ? (
-                <div className="jf-subcat-pills" role="tablist" aria-label="Filter clearance by discount tier">
-                  {DISCOUNT_TIERS.map((tier) => (
-                    <button
-                      key={tier.id}
-                      type="button"
-                      className={`jf-subcat-pill ${clearanceTier === tier.id ? 'active' : ''}`}
-                      onClick={() => setClearanceTier(tier.id)}
-                    >
-                      {tier.label}
-                    </button>
-                  ))}
-                </div>
-              ) : (
-                /* Subcategories (Visible when inside a specific department) */
-                activeDept !== 'all' && subcategoriesForDept.length > 2 && (
-                  <div className="jf-subcat-pills" role="tablist" aria-label="Filter by subcategory">
-                    {subcategoriesForDept.map((sub) => (
-                      <button
-                        key={sub}
-                        type="button"
-                        className={`jf-subcat-pill ${activeSubcat === sub ? 'active' : ''}`}
-                        onClick={() => setActiveSubcat(sub)}
-                      >
-                        {sub === 'all' ? `All ${activeDepartmentMeta.label}` : sub}
-                      </button>
-                    ))}
-                  </div>
-                )
-              )}
-
-              {/* Actions & Filters Toggle */}
-              <div className="jf-toolbar-right-group">
-                {/* Fabric Quick Filter */}
-                <div className="jf-toolbar-select">
-                  <span>Fabric:</span>
-                  <select value={fabricFilter} onChange={(e) => setFabricFilter(e.target.value)}>
-                    <option value="all">All Fabrics</option>
-                    <option value="linen">Slub Linen</option>
-                    <option value="cotton">Organic Cotton</option>
-                    <option value="silk">Chanderi Silk</option>
-                  </select>
-                </div>
-
-                {/* Sort dropdown */}
-                <div className="jf-toolbar-select">
-                  <span>Sort:</span>
-                  <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-                    {activeDept === 'clearance' && <option value="discount">Biggest Discount</option>}
-                    <option value="featured">Featured Picks</option>
-                    <option value="newest">New Arrivals</option>
-                    <option value="price-low">Price: Low to High</option>
-                    <option value="price-high">Price: High to Low</option>
-                  </select>
-                </div>
-
-                {/* Sale Toggle (if not already on clearance tab) */}
-                {activeDept !== 'clearance' && (
-                  <button
-                    type="button"
-                    className={`jf-sale-toggle-pill ${onlySale ? 'active' : ''}`}
-                    onClick={() => setOnlySale(!onlySale)}
-                  >
-                    <span className="jf-sale-dot" />
-                    <span>Sale Items</span>
-                  </button>
-                )}
-
-                {/* Grid Column Selector */}
-                <div className="jf-grid-view-ctrls">
-                  {[2, 3, 4].map((cols) => (
-                    <button
-                      key={cols}
-                      type="button"
-                      className={`jf-grid-view-btn ${gridCols === cols ? 'active' : ''}`}
-                      onClick={() => setGridCols(cols)}
-                      title={`${cols} Columns View`}
-                      aria-label={`${cols} columns`}
-                    >
-                      {cols === 2 ? 'II' : cols === 3 ? 'III' : 'IIII'}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Main Content Area */}
-        <div className="container jf-shop-main-content">
-          {/* MODE A: Curated Department Salons Mode (When "All" is active and not searching) */}
-          {isSalonsMode ? (
-            <div className="jf-salons-container">
-              {/* Department 1: The Linen Dress Atelier */}
-              <DepartmentSalon
-                eyebrow="100% PURE SLUB LINEN · HAND-PAINTED"
-                title="The Linen Dress Atelier"
-                description="Breathable midi silhouettes with artisan botanical floral artwork. Cut for effortless summer grace."
-                count={dressesList.length}
-                products={dressesList}
-                onViewDepartment={() => setActiveDept('dresses')}
-              />
-
-              {/* Department 2: Women's Tops & Kurtis Salon */}
-              <DepartmentSalon
-                eyebrow="DAILYWEAR SILHOUETTES · BREATHABLE COTTONS"
-                title="Women's Tops & Kurtis"
-                description="Everyday blouses, casual tunics, and comfortable dailywear crafted with delicate block details."
-                count={womenList.length}
-                products={womenList}
-                onViewDepartment={() => setActiveDept('women')}
-              />
-
-              {/* Department 3: Men's Everyday & Kurtas */}
-              <DepartmentSalon
-                eyebrow="REFINED TAILORING · ARTISANAL WEAVES"
-                title="Men's Everyday Collection"
-                description="Breathable linen kurtas, tailored casual shirts, and classic polos designed for all-day comfort."
-                count={menList.length}
-                products={menList}
-                onViewDepartment={() => setActiveDept('men')}
-              />
-
-              {/* Department 4: Festive Kerala Weaves */}
-              <DepartmentSalon
-                eyebrow="KASAVU GOLD BORDERS · CELEBRATION"
-                title="Festive Kerala Edit"
-                description="Traditional handloom set sarees, Kasavu borders, and heritage occasionwear."
-                count={festiveList.length}
-                products={festiveList}
-                onViewDepartment={() => setActiveDept('festive')}
-              />
-
-              {/* Department 5: Kids Capsule */}
-              {kidsList.length > 0 && (
-                <DepartmentSalon
-                  eyebrow="GENTLE ON SKIN · ORGANIC COTTON"
-                  title="Kids & Juniors Capsule"
-                  description="Soft breathable cotton sets and playful kurtas for boys and girls."
-                  count={kidsList.length}
-                  products={kidsList}
-                  onViewDepartment={() => setActiveDept('kids')}
-                />
-              )}
-
-              {/* Department 6: DEDICATED CLEARANCE ARCHIVE SALON */}
-              {clearanceList.length > 0 && (
-                <DepartmentSalon
-                  eyebrow="🔥 FINAL REDUCTIONS · UP TO 60% OFF"
-                  title="Clearance Archive & Special Offers"
-                  description="Limited stock markdowns on authentic South Asian dailywear and summer favorites. Final chance before archive retirement."
-                  count={clearanceList.length}
-                  products={clearanceList}
-                  onViewDepartment={() => setActiveDept('clearance')}
-                  isClearance={true}
-                />
-              )}
-            </div>
-          ) : (
-            /* MODE B: Focused Department Grid View */
-            <div className="jf-focused-department-view">
-              <div className="jf-focused-header">
-                <div className="jf-focused-title-wrap">
-                  <h2 className="jf-focused-title">
-                    {activeDept === 'all'
-                      ? 'Filtered Search Results'
-                      : activeDept === 'clearance'
-                      ? 'Clearance Archive & Markdowns'
-                      : activeDepartmentMeta.label}
-                  </h2>
-                  <span className="jf-focused-count-pill">{filteredProducts.length} pieces</span>
-                </div>
-                {(search || fabricFilter !== 'all' || onlySale || activeSubcat !== 'all' || clearanceTier !== 'all') && (
-                  <button type="button" className="jf-reset-all-btn" onClick={resetFilters}>
-                    <span>Clear all filters</span>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M18 6L6 18M6 6l12 12" />
-                    </svg>
-                  </button>
-                )}
-              </div>
-
-              {/* Dedicated Clearance Stats Row (when viewing clearance) */}
-              {activeDept === 'clearance' && (
-                <div className="jf-clearance-stats-band">
-                  <div className="jf-clear-stat">
-                    <span className="jf-clear-stat-num">Up to 60%</span>
-                    <span className="jf-clear-stat-lbl">Real Computed Discount</span>
-                  </div>
-                  <div className="jf-clear-stat-divider" />
-                  <div className="jf-clear-stat">
-                    <span className="jf-clear-stat-num">{clearanceList.length}</span>
-                    <span className="jf-clear-stat-lbl">Discounted Pieces</span>
-                  </div>
-                  <div className="jf-clear-stat-divider" />
-                  <div className="jf-clear-stat">
-                    <span className="jf-clear-stat-num">Fast UK</span>
-                    <span className="jf-clear-stat-lbl">Tracked Dispatch</span>
-                  </div>
-                </div>
-              )}
-
-              {filteredProducts.length === 0 ? (
-                <div className="jf-shop-empty-state">
-                  <div className="jf-empty-icon">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                      <circle cx="11" cy="11" r="7" />
-                      <path d="M21 21l-4.35-4.35" />
-                    </svg>
-                  </div>
-                  <h3>No pieces match your selected filters</h3>
-                  <p>Try resetting your search query or choosing a different discount tier.</p>
-                  <button type="button" className="jf-staples-viewall-btn" onClick={resetFilters}>
-                    Reset all filters
-                  </button>
-                </div>
-              ) : (
-                <motion.div className={`jf-luxury-grid cols-${gridCols}`} layout>
-                  <AnimatePresence>
-                    {filteredProducts.map((product) => (
-                      <LuxuryShopCard key={product.id} product={product} />
-                    ))}
-                  </AnimatePresence>
-                </motion.div>
-              )}
-            </div>
-          )}
-        </div>
-      </main>
-
+      <Suspense fallback={<div style={{ minHeight: '80vh' }} />}>
+        <ShopContent />
+      </Suspense>
       <Footer />
     </>
   );
