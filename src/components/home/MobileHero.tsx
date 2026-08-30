@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import HeroLoopingLogo from './HeroLoopingLogo';
@@ -8,187 +8,179 @@ import HeroLoopingLogo from './HeroLoopingLogo';
 interface HeroSlide {
   id: string;
   category: string;
-  tagline: string;
-  description: string;
+  headline: string;
+  subhead: string;
+  narrative: string;
   image: string;
   href: string;
-  badge: string;
 }
 
 const HERO_SLIDES: HeroSlide[] = [
   {
+    id: 'bestseller',
+    category: 'Best Seller Edit',
+    headline: 'Best Seller Edit',
+    subhead: 'DAILYWEAR · THOUGHTFULLY MADE',
+    narrative: 'Where South Asian heritage meets London everyday elegance',
+    image: '/images/hero-casual.png',
+    href: '/shop',
+  },
+  {
     id: 'women',
     category: "Women's Atelier",
-    tagline: 'Linen Midis & Hand-Dyed Silhouettes',
-    description: '100% Pure Slub Linen · Featherlight Drape · Artisan Weaves',
+    headline: "Women's Atelier",
+    subhead: '100% PURE SLUB LINEN & COTTONS',
+    narrative: 'Hand-dyed midis, artisanal kurtis & featherweight drape',
     image: '/images/womens-collection.png',
     href: '/shop?category=women',
-    badge: '🌿 PURE SLUB LINEN',
   },
   {
     id: 'men',
     category: "Men's Everyday",
-    tagline: 'Breathable Kurtas & Relaxed Linen Shirts',
-    description: 'Organic Handloom Cottons · Relaxed Modern Fits',
+    headline: "Men's Everyday Line",
+    subhead: 'ORGANIC HANDLOOM WEAVES',
+    narrative: 'Relaxed linen shirts, breathable kurtas & lightweight layers',
     image: '/images/mens-collection.png',
     href: '/shop?category=men',
-    badge: '👔 ARTISANAL WEAVE',
   },
   {
-    id: 'kids',
-    category: 'Kids & Juniors',
-    tagline: 'Gentle Everyday Cottons for Little Ones',
-    description: 'Featherweight Breathable Fabrics for Play & Occasion',
-    image: '/images/kids-collection.jpg',
-    href: '/shop?category=kids',
-    badge: '🧒 ORGANIC COTTON',
+    id: 'festive',
+    category: 'Festive & Occasion',
+    headline: 'The Heritage Edit',
+    subhead: 'KERALA KASAVU & HANDLOOMS',
+    narrative: 'Artisan gold borders, pure cotton sarees & statement sets',
+    image: '/images/festive-collection.png',
+    href: '/shop?category=festive',
   },
   {
     id: 'clearance',
     category: 'Clearance Archive',
-    tagline: 'Final End-of-Season Reductions',
-    description: 'Up to 60% Off Limited Sizes & Archive Classics',
+    headline: 'The Clearance Vault',
+    subhead: 'UP TO 60% OFF ARCHIVE STYLES',
+    narrative: 'Final end-of-season markdowns on limited archive sizes',
     image: '/clearance-sale.jpg',
     href: '/shop?category=clearance',
-    badge: '🔥 UP TO 60% OFF',
   },
 ];
 
 export default function MobileHero() {
   const [activeIdx, setActiveIdx] = useState(0);
+  const touchStartX = useRef<number | null>(null);
   const activeSlide = HERO_SLIDES[activeIdx];
 
-  // Auto-advance every 6 seconds
+  // Auto-advance every 5.5 seconds
   useEffect(() => {
     const timer = setInterval(() => {
       setActiveIdx((prev) => (prev + 1) % HERO_SLIDES.length);
-    }, 6000);
+    }, 5500);
     return () => clearInterval(timer);
   }, []);
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (diff > 45) {
+      // Swiped left -> next
+      setActiveIdx((prev) => (prev + 1) % HERO_SLIDES.length);
+    } else if (diff < -45) {
+      // Swiped right -> prev
+      setActiveIdx((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
+    }
+    touchStartX.current = null;
+  };
+
   return (
-    <div className="jf-mobile-hero-exclusive">
-      {/* Background Ambience Layer */}
-      <div className="jf-mh-bg-ambient" />
+    <div className="jf-darveys-mobile-hero">
+      {/* 1. Sub-Navigation Category Bar (MEN | WOMEN | KIDS | CLEARANCE) */}
+      <nav className="jf-dmh-subnav" aria-label="Quick Category Navigation">
+        <Link href="/shop?category=women" className="jf-dmh-subnav-link">WOMEN</Link>
+        <span className="jf-dmh-subnav-sep">|</span>
+        <Link href="/shop?category=men" className="jf-dmh-subnav-link">MEN</Link>
+        <span className="jf-dmh-subnav-sep">|</span>
+        <Link href="/shop?category=kids" className="jf-dmh-subnav-link">KIDS</Link>
+        <span className="jf-dmh-subnav-sep">|</span>
+        <Link href="/shop?category=clearance" className="jf-dmh-subnav-link is-sale">CLEARANCE</Link>
+      </nav>
 
-      {/* Top Centerpiece: Animated Peacock Monogram Crown */}
-      <div className="jf-mh-logo-crown">
-        <HeroLoopingLogo />
-      </div>
+      {/* 2. Full-Bleed Editorial Stage with Touch-Swipe */}
+      <div
+        className="jf-dmh-stage"
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
+      >
+        {/* Animated Looping Peacock Monogram Medallion */}
+        <div className="jf-dmh-logo-overlay">
+          <HeroLoopingLogo />
+        </div>
 
-      {/* Full-Bleed Editorial Stage Card */}
-      <div className="jf-mh-stage-card">
-        {/* Dynamic Fashion Photography with Fade Transition */}
-        <div className="jf-mh-photo-container">
+        {/* Full-Bleed Photo Carousel */}
+        <div className="jf-dmh-viewport">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeSlide.id}
-              className="jf-mh-photo-slide"
-              initial={{ opacity: 0, scale: 1.04 }}
+              className="jf-dmh-slide"
+              initial={{ opacity: 0, scale: 1.02 }}
               animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.98 }}
-              transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
             >
               <img
                 src={activeSlide.image}
-                alt={activeSlide.category}
-                className="jf-mh-img"
+                alt={activeSlide.headline}
+                className="jf-dmh-photo"
               />
             </motion.div>
           </AnimatePresence>
 
-          {/* Luxury Editorial Vignettes & Scrim */}
-          <div className="jf-mh-vignette-top" />
-          <div className="jf-mh-vignette-bottom" />
+          {/* Dreamy Feathered Gradient Blend into Background */}
+          <div className="jf-dmh-gradient-scrim" />
+        </div>
 
-          {/* Floating Slide Badge */}
-          <div className="jf-mh-float-badge">
-            <span>{activeSlide.badge}</span>
-          </div>
+        {/* 3. Editorial Lower Typography & Interactive Controls */}
+        <div className="jf-dmh-editorial-dock">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeSlide.id}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+              className="jf-dmh-text-wrap"
+            >
+              <h1 className="jf-dmh-headline">{activeSlide.headline}</h1>
+              <p className="jf-dmh-subhead">{activeSlide.subhead}</p>
+              <p className="jf-dmh-narrative">{activeSlide.narrative}</p>
+            </motion.div>
+          </AnimatePresence>
 
-          {/* Interactive Floating Look Selector Tabs */}
-          <div className="jf-mh-look-tabs">
+          {/* Minimalist Pagination Dots */}
+          <div className="jf-dmh-dots" role="tablist" aria-label="Hero Slide Navigation">
             {HERO_SLIDES.map((slide, idx) => (
               <button
                 key={slide.id}
                 type="button"
-                className={`jf-mh-tab-pill ${activeIdx === idx ? 'active' : ''}`}
+                className={`jf-dmh-dot ${activeIdx === idx ? 'active' : ''}`}
                 onClick={() => setActiveIdx(idx)}
-                aria-label={`View ${slide.category}`}
-              >
-                <span>{slide.id.charAt(0).toUpperCase() + slide.id.slice(1)}</span>
-                {activeIdx === idx && (
-                  <motion.div
-                    className="jf-mh-tab-active-indicator"
-                    layoutId="activeTabIndicator"
-                    transition={{ type: 'spring', stiffness: 500, damping: 35 }}
-                  />
-                )}
-              </button>
+                aria-label={`Slide ${idx + 1}: ${slide.headline}`}
+                role="tab"
+                aria-selected={activeIdx === idx}
+              />
             ))}
           </div>
-        </div>
 
-        {/* Editorial Story Content (Floating at base of card) */}
-        <div className="jf-mh-content-dock">
-          <div className="jf-mh-eyebrow">
-            <span>THE ATELIER COLLECTION · LONDON</span>
-          </div>
-
-          <h1 className="jf-mh-title">
-            Dailywear, <span className="accent">thoughtfully made.</span>
-          </h1>
-
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeSlide.id}
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.3 }}
-              className="jf-mh-slide-meta"
-            >
-              <p className="jf-mh-tagline">{activeSlide.tagline}</p>
-              <p className="jf-mh-desc">{activeSlide.description}</p>
-            </motion.div>
-          </AnimatePresence>
-
-          {/* Dual Action Suite */}
-          <div className="jf-mh-actions">
-            <Link href="/shop" className="jf-mh-btn-primary">
-              <span>Shop All Curated Pieces</span>
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4">
+          {/* Explore Button */}
+          <div className="jf-dmh-cta-wrap">
+            <Link href={activeSlide.href} className="jf-dmh-cta-btn">
+              <span>Explore {activeSlide.category}</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
             </Link>
-
-            <Link href={activeSlide.href} className="jf-mh-btn-secondary">
-              <span>Explore {activeSlide.category} →</span>
-            </Link>
           </div>
-        </div>
-      </div>
-
-      {/* Archival Maison Trust Strip */}
-      <div className="jf-mh-trust-strip">
-        <div className="jf-mh-trust-pill">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-            <path d="M5 12h14M12 5l7 7-7 7" />
-          </svg>
-          <span>Free UK Delivery &gt; £50</span>
-        </div>
-        <div className="jf-mh-trust-pill">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-            <path d="M20 6L9 17l-5-5" />
-          </svg>
-          <span>14-Day Easy Returns</span>
-        </div>
-        <div className="jf-mh-trust-pill">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
-            <circle cx="12" cy="12" r="10" />
-            <path d="M12 8v4l3 3" />
-          </svg>
-          <span>100% Artisan Linen</span>
         </div>
       </div>
     </div>
