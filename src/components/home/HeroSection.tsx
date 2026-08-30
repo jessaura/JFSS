@@ -112,6 +112,29 @@ export default function HeroSection() {
         </div>
       </div>
 
+      {/* Mobile Archival Trust Badges Strip */}
+      <div className="jf-hero-mobile-trust" aria-label="Maison Assurance">
+        <div className="jf-hmt-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+          <span>Free UK Delivery &gt; £50</span>
+        </div>
+        <div className="jf-hmt-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+            <path d="M20 6L9 17l-5-5" />
+          </svg>
+          <span>14-Day Easy Returns</span>
+        </div>
+        <div className="jf-hmt-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 8v4l3 3" />
+          </svg>
+          <span>100% Artisan Linen</span>
+        </div>
+      </div>
+
       <div className="jf-hero-scroll" aria-hidden="true">
         <span>Scroll</span>
         <i />

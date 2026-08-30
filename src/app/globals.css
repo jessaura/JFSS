@@ -10587,17 +10587,113 @@ input, textarea, select {
    MOBILE HERO OVERHAUL (web-design-engineer & emil-design-eng)
    ========================================================================== */
 
+/* ==========================================================================
+   MOBILE HERO OVERHAUL (web-design-engineer & emil-design-eng)
+   ========================================================================== */
+
+/* Logo Aura and Submark */
+.jf-logo-stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-md);
+}
+
+.jf-logo-aura-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 140px;
+  height: 140px;
+  background: radial-gradient(circle, rgba(197, 168, 128, 0.28) 0%, rgba(110, 18, 18, 0.08) 45%, transparent 70%);
+  filter: blur(14px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.jf-logo-wordmark-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  position: relative;
+  z-index: 1;
+}
+
+.jf-logo-submark {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  color: var(--crimson, #6E1212);
+  text-transform: uppercase;
+}
+
+/* Carousel Badges on Mobile */
+.jf-carousel-badges {
+  display: none;
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  right: 12px;
+  justify-content: center;
+  gap: 6px;
+  z-index: 5;
+}
+
+.jf-cb-pill {
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(197, 168, 128, 0.35);
+  color: var(--charcoal, #1C1917);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  white-space: nowrap;
+}
+
+/* Mobile Trust Strip */
+.jf-hero-mobile-trust {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+  padding: 0 16px;
+}
+
+.jf-hmt-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(197, 168, 128, 0.12);
+  border: 1px solid rgba(197, 168, 128, 0.25);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--text-primary, #1C1917);
+}
+
+.jf-hmt-item svg {
+  color: var(--crimson, #6E1212);
+}
+
 @media (max-width: 900px) {
   .jf-hero {
     padding-top: calc(var(--nav-height, 66px) + 38px + 16px) !important;
-    padding-bottom: 40px !important;
+    padding-bottom: 36px !important;
     text-align: center;
   }
 
   .jf-hero-split {
     grid-template-columns: 1fr !important;
-    gap: 28px !important;
-    padding: 0 20px !important;
+    gap: 24px !important;
+    padding: 0 18px !important;
   }
 
   .jf-hero-copy {
@@ -10610,18 +10706,27 @@ input, textarea, select {
 
   .jf-hero-copy .jf-logo-stage {
     align-items: center !important;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
   }
 
   .jf-logo-mark {
-    width: 84px !important;
-    height: 84px !important;
+    width: 86px !important;
+    height: 86px !important;
+    border-radius: 20px !important;
+    background: rgba(255, 255, 255, 0.88) !important;
+    border: 1.5px solid rgba(197, 168, 128, 0.4) !important;
+    box-shadow: 0 16px 36px rgba(110, 18, 18, 0.14), inset 0 1px 2px rgba(255, 255, 255, 0.8) !important;
+  }
+
+  .jf-logo-wordmark-wrap {
+    align-items: center !important;
+    text-align: center !important;
   }
 
   .jf-hero-title {
-    font-size: clamp(2.2rem, 7.5vw, 3rem) !important;
+    font-size: clamp(2.25rem, 7.8vw, 3.1rem) !important;
     line-height: 1.12 !important;
-    max-width: 16ch !important;
+    max-width: 15ch !important;
     margin: 0 auto;
   }
 
@@ -10651,10 +10756,15 @@ input, textarea, select {
     justify-content: center !important;
   }
 
+  .jf-hero-cta .jf-btn-primary {
+    background: linear-gradient(135deg, #6E1212 0%, #8A1515 100%) !important;
+    box-shadow: 0 8px 24px rgba(110, 18, 18, 0.24) !important;
+  }
+
   /* Stage & Floating cards on mobile */
   .jf-hero-stage {
     width: 100% !important;
-    max-width: 360px !important;
+    max-width: 350px !important;
     margin: 0 auto !important;
     position: relative;
   }
@@ -10666,15 +10776,41 @@ input, textarea, select {
 
   .jf-carousel {
     max-width: 100% !important;
-    border-radius: 18px !important;
-    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.1) !important;
+    border-radius: 20px !important;
+    border: 1px solid rgba(197, 168, 128, 0.35) !important;
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.12) !important;
+    overflow: hidden !important;
+  }
+
+  .jf-carousel-viewport {
+    aspect-ratio: 3 / 4 !important;
+    height: auto !important;
+  }
+
+  .jf-cc-photo {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center 20% !important;
+  }
+
+  .jf-carousel-badges {
+    display: flex !important;
+  }
+
+  .jf-hero-mobile-trust {
+    display: flex !important;
+  }
+
+  .jf-hero-scroll {
+    display: none !important;
   }
 }
 
 @media (max-width: 480px) {
   .jf-hero-cta {
     flex-direction: column !important;
-    max-width: 300px;
+    max-width: 320px;
   }
 }
 

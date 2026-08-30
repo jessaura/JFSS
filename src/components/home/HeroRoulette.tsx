@@ -61,6 +61,12 @@ export default function HeroRoulette() {
             </div>
           ))}
         </div>
+
+        {/* Luxury Micro-Badges Bar */}
+        <div className="jf-carousel-badges">
+          <span className="jf-cb-pill">🌿 100% Pure Slub Linen</span>
+          <span className="jf-cb-pill">✦ Handcrafted Atelier</span>
+        </div>
       </div>
 
       <div className="jf-carousel-nav">
