@@ -110,25 +110,25 @@ export default function Navbar() {
                   )}
                 </Link>
 
-                {/* Smooth Slide-to-Right Animated Categories on Hover */}
+                {/* Smooth Slide-to-Right Animated Categories on Hover without shifting Home & Shop */}
                 {link.hasMega && (
                   <AnimatePresence>
                     {megaOpen && (
                       <motion.div
                         className="jf-nav-slide-wrap"
-                        initial={{ opacity: 0, width: 0, scale: 0.95 }}
-                        animate={{ opacity: 1, width: 'auto', scale: 1 }}
-                        exit={{ opacity: 0, width: 0, scale: 0.95 }}
+                        initial={{ opacity: 0, x: -8, scale: 0.96 }}
+                        animate={{ opacity: 1, x: 0, scale: 1 }}
+                        exit={{ opacity: 0, x: -6, scale: 0.96 }}
                         transition={{ type: 'spring', stiffness: 450, damping: 28 }}
                       >
                         <div className="jf-nav-slide-track">
                           {slideCategories.map((cat, idx) => (
                             <motion.div
                               key={cat.href}
-                              initial={{ opacity: 0, x: -14 }}
+                              initial={{ opacity: 0, x: -10 }}
                               animate={{ opacity: 1, x: 0 }}
-                              exit={{ opacity: 0, x: -8 }}
-                              transition={{ delay: idx * 0.035, duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+                              exit={{ opacity: 0, x: -6 }}
+                              transition={{ delay: idx * 0.03, duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
                             >
                               <Link
                                 href={cat.href}

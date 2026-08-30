@@ -9483,24 +9483,31 @@ input, textarea, select {
 }
 
 .navbar-link-pill-row {
+  position: relative;
   display: flex;
   align-items: center;
 }
 
-/* Sliding Category Pills on Hover */
+/* Sliding Category Pills on Hover - Absolute Positioning so Home & Shop stay 100% fixed */
 .jf-nav-slide-wrap {
-  overflow: hidden;
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   align-items: center;
+  pointer-events: auto;
+  z-index: 50;
 }
 
 .jf-nav-slide-track {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 2px 0 2px 10px;
+  padding: 2px 0 2px 8px;
   margin-left: 6px;
-  border-left: 1px solid rgba(197, 168, 128, 0.3);
+  border-left: 1px solid rgba(197, 168, 128, 0.35);
+  white-space: nowrap;
 }
 
 .jf-nav-slide-pill {
