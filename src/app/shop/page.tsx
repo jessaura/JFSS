@@ -311,68 +311,90 @@ function ShopContent() {
     return PRIMARY_CATEGORIES.find((c) => c.id === activeCategory) ?? PRIMARY_CATEGORIES[0];
   }, [activeCategory]);
 
-  // Helper matcher function for categories
+  // Helper matcher function for exact categories with 0 overlap
   const matchCategory = (p: Product, cat: string) => {
     if (cat === 'all') return true;
+
+    const name = (p.name || '').toLowerCase();
+    const sub = (p.subcategory || '').toLowerCase();
+    const tags = (p.tags || []).map((t) => t.toLowerCase());
+
+    const isSweatshirt = () => {
+      return (
+        sub === 'sweater' ||
+        name.includes('sweatshirt') ||
+        name.includes('sweater') ||
+        name.includes('half-zip') ||
+        p.id === 'p001' ||
+        p.id === 'p002' ||
+        p.id === 'p003'
+      );
+    };
+
+    const isKurtiOrDress = () => {
+      if (p.category === 'kids') return false;
+      if (p.id.startsWith('d')) return true;
+      if (sub === 'dresses') return true;
+      if (name.includes('kurti') || name.includes('tunic') || name.includes('anarkali') || name.includes('dress')) return true;
+      return false;
+    };
+
+    if (cat === 'sweatshirt') {
+      return isSweatshirt();
+    }
+
+    if (cat === 'shirts') {
+      if (isSweatshirt()) return false;
+      if (p.category === 'kids') return false;
+      return sub === 'shirts' || name.includes('shirt') || name.includes('oxford') || name.includes('polo');
+    }
+
+    if (cat === 'kurti') {
+      return isKurtiOrDress();
+    }
+
+    if (cat === 'blouses') {
+      if (isKurtiOrDress()) return false;
+      if (p.category === 'kids') return false;
+      if (sub === 'blouses') return true;
+      if (name.includes('blouse') || name.includes('crop top') || name.includes('design top')) return true;
+      if (sub === 'tops' && !name.includes('kurti') && !name.includes('tunic')) return true;
+      return false;
+    }
+
+    if (cat === 'jewellery') {
+      return p.id.startsWith('j') || sub === 'jewellery' || tags.includes('jewellery');
+    }
+
     if (cat === 'onam') {
       return (
-        p.subcategory?.toLowerCase().includes('saree') ||
-        p.subcategory?.toLowerCase().includes('festive') ||
-        p.tags?.some((t) => /onam|festive|saree|kasavu|traditional|anarkali|lehenga|sherwani/i.test(t)) ||
-        /onam|festive|saree|kasavu|traditional|anarkali|lehenga|sherwani/i.test(p.name + ' ' + (p.description || ''))
+        sub === 'sarees' ||
+        sub === 'mundu' ||
+        name.includes('set mundu') ||
+        name.includes('pattupavada') ||
+        name.includes('dhavani') ||
+        name.includes('saree') ||
+        tags.includes('sarees') ||
+        tags.includes('mundu')
       );
     }
-    if (cat === 'jewellery') {
-      return (
-        p.id.startsWith('j') ||
-        p.subcategory?.toLowerCase().includes('jewel') ||
-        p.tags?.some((t) => /jewel|necklace|pendant|bangle|earring|gold|stone/i.test(t)) ||
-        /jewellery|necklace|pendant|bangle|earring/i.test(p.name + ' ' + (p.description || ''))
-      );
-    }
-    if (cat === 'blouses') {
-      return (
-        p.subcategory?.toLowerCase().includes('blouse') ||
-        p.tags?.some((t) => /blouse|top/i.test(t)) ||
-        /blouse|design top|skin-top|dark-pink-top|green-top|gold-yellow/i.test(p.name)
-      );
-    }
-    if (cat === 'kurti') {
-      return (
-        p.id.startsWith('d') ||
-        p.subcategory?.toLowerCase().includes('dress') ||
-        p.subcategory?.toLowerCase().includes('kurt') ||
-        p.tags?.some((t) => /dress|kurt|tunic|midi/i.test(t)) ||
-        /kurti|kurta|dress|midi|tunic|floral/i.test(p.name)
-      );
-    }
-    if (cat === 'shirts') {
-      return (
-        p.subcategory?.toLowerCase().includes('shirt') ||
-        p.subcategory?.toLowerCase().includes('polo') ||
-        p.tags?.some((t) => /shirt|polo/i.test(t)) ||
-        /shirt|polo|royalman|rl-polo|raid-taylor|veliger/i.test(p.name)
-      );
-    }
-    if (cat === 'sweatshirt') {
-      return (
-        p.subcategory?.toLowerCase().includes('sweat') ||
-        p.tags?.some((t) => /sweat|hoodie|fleece|knit|sweater/i.test(t)) ||
-        /sweatshirt|hoodie|sweater|fable|catboy|thunder|tiger|sowatt|bespirit|brooklyn/i.test(p.name)
-      );
-    }
+
     if (cat === 'kids') {
-      return p.category === 'kids' || p.tags?.includes('kids') || /kids|child|boy|girl/i.test(p.name);
+      return p.category === 'kids' || tags.includes('kids');
     }
+
     if (cat === 'women') {
-      return p.category === 'women' || p.tags?.includes('women');
+      return p.category === 'women' || tags.includes('women');
     }
+
     if (cat === 'men') {
-      return p.category === 'men' || p.tags?.includes('men');
+      return p.category === 'men' || tags.includes('men');
     }
+
     if (cat === 'clearance') {
       return Boolean(p.clearance || discountPercent(p) > 0);
     }
+
     return true;
   };
 
