@@ -7,6 +7,13 @@ import { useStore } from '@/store/store';
 import Logo from '@/components/common/Logo';
 import AuthNav from '@/components/layout/AuthNav';
 
+interface NavLinkItem {
+  href: string;
+  label: string;
+  hasMega?: boolean;
+  isSpecial?: boolean;
+}
+
 const clerkEnabled = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
 
 export default function Navbar() {
@@ -44,13 +51,18 @@ export default function Navbar() {
     }, 200);
   };
 
-  const navLinks = [
+  const navLinks: NavLinkItem[] = [
     { href: '/', label: 'Home' },
     { href: '/shop', label: 'Shop', hasMega: true },
-    { href: '/shop?category=women', label: 'Women' },
-    { href: '/shop?category=men', label: 'Men' },
-    { href: '/shop?category=kids', label: 'Kids' },
-    { href: '/shop?category=clearance', label: 'Clearance', isSpecial: true },
+  ];
+
+  const mobileNavLinks: NavLinkItem[] = [
+    { href: '/', label: 'Home' },
+    { href: '/shop', label: 'Shop All Pieces' },
+    { href: '/shop?category=women', label: "Women's Atelier" },
+    { href: '/shop?category=men', label: "Men's Everyday" },
+    { href: '/shop?category=kids', label: 'Kids & Juniors' },
+    { href: '/shop?category=clearance', label: 'Clearance Archive', isSpecial: true },
   ];
 
   return (
@@ -209,13 +221,13 @@ export default function Navbar() {
             transition={{ duration: 0.3 }}
           >
             <div className="jf-mobile-nav-links">
-              {navLinks.map((link, i) => (
+              {mobileNavLinks.map((link, i) => (
                 <motion.div
                   key={link.href}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  transition={{ delay: i * 0.06, duration: 0.3 }}
+                  transition={{ delay: i * 0.05, duration: 0.28 }}
                 >
                   <Link
                     href={link.href}
