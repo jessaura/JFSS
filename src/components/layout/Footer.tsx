@@ -160,7 +160,17 @@ export default function Footer() {
               <li><Link href="/#story">Our Brand Story</Link></li>
               <li><Link href="/shop">Artisanal Slub Weave</Link></li>
               <li><Link href="/shop">Hand-Painted Botanicals</Link></li>
-              <li><Link href="/shop">Ethical Craftsmanship</Link></li>
+              <li>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (typeof window !== 'undefined') window.dispatchEvent(new Event('jf_open_onboarding'));
+                  }}
+                  className="jf-footer-btn-link"
+                >
+                  Maison Welcome Guide
+                </button>
+              </li>
               <li><Link href="/admin">Atelier Admin Portal</Link></li>
             </ul>
           </div>
@@ -170,7 +180,8 @@ export default function Footer() {
             <h4 className="jf-footer-col-title">Client Care</h4>
             <ul className="jf-footer-links">
               <li><Link href="/account/orders">Track My Order</Link></li>
-              <li><Link href="/shop">Interactive Size Guide</Link></li>
+              <li><Link href="/privacy">Privacy &amp; Data Rights</Link></li>
+              <li><Link href="/terms">Terms of Service</Link></li>
               <li><Link href="/account">Account Dashboard</Link></li>
               <li><Link href="/account/wishlist">Saved Wishlist</Link></li>
               <li><Link href="/account/addresses">Shipping &amp; Delivery</Link></li>
@@ -189,11 +200,19 @@ export default function Footer() {
           <div className="jf-footer-copyright">
             <p>© {new Date().getFullYear()} JessAura London. All rights reserved.</p>
             <div className="jf-footer-legal-links">
-              <Link href="/shop">Privacy Policy</Link>
+              <Link href="/privacy">Privacy Policy</Link>
               <span>·</span>
-              <Link href="/shop">Terms of Service</Link>
+              <Link href="/terms">Terms of Service</Link>
               <span>·</span>
-              <Link href="/shop">Cookie Preferences</Link>
+              <button
+                type="button"
+                onClick={() => {
+                  if (typeof window !== 'undefined') window.dispatchEvent(new Event('jf_open_cookie_preferences'));
+                }}
+                className="jf-footer-legal-btn"
+              >
+                Cookie Preferences
+              </button>
             </div>
           </div>
 

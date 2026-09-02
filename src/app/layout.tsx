@@ -6,6 +6,8 @@ import ProductModal from "@/components/common/ProductModal";
 import ConvexClientProvider from "@/components/providers/ConvexClientProvider";
 import CatalogueProvider from "@/components/providers/CatalogueProvider";
 import AccountSync from "@/components/layout/AccountSync";
+import CookieConsent from "@/components/layout/CookieConsent";
+import WelcomeOnboarding from "@/components/layout/WelcomeOnboarding";
 
 // Only run the Clerk-backed sync when Clerk is configured (needs a provider).
 const clerkEnabled = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
@@ -53,6 +55,8 @@ export default function RootLayout({
             <ProductModal />
             {clerkEnabled && <AccountSync />}
             {children}
+            <CookieConsent />
+            <WelcomeOnboarding />
           </CatalogueProvider>
         </ConvexClientProvider>
       </body>
