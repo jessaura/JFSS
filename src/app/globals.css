@@ -11678,19 +11678,19 @@ input, textarea, select {
 
 .jf-cookie-banner {
   pointer-events: auto;
-  max-width: 1100px;
-  margin: 0 auto 20px;
-  padding: 16px 24px;
-  background: rgba(28, 25, 23, 0.96);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(197, 168, 128, 0.35);
-  border-radius: 16px;
-  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.35);
+  max-width: 1060px;
+  margin: 0 auto 24px;
+  padding: 16px 28px;
+  background: rgba(26, 23, 22, 0.96);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(197, 168, 128, 0.3);
+  border-radius: 12px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
+  gap: 32px;
   color: #FAF7F2;
 }
 
@@ -11701,71 +11701,81 @@ input, textarea, select {
   flex: 1;
 }
 
-.jf-cookie-title-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.jf-cookie-icon {
-  font-size: 1.1rem;
-}
-
-.jf-cookie-heading {
-  font-size: 0.88rem;
+.jf-cookie-eyebrow {
+  font-size: 0.68rem;
   font-weight: 700;
-  letter-spacing: 0.04em;
-  color: #FAF7F2;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold, #C5A880);
 }
 
 .jf-cookie-desc {
-  font-size: 0.78rem;
-  color: rgba(250, 247, 242, 0.8);
+  font-size: 0.8rem;
+  color: rgba(250, 247, 242, 0.85);
   margin: 0;
-  line-height: 1.45;
+  line-height: 1.5;
 }
 
 .jf-cookie-link {
-  color: var(--gold, #C5A880);
+  color: #FAF7F2;
   text-decoration: underline;
-  text-underline-offset: 2px;
+  text-underline-offset: 3px;
+  font-weight: 500;
+}
+
+.jf-cookie-link:hover {
+  color: var(--gold, #C5A880);
 }
 
 .jf-cookie-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
   flex-shrink: 0;
+}
+
+.jf-cookie-btn {
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .jf-cookie-btn-pref {
   background: transparent;
-  border: 1px solid rgba(250, 247, 242, 0.3);
+  border: 1px solid rgba(250, 247, 242, 0.25);
   color: #FAF7F2;
 }
+
 .jf-cookie-btn-pref:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: #FAF7F2;
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(250, 247, 242, 0.6);
 }
 
 .jf-cookie-btn-secondary {
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   color: #FAF7F2;
 }
+
 .jf-cookie-btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.16);
 }
 
 .jf-cookie-btn-primary {
   background: var(--gold, #C5A880);
   color: #1C1917;
   border: 1px solid var(--gold, #C5A880);
-  font-weight: 700;
 }
+
 .jf-cookie-btn-primary:hover {
   background: #D4AF37;
   color: #000;
+  box-shadow: 0 2px 10px rgba(197, 168, 128, 0.3);
 }
 
 /* Cookie Modal Overlay */

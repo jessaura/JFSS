@@ -25,20 +25,18 @@ const ONBOARDING_STEPS = [
   },
   {
     step: 3,
-    eyebrow: 'YOUR CLIENT PRIVILEGE',
-    title: 'Enjoy 10% Off Your First Order',
+    eyebrow: 'THE MAISON EXPERIENCE',
+    title: 'Effortless Delivery & Concierge',
     description:
-      'Use code WELCOME10 at checkout to enjoy 10% off across all full-priced artisanal pieces, with complimentary tracked delivery on UK orders over £50.',
-    badge: '🎁 CODE: WELCOME10',
+      'Complimentary tracked UK delivery on orders over £50, 14-day effortless returns, and dedicated styling advice via our WhatsApp concierge.',
+    badge: '📦 TRACKED UK & WORLDWIDE DISPATCH',
     image: '/images/womens-collection.png',
-    code: 'WELCOME10',
   },
 ];
 
 export default function WelcomeOnboarding() {
   const [isOpen, setIsOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
-  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     // Check if user has already seen the onboarding
@@ -78,14 +76,6 @@ export default function WelcomeOnboarding() {
   const handleComplete = () => {
     localStorage.setItem('jf_onboarding_completed', 'true');
     setIsOpen(false);
-  };
-
-  const handleCopyCode = () => {
-    if (navigator?.clipboard) {
-      navigator.clipboard.writeText('WELCOME10');
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
   };
 
   if (!isOpen) return null;
@@ -160,23 +150,6 @@ export default function WelcomeOnboarding() {
                   <span className="jf-onboarding-eyebrow">{stepData.eyebrow}</span>
                   <h2 className="jf-onboarding-title">{stepData.title}</h2>
                   <p className="jf-onboarding-desc">{stepData.description}</p>
-
-                  {/* Step 3 Promo Code Box */}
-                  {stepData.code && (
-                    <div className="jf-onboarding-code-box">
-                      <div className="jf-onboarding-code-text">
-                        <span className="jf-onboarding-code-label">PROMO CODE</span>
-                        <strong className="jf-onboarding-code-val">{stepData.code}</strong>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={handleCopyCode}
-                        className="jf-btn-sm jf-btn-primary jf-onboarding-copy-btn"
-                      >
-                        {copied ? 'Copied ✓' : 'Copy Code'}
-                      </button>
-                    </div>
-                  )}
                 </motion.div>
               </AnimatePresence>
 
@@ -207,7 +180,7 @@ export default function WelcomeOnboarding() {
                     className="jf-btn-sm jf-btn-primary"
                     style={{ flex: 1, textAlign: 'center' }}
                   >
-                    Start Exploring The Collection →
+                    Explore The Collection →
                   </Link>
                 )}
               </div>
