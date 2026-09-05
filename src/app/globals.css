@@ -12247,6 +12247,140 @@ input, textarea, select {
   }
 }
 
+/* ==========================================================================
+   FLOATING WHATSAPP CONCIERGE BUTTON
+   ========================================================================== */
+
+.jf-wa-floating-wrap {
+  position: fixed;
+  bottom: 26px;
+  right: 26px;
+  z-index: 900;
+  pointer-events: auto;
+}
+
+.jf-wa-floating-btn {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+  color: #FFFFFF !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  text-decoration: none;
+  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.38), 0 2px 6px rgba(0, 0, 0, 0.12);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.jf-wa-floating-btn:hover {
+  transform: scale(1.08) translateY(-2px);
+  box-shadow: 0 14px 32px rgba(37, 211, 102, 0.5), 0 4px 10px rgba(0, 0, 0, 0.18);
+  color: #FFFFFF !important;
+}
+
+.jf-wa-icon {
+  width: 30px;
+  height: 30px;
+  fill: currentColor;
+  transition: transform 0.2s ease;
+}
+
+.jf-wa-floating-btn:hover .jf-wa-icon {
+  transform: scale(1.05);
+}
+
+.jf-wa-pulse-ring {
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 2px solid rgba(37, 211, 102, 0.6);
+  animation: jf-wa-pulse 2.8s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+  pointer-events: none;
+}
+
+@keyframes jf-wa-pulse {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.22);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1.22);
+    opacity: 0;
+  }
+}
+
+.jf-wa-label {
+  position: absolute;
+  right: 66px;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(26, 23, 22, 0.94);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #FAF7F2;
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(197, 168, 128, 0.3);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(8px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.jf-wa-label-show,
+.jf-wa-floating-btn:hover .jf-wa-label {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.jf-wa-label-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #25D366;
+  box-shadow: 0 0 8px #25D366;
+  display: inline-block;
+}
+
+@media (max-width: 768px) {
+  .jf-wa-floating-wrap {
+    bottom: 22px;
+    right: 18px;
+  }
+
+  .jf-wa-floating-btn {
+    width: 48px;
+    height: 48px;
+  }
+
+  .jf-wa-icon {
+    width: 26px;
+    height: 26px;
+  }
+
+  .jf-wa-label {
+    display: none;
+  }
+
+  /* When sticky bottom bar is present on product page, lift WhatsApp button above it */
+  body:has(.jf-spec-sticky-bar) .jf-wa-floating-wrap {
+    bottom: 84px;
+  }
+}
+
 
 
 

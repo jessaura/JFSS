@@ -184,8 +184,15 @@ export default function Footer() {
               <li><Link href="/terms">Terms of Service</Link></li>
               <li><Link href="/account">Account Dashboard</Link></li>
               <li><Link href="/account/wishlist">Saved Wishlist</Link></li>
-              <li><Link href="/account/addresses">Shipping &amp; Delivery</Link></li>
-              <li><a href="https://wa.me/" target="_blank" rel="noopener noreferrer">WhatsApp Concierge</a></li>
+              <li>
+                <a
+                  href="https://wa.me/447909707271?text=Hello%20JessAura%2C%20I%20have%20an%20enquiry%20regarding%20your%20collection"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  WhatsApp Concierge
+                </a>
+              </li>
             </ul>
           </div>
         </div>

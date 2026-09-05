@@ -29,7 +29,7 @@ const ONBOARDING_STEPS = [
     title: 'Effortless Delivery & Concierge',
     description:
       'Complimentary tracked UK delivery on orders over £50, 14-day effortless returns, and dedicated styling advice via our WhatsApp concierge.',
-    badge: '📦 TRACKED UK & WORLDWIDE DISPATCH',
+    badge: '📦 TRACKED UK COURIER DELIVERY',
     image: '/images/womens-collection.png',
   },
 ];

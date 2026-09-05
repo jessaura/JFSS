@@ -112,10 +112,7 @@ export default function TermsPage() {
                   </p>
                   <ul>
                     <li>
-                      <strong>United Kingdom:</strong> Complimentary standard tracked delivery on all UK orders over £50. Standard delivery typically takes 2–4 business days; express delivery takes 1–2 business days.
-                    </li>
-                    <li>
-                      <strong>International Deliveries:</strong> Available worldwide with estimated delivery within 5–10 business days. International orders may be subject to local import duties and taxes, which are the responsibility of the recipient.
+                      <strong>United Kingdom Delivery:</strong> Complimentary standard tracked delivery on all UK orders over £50 via tracked courier. Standard delivery typically takes 2–4 business days; express delivery takes 1–2 business days.
                     </li>
                   </ul>
                 </section>

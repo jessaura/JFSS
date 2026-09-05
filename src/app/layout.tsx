@@ -8,6 +8,7 @@ import CatalogueProvider from "@/components/providers/CatalogueProvider";
 import AccountSync from "@/components/layout/AccountSync";
 import CookieConsent from "@/components/layout/CookieConsent";
 import WelcomeOnboarding from "@/components/layout/WelcomeOnboarding";
+import WhatsAppButton from "@/components/common/WhatsAppButton";
 
 // Only run the Clerk-backed sync when Clerk is configured (needs a provider).
 const clerkEnabled = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
@@ -57,6 +58,7 @@ export default function RootLayout({
             {children}
             <CookieConsent />
             <WelcomeOnboarding />
+            <WhatsAppButton />
           </CatalogueProvider>
         </ConvexClientProvider>
       </body>
